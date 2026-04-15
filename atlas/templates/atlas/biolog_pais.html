@@ -1,0 +1,91 @@
+{% extends 'atlas/base.html' %}
+{% load atlas_tags %}
+{% block title %}Mi Atlas — {{ pais.nombre }} — BioAtlas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}">Inicio</a><span>/</span>
+            <a href="{% url 'atlas:biolog' %}">Mi Atlas</a><span>/</span>
+            <span>{{ pais.nombre }}</span>
+        </nav>
+        <h1>🌍 {{ pais.nombre }}</h1>
+        <p class="page-subtitle">
+            {{ total_coleccionadas }} especies coleccionadas de {{ total_pais }} disponibles
+            &bull; <span style="color:var(--green);">{{ porcentaje }}%</span>
+        </p>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom:4rem;">
+
+    <!-- Barra de progreso grande -->
+    <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span style="font-size:0.82rem; color:var(--text-muted);">Progreso en {{ pais.nombre }}</span>
+            <span style="font-size:0.82rem; font-weight:700; color:var(--green);">{{ total_coleccionadas }} / {{ total_pais }}</span>
+        </div>
+        <div style="background:var(--bg-surface); border-radius:999px; height:10px; overflow:hidden;">
+            <div style="background:linear-gradient(90deg,var(--green),#6EE79A); height:100%; border-radius:999px; width:{{ porcentaje }}%; transition:width 0.8s ease;"></div>
+        </div>
+    </div>
+
+    <!-- Filtros por reino -->
+    {% if kingdoms_disponibles %}
+    <div class="class-filters" style="margin-bottom:1.5rem;">
+        <a href="?" class="cf-pill {% if not kingdom_filtro %}active{% endif %}">🌐 Todos</a>
+        {% for k in kingdoms_disponibles %}
+        <a href="?kingdom={{ k }}" class="cf-pill {% if kingdom_filtro == k %}active{% endif %}">
+            {% if k == 'Animalia' %}🦁{% elif k == 'Plantae' %}🌿{% elif k == 'Fungi' %}🍄{% endif %}
+            {{ k }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Grid de especies -->
+    {% if page_obj.object_list %}
+    <div class="species-grid">
+        {% for entrada in page_obj.object_list %}
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="aspect-ratio:4/3; overflow:hidden; background:var(--bg-surface);">
+                {% with img_url=imagenes_pais|get_item:entrada.especie.species_key %}
+                {% if img_url %}
+                <img src="{{ img_url }}" style="width:100%; height:100%; object-fit:cover;"
+                     onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:2rem;\'>🌿</div>'">
+                {% elif entrada.especie.image_url %}
+                <img src="{{ entrada.especie.image_url }}" style="width:100%; height:100%; object-fit:cover;"
+                     onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:2rem;\'>🌿</div>'">
+                {% else %}
+                <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:2rem;">🌿</div>
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div style="padding:0.8rem;">
+                <p style="font-size:0.82rem; font-style:italic; font-weight:700; color:var(--text); margin:0 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ entrada.especie.canonical_name|default:entrada.especie.scientific_name }}</p>
+                {% if entrada.especie.common_name %}<p style="font-size:0.7rem; color:var(--green); font-weight:600; margin:0 0 4px;">{{ entrada.especie.common_name }}</p>{% endif %}
+                <p style="font-size:0.68rem; color:var(--text-faint); margin:0;">{{ entrada.especie.family|default:entrada.especie.kingdom }}</p>
+                <p style="font-size:0.68rem; color:var(--text-faint); margin:2px 0 0;">{{ entrada.created_at|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if kingdom_filtro %}&kingdom={{ kingdom_filtro }}{% endif %}">← Anterior</a>{% endif %}
+        <span class="current">{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if kingdom_filtro %}&kingdom={{ kingdom_filtro }}{% endif %}">Siguiente →</a>{% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div style="text-align:center; padding:3rem 2rem; color:var(--text-muted);">
+        <p>No hay especies con este filtro.</p>
+        <a href="?" style="color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;">Ver todas →</a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

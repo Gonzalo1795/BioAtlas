@@ -1,0 +1,90 @@
+{% extends 'atlas/base.html' %}
+{% block title %}Mi Atlas — BioAtlas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}">Inicio</a><span>/</span><span>Mi Atlas</span>
+        </nav>
+        <h1>🌿 Mi Atlas</h1>
+        <p class="page-subtitle">Tu atlas personal de biodiversidad</p>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom:4rem;">
+
+    <!-- Stats -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:2rem;">
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center;">
+            <div style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--text);">{{ total_especies }}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Especies</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center;">
+            <div style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--text);">{{ total_paises }}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Países</div>
+        </div>
+        {% if not suscripcion.es_premium %}
+        <div style="background:var(--bg-card); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1.25rem; text-align:center;">
+            <div style="font-size:0.9rem; font-weight:700; color:var(--gold); margin-bottom:4px;">Plan Gratuito</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">{{ total_paises }}/{{ limite_paises }} países</div>
+            <a href="{% url 'atlas:premium' %}" style="display:inline-block; margin-top:8px; padding:4px 14px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; font-size:0.72rem; font-weight:700; text-decoration:none;">✨ Premium</a>
+        </div>
+        {% else %}
+        <div style="background:var(--bg-card); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1.25rem; text-align:center;">
+            <div style="font-size:0.9rem; font-weight:700; color:var(--gold);">✨ Premium</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Sin límites</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Banner límite -->
+    {% if not suscripcion.es_premium and total_paises >= limite_paises %}
+    <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1rem 1.25rem; display:flex; align-items:center; gap:12px; margin-bottom:1.5rem;">
+        <span style="font-size:1.5rem;">⚠️</span>
+        <div style="flex:1;">
+            <strong style="color:var(--gold);">Has alcanzado el límite de {{ limite_paises }} países.</strong>
+            <span style="color:var(--text-muted); font-size:0.88rem;"> Hazte Premium para desbloquear todos los países.</span>
+        </div>
+        <a href="{% url 'atlas:premium' %}" style="padding:8px 18px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; font-size:0.82rem; font-weight:700; text-decoration:none; white-space:nowrap;">Ver Premium</a>
+    </div>
+    {% endif %}
+
+    {% if paises %}
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:1.25rem;">
+        {% for p in paises %}
+        <a href="{% url 'atlas:biolog_pais' p.pais_id %}"
+           style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem 1.5rem; text-decoration:none; transition:all 0.2s;"
+           onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-2px)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                <div>
+                    <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--text); margin:0;">{{ p.nombre }}</p>
+                    <p style="font-size:0.72rem; color:var(--text-faint); margin:0; font-family:var(--font-mono);">{{ p.codigo }}</p>
+                </div>
+                <span style="font-size:1.5rem;">🌍</span>
+            </div>
+            <div style="background:var(--bg-surface); border-radius:999px; height:6px; margin-bottom:8px; overflow:hidden;">
+                <div style="background:linear-gradient(90deg,var(--green),#6EE79A); height:100%; border-radius:999px; width:{{ p.porcentaje }}%; transition:width 0.6s ease;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.78rem; color:var(--text-muted);"><strong style="color:var(--text);">{{ p.coleccionadas }}</strong> / {{ p.total }} especies</span>
+                <span style="font-size:0.78rem; font-weight:700; color:var(--green);">{{ p.porcentaje }}%</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center; padding:5rem 2rem;">
+        <div style="font-size:4rem; margin-bottom:1rem;">🌱</div>
+        <h2 style="font-family:var(--font-display); color:var(--text); font-size:1.4rem; margin-bottom:0.5rem;">Tu Mi Atlas está vacío</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; max-width:420px; margin:0 auto 1.5rem; line-height:1.6;">
+            Explora cualquier país y pulsa <strong style="color:var(--green);">🌿 Mi Atlas</strong> en la ficha de cada especie para empezar tu colección.
+        </p>
+        <a href="{% url 'atlas:index' %}" style="display:inline-block; padding:12px 28px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700;">Explorar el atlas</a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

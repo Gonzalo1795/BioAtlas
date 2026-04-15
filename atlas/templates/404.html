@@ -1,0 +1,25 @@
+{% extends 'atlas/base.html' %}
+{% block title %}404 — Página no encontrada — BioAtlas{% endblock %}
+
+{% block content %}
+<div style="min-height:70vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+    <div style="text-align:center; max-width:500px;">
+        <div style="font-size:5rem; margin-bottom:1rem;">🌍</div>
+        <h1 style="font-family:var(--font-display); font-size:6rem; font-weight:700; color:var(--green); line-height:1; margin-bottom:0.5rem;">404</h1>
+        <h2 style="font-family:var(--font-display); font-size:1.5rem; font-weight:600; color:var(--text); margin-bottom:1rem;">Página no encontrada</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:2rem;">
+            Parece que esta especie se ha extinguido... o simplemente la página que buscas no existe.
+        </p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="/" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:var(--green); color:#fff; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.92rem; transition:all 0.2s;"
+               onmouseover="this.style.background='#236B3C'" onmouseout="this.style.background='var(--green)'">
+                🏠 Volver al inicio
+            </a>
+            <a href="/buscar/" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:transparent; color:var(--text); border:1.5px solid var(--border); border-radius:999px; text-decoration:none; font-weight:600; font-size:0.92rem; transition:all 0.2s;"
+               onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
+                🔍 Buscar especie
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

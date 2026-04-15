@@ -1,0 +1,85 @@
+{% extends 'atlas/base.html' %}
+{% block title %}{{ continente.nombre }} — BioAtlas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}">Inicio</a><span>/</span><span>{{ continente.nombre }}</span>
+        </nav>
+        <h1>
+            {% if continente.codigo == 'EU' %}🏰
+            {% elif continente.codigo == 'AF' %}🐘
+            {% elif continente.codigo == 'AS' %}🕌
+            {% elif continente.codigo == 'AM' %}🌎
+            {% elif continente.codigo == 'OC' %}🦘
+            {% elif continente.codigo == 'AN' %}🧊
+            {% else %}🌐{% endif %}
+            {{ continente.nombre }}
+        </h1>
+        <p class="page-subtitle">
+            {% if continente.codigo == 'AN' %}
+                Territorio de investigación científica · Sin soberanía nacional
+            {% else %}
+                {{ paises.count }} países · Explora la biodiversidad de cada uno
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom:4rem;">
+
+    {% if continente.codigo == 'AN' %}
+    <div style="max-width:600px; margin:0 auto; text-align:center; padding:3rem 0;">
+        <div style="font-size:4rem; margin-bottom:1rem;">🧊</div>
+        <h2 style="font-family:var(--font-display); font-size:1.5rem; color:var(--text); margin-bottom:0.75rem;">
+            La Antártida no tiene países
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:2rem; max-width:480px; margin-left:auto; margin-right:auto;">
+            La Antártida está administrada por el Tratado Antártico (1959) y no tiene
+            soberanía nacional. Sin embargo, alberga una biodiversidad única adaptada
+            a condiciones extremas: pingüinos, focas, krill y numerosas especies marinas.
+        </p>
+        {% if territorio_especial %}
+        <a href="{% url 'atlas:antartida_detail' %}"
+           style="display:inline-flex; align-items:center; gap:8px; padding:14px 28px;
+                  background:var(--green); color:#fff; border-radius:999px;
+                  text-decoration:none; font-weight:700; font-size:0.95rem; transition:all 0.2s;"
+           onmouseover="this.style.background='#236B3C'; this.style.transform='translateY(-2px)'"
+           onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'">
+            🌿 Ver biodiversidad antártica
+        </a>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:1rem;">
+        {% for pais in paises %}
+        <a href="{% url 'atlas:pais_detail' pais.pk %}"
+           style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem 1.5rem; text-decoration:none; transition:all 0.2s; display:flex; flex-direction:column; gap:8px;"
+           onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)';this.style.boxShadow='none'">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                    <img src="https://flagcdn.com/24x18/{{ pais.codigo|lower }}.png"
+                         alt="{{ pais.codigo }}"
+                         style="width:24px; height:18px; border-radius:2px; flex-shrink:0; object-fit:cover;"
+                         onerror="this.style.display='none'">
+                    <h3 style="font-family:var(--font-display); font-size:0.95rem; font-weight:600; color:var(--text); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ pais.nombre }}</h3>
+                </div>
+                <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-faint); background:var(--bg-surface); padding:2px 6px; border-radius:4px; flex-shrink:0;">{{ pais.codigo }}</span>
+            </div>
+            {% if pais.num_especies %}
+            <span style="font-size:0.78rem; color:var(--green); font-weight:600;">🌿 {{ pais.num_especies }} especies</span>
+            {% else %}
+            <span style="font-size:0.75rem; color:var(--text-faint);">Sin datos aún</span>
+            {% endif %}
+        </a>
+        {% empty %}
+        <p style="color:var(--text-muted);">No hay países disponibles.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

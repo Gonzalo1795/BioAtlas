@@ -1,0 +1,84 @@
+{% extends 'atlas/base.html' %}
+{% block title %}Nuevo avistamiento — BioAtlas{% endblock %}
+
+{% block content %}
+<div style="max-width:560px; margin:3rem auto; padding:0 1.5rem;">
+
+    <div style="margin-bottom:1.5rem;">
+        <a href="{% url 'atlas:mis_avistamientos' %}" style="color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;">← Volver a mis avistamientos</a>
+    </div>
+
+    <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; box-shadow:var(--shadow-lg);">
+
+        <!-- Especie -->
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border);">
+            {% if especie.image_url %}
+            <img src="{{ especie.image_url }}" style="width:64px; height:64px; border-radius:var(--radius-sm); object-fit:cover; flex-shrink:0;">
+            {% else %}
+            <div style="width:64px; height:64px; border-radius:var(--radius-sm); background:var(--bg-surface); display:flex; align-items:center; justify-content:center; font-size:2rem; flex-shrink:0;">🌿</div>
+            {% endif %}
+            <div>
+                <h1 style="font-family:var(--font-display); font-size:1.3rem; font-style:italic; font-weight:700; color:var(--text); margin:0;">{{ especie.canonical_name|default:especie.scientific_name }}</h1>
+                {% if especie.common_name %}<p style="font-size:0.82rem; color:var(--green); font-weight:600; margin:4px 0 0;">{{ especie.common_name }}</p>{% endif %}
+                <p style="font-size:0.75rem; color:var(--text-faint); margin:2px 0 0;">📍 Registrar avistamiento</p>
+            </div>
+        </div>
+
+        {% if limite_alcanzado %}
+        <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius-sm); padding:1rem 1.25rem; margin-bottom:1.5rem;">
+            <p style="font-size:0.88rem; color:var(--gold); margin:0; line-height:1.6;">
+                ⚠️ Has alcanzado el límite de {{ limite }} avistamientos del plan gratuito.
+                <a href="{% url 'atlas:premium' %}" style="color:var(--gold); font-weight:700; text-decoration:underline;">Hazte Premium →</a>
+            </p>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div style="background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:var(--radius-sm); padding:10px 14px; font-size:0.84rem; color:#F87171; margin-bottom:1.25rem;">⚠️ {{ error }}</div>
+        {% endif %}
+
+        {% if not limite_alcanzado %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="margin-bottom:1.25rem;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.03em;">Fecha *</label>
+                <input type="date" name="fecha" required
+                    style="width:100%; padding:10px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.9rem; font-family:var(--font-body); outline:none; box-sizing:border-box; transition:all 0.2s;"
+                    onfocus="this.style.borderColor='var(--green-dim)';this.style.boxShadow='0 0 0 3px var(--green-glow)'"
+                    onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+            </div>
+
+            <div style="margin-bottom:1.25rem;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.03em;">Lugar *</label>
+                <input type="text" name="lugar" required placeholder="Ej: Parque Nacional de Doñana, España"
+                    style="width:100%; padding:10px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.9rem; font-family:var(--font-body); outline:none; box-sizing:border-box; transition:all 0.2s;"
+                    onfocus="this.style.borderColor='var(--green-dim)';this.style.boxShadow='0 0 0 3px var(--green-glow)'"
+                    onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+            </div>
+
+            <div style="margin-bottom:1.25rem;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.03em;">Notas <span style="font-weight:400; text-transform:none;">(opcional)</span></label>
+                <textarea name="notas" rows="3" placeholder="Describe lo que viste..."
+                    style="width:100%; padding:10px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.9rem; font-family:var(--font-body); outline:none; box-sizing:border-box; resize:vertical; transition:all 0.2s;"
+                    onfocus="this.style.borderColor='var(--green-dim)';this.style.boxShadow='0 0 0 3px var(--green-glow)'"
+                    onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'"></textarea>
+            </div>
+
+            <div style="margin-bottom:1.75rem;">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.03em;">Foto <span style="font-weight:400; text-transform:none;">(opcional)</span></label>
+                <input type="file" name="foto" accept="image/*"
+                    style="width:100%; padding:10px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-muted); font-size:0.85rem; font-family:var(--font-body); box-sizing:border-box; cursor:pointer;">
+            </div>
+
+            <button type="submit"
+                style="width:100%; padding:13px; background:var(--green); color:#0A0F0D; border:none; border-radius:999px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;"
+                onmouseover="this.style.background='#6EE79A';this.style.transform='translateY(-1px)'"
+                onmouseout="this.style.background='var(--green)';this.style.transform='translateY(0)'">
+                Guardar avistamiento →
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

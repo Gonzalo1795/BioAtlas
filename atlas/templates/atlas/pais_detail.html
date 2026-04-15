@@ -1,0 +1,423 @@
+{% extends 'atlas/base.html' %}
+{% load static %}
+{% load atlas_tags %}
+
+{% block title %}{{ pais.nombre }} — BioAtlas{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}">Inicio</a>
+            <span>/</span>
+            <a href="{% url 'atlas:continente_detail' pais.continente.pk %}">{{ pais.continente.nombre }}</a>
+            <span>/</span>
+            <span>{{ pais.nombre }}</span>
+        </nav>
+        <h1 style="display:flex; align-items:center; gap:12px;">
+            <img src="https://flagcdn.com/32x24/{{ pais.codigo|lower }}.png"
+                 alt="{{ pais.codigo }}"
+                 style="width:32px; height:24px; border-radius:3px; object-fit:cover;"
+                 onerror="this.style.display='none'">
+            {{ pais.nombre }}
+        </h1>
+        <p class="page-subtitle">
+            {{ pais.continente.nombre }} &bull; {{ total_species }} especies registradas
+            {% if user.is_authenticated and biolog_count %}
+            &bull; <span style="color:var(--green);">🌿 {{ biolog_count }} en tu Mi Atlas</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom:4rem;">
+<div class="atlas-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="filters-sidebar">
+        <div class="filters-box">
+            <h3>Filtros</h3>
+            <form method="GET" class="filters-form">
+                <input type="text" name="search" placeholder="Buscar especie..." value="{{ request.GET.search }}">
+                <select name="kingdom">
+                    <option value="">Todos los reinos</option>
+                    {% for k in kingdoms %}<option value="{{ k }}" {% if request.GET.kingdom == k %}selected{% endif %}>{{ k }}</option>{% endfor %}
+                </select>
+                <select name="phylum">
+                    <option value="">Todos los filos</option>
+                    {% for p in phylums %}<option value="{{ p }}" {% if request.GET.phylum == p %}selected{% endif %}>{{ p }}</option>{% endfor %}
+                </select>
+                <select name="class_name">
+                    <option value="">Todas las clases</option>
+                    {% for c in classes %}<option value="{{ c }}" {% if request.GET.class_name == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+                </select>
+                <select name="order">
+                    <option value="">Todos los órdenes</option>
+                    {% for o in orders %}<option value="{{ o }}" {% if request.GET.order == o %}selected{% endif %}>{{ o }}</option>{% endfor %}
+                </select>
+                <select name="family">
+                    <option value="">Todas las familias</option>
+                    {% for f in families %}<option value="{{ f }}" {% if request.GET.family == f %}selected{% endif %}>{{ f }}</option>{% endfor %}
+                </select>
+                <select name="iucn_status">
+                    <option value="">Estado IUCN — Todos</option>
+                    <option value="EX" {% if request.GET.iucn_status == 'EX' %}selected{% endif %}>💀 Extinta (EX)</option>
+                    <option value="EW" {% if request.GET.iucn_status == 'EW' %}selected{% endif %}>💀 Ext. silvestre (EW)</option>
+                    <option value="CR" {% if request.GET.iucn_status == 'CR' %}selected{% endif %}>🔴 Peligro crítico (CR)</option>
+                    <option value="EN" {% if request.GET.iucn_status == 'EN' %}selected{% endif %}>🟠 En peligro (EN)</option>
+                    <option value="VU" {% if request.GET.iucn_status == 'VU' %}selected{% endif %}>🟡 Vulnerable (VU)</option>
+                    <option value="NT" {% if request.GET.iucn_status == 'NT' %}selected{% endif %}>🟢 Casi amenazada (NT)</option>
+                    <option value="LC" {% if request.GET.iucn_status == 'LC' %}selected{% endif %}>⚪ Preoc. menor (LC)</option>
+                </select>
+                <button type="submit" class="btn-filter">Aplicar filtros</button>
+                <a href="{% url 'atlas:pais_detail' pais.pk %}" class="btn-reset">Limpiar</a>
+            </form>
+        </div>
+    </aside>
+
+    <!-- GRID -->
+    <main>
+        <div class="class-filters">
+            <a href="?" class="cf-pill {% if not request.GET.class_name %}active{% endif %}">🌐 Todos</a>
+            <a href="?class_name=Mammalia" class="cf-pill {% if request.GET.class_name == 'Mammalia' %}active{% endif %}">🦁 Mammalia</a>
+            <a href="?class_name=Aves" class="cf-pill {% if request.GET.class_name == 'Aves' %}active{% endif %}">🦅 Aves</a>
+            <a href="?class_name=Reptilia" class="cf-pill {% if request.GET.class_name == 'Reptilia' %}active{% endif %}">🦎 Reptilia</a>
+            <a href="?class_name=Amphibia" class="cf-pill {% if request.GET.class_name == 'Amphibia' %}active{% endif %}">🐸 Amphibia</a>
+            <a href="?class_name=Actinopterygii" class="cf-pill {% if request.GET.class_name == 'Actinopterygii' %}active{% endif %}">🐟 Peces</a>
+            <a href="?class_name=Insecta" class="cf-pill {% if request.GET.class_name == 'Insecta' %}active{% endif %}">🦋 Insecta</a>
+            <a href="?class_name=Magnoliopsida" class="cf-pill {% if request.GET.class_name == 'Magnoliopsida' %}active{% endif %}">🌸 Plantas</a>
+            <a href="?class_name=Agaricomycetes" class="cf-pill {% if request.GET.class_name == 'Agaricomycetes' %}active{% endif %}">🍄 Hongos</a>
+            <a href="?class_name=Arachnida" class="cf-pill {% if request.GET.class_name == 'Arachnida' %}active{% endif %}">🕷️ Arácnidos</a>
+        </div>
+
+        <div class="species-grid">
+            {% for especie in especies %}
+            <article class="species-card" data-species-key="{{ especie.species_key }}" data-pais-id="{{ pais.pk }}">
+
+                {% if especie.species_key in especies_biolog %}
+                <div class="sc-biolog-badge visible" id="badge-{{ especie.species_key }}">✓ Atlas</div>
+                {% else %}
+                <div class="sc-biolog-badge" id="badge-{{ especie.species_key }}"></div>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                <div class="sc-quick-actions" onclick="event.stopPropagation()">
+                    <button class="sc-qa-btn {% if especie.species_key in especies_favoritas %}active-fav{% endif %}"
+                            id="qa-fav-{{ especie.species_key }}" title="Favorito"
+                            onclick="quickFavorito({{ especie.species_key }}, this)">
+                        {% if especie.species_key in especies_favoritas %}❤️{% else %}🤍{% endif %}
+                    </button>
+                    <button class="sc-qa-btn {% if especie.species_key in especies_biolog %}active-atlas{% endif %}"
+                            id="qa-atlas-{{ especie.species_key }}" title="Mi Atlas"
+                            onclick="quickAtlas({{ especie.species_key }}, {{ pais.pk }}, this)">
+                        {% if especie.species_key in especies_biolog %}🌿{% else %}🪴{% endif %}
+                    </button>
+                    <a class="sc-qa-btn" title="Registrar avistamiento"
+                       href="{% url 'atlas:nuevo_avistamiento' especie.species_key %}"
+                       onclick="event.stopPropagation()">📍</a>
+                </div>
+                {% endif %}
+
+                <div class="sc-image-wrap">
+                    {% with img_url=imagenes_pais|get_item:especie.species_key %}
+                    {% if img_url %}
+                    <img class="sc-img" src="{{ img_url }}"
+                         alt="{{ especie.canonical_name|default:especie.scientific_name }}"
+                         loading="lazy"
+                         onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">
+                    {% elif especie.image_url %}
+                    <img class="sc-img" src="{{ especie.image_url }}"
+                         alt="{{ especie.canonical_name|default:especie.scientific_name }}"
+                         loading="lazy"
+                         onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">
+                    {% endif %}
+                    <div class="sc-placeholder {% if img_url or especie.image_url %}hidden{% endif %}">
+                        {% if especie.class_name == 'Mammalia' %}🦁{% elif especie.class_name == 'Aves' %}🦅{% elif especie.class_name == 'Reptilia' %}🦎{% elif especie.class_name == 'Amphibia' %}🐸{% elif especie.class_name == 'Actinopterygii' %}🐟{% elif especie.class_name == 'Insecta' %}🦋{% elif especie.class_name == 'Magnoliopsida' %}🌸{% elif especie.class_name == 'Agaricomycetes' %}🍄{% elif especie.class_name == 'Arachnida' %}🕷️{% elif especie.kingdom == 'Plantae' %}🌿{% elif especie.kingdom == 'Fungi' %}🍄{% else %}🌍{% endif %}
+                    </div>
+                    {% endwith %}
+                    {% if especie.kingdom %}
+                    <span class="sc-kingdom sc-kingdom--{{ especie.kingdom|lower }}">{{ especie.kingdom }}</span>
+                    {% endif %}
+                    <div class="sc-overlay"><span class="sc-overlay-text">Ver detalles →</span></div>
+                </div>
+
+                <div class="sc-body">
+                    <p class="sc-sci-name">{{ especie.canonical_name|default:especie.scientific_name }}</p>
+                    {% if especie.common_name %}<p class="sc-common-name">{{ especie.common_name }}</p>{% endif %}
+                    <div class="sc-taxonomy">
+                        {% if especie.family %}<span>{{ especie.family }}</span>{% endif %}
+                        {% if especie.class_name %}<span>{{ especie.class_name }}</span>{% endif %}
+                    </div>
+                    {% if especie.descripcion %}
+                    <p class="sc-description">{{ especie.get_descripcion }}</p>
+                    {% endif %}
+                    {% if especie.iucn_status %}
+                    <div class="sc-iucn sc-iucn--{{ especie.iucn_status|lower }}">
+                        {% if especie.iucn_status == 'EX' %}💀 Extinta{% elif especie.iucn_status == 'EW' %}💀 Ext. silvestre{% elif especie.iucn_status == 'CR' %}🔴 Peligro crítico{% elif especie.iucn_status == 'EN' %}🟠 En peligro{% elif especie.iucn_status == 'VU' %}🟡 Vulnerable{% elif especie.iucn_status == 'NT' %}🟢 Casi amenazada{% elif especie.iucn_status == 'LC' %}⚪ Preoc. menor{% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% empty %}
+            <p style="color:var(--text-muted); grid-column:1/-1; padding:2rem 0;">
+                No se encontraron especies con los filtros seleccionados.
+            </p>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">&laquo; Anterior</a>
+            {% endif %}
+            {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}<span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                <a href="?page={{ num }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Siguiente &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </main>
+</div>
+</div>
+
+<!-- MODAL HORIZONTAL -->
+<div class="smodal-backdrop" id="smodal-backdrop">
+    <div class="smodal">
+        <button class="smodal-close" id="smodal-close">✕</button>
+        <div class="smodal-left" style="width:440px !important; min-width:440px !important;">
+            <img class="smodal-hero-img" id="smodal-hero-img" src="" alt="">
+            <div class="smodal-hero-gradient"></div>
+            <div class="smodal-hero-info">
+                <span id="smodal-kingdom-badge" class="smodal-kingdom-badge"></span>
+                <span id="smodal-iucn-badge" class="smodal-iucn-badge"></span>
+                <h2 id="smodal-sci"></h2>
+                <p id="smodal-common" class="smodal-common"></p>
+            </div>
+        </div>
+        <div class="smodal-right">
+            <div class="smodal-actions">
+                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn">🤍 <span id="btn-favorito-text">Favorito</span></button>
+                <button id="btn-miatlas" onclick="toggleMiAtlas()" class="smodal-action-btn">🪴 <span id="btn-miatlas-text">Mi Atlas</span></button>
+                <a id="btn-avistamiento" href="#" class="smodal-action-btn">📍 Avistamiento</a>
+            </div>
+            <div id="smodal-desc-wrap" style="display:none;">
+                <p class="smodal-section-title">Descripción</p>
+                <div id="smodal-description" class="smodal-description"></div>
+                <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                    <button onclick="changeDescLang('es')" class="smodal-lang-btn active" data-lang="es">🇪🇸 ES</button>
+                    <button onclick="changeDescLang('en')" class="smodal-lang-btn" data-lang="en">🇬🇧 EN</button>
+                    <button onclick="changeDescLang('fr')" class="smodal-lang-btn" data-lang="fr">🇫🇷 FR</button>
+                </div>
+            </div>
+            <div id="smodal-names-wrap" style="display:none;">
+                <p class="smodal-section-title">Nombres comunes</p>
+                <div class="smodal-names-list" id="smodal-names-list"></div>
+            </div>
+            <p class="smodal-section-title">Clasificación taxonómica</p>
+            <div class="smodal-taxo-grid">
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Reino</span><span class="smodal-taxo-value" id="smodal-kingdom"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Filo</span><span class="smodal-taxo-value" id="smodal-phylum"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Clase</span><span class="smodal-taxo-value" id="smodal-class"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Orden</span><span class="smodal-taxo-value" id="smodal-order"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Familia</span><span class="smodal-taxo-value" id="smodal-family"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Género</span><span class="smodal-taxo-value" id="smodal-genus"></span></div>
+            </div>
+            <p class="smodal-section-title">Galería de fotos</p>
+            <div class="smodal-gallery">
+                <div class="smodal-gallery-loading" id="smodal-gallery-loading"><span></span><span></span><span></span></div>
+                <div class="gallery-grid" id="gallery-grid" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lb-close">✕</button>
+    <div class="lightbox-main">
+        <button class="lightbox-btn lightbox-prev" id="lb-prev">&#8592;</button>
+        <img class="lightbox-img" id="lb-img" src="" alt="">
+        <button class="lightbox-btn lightbox-next" id="lb-next">&#8594;</button>
+    </div>
+    <div class="lightbox-caption" id="lb-caption"></div>
+    <div class="lightbox-counter" id="lb-counter"></div>
+    <div class="lightbox-thumbs" id="lb-thumbs"></div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.smodal-lang-btn { padding:4px 11px; border-radius:999px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-muted); font-size:0.73rem; font-weight:600; cursor:pointer; font-family:var(--font-body); transition:all 0.15s; }
+.smodal-lang-btn:hover { border-color:var(--border-hover); color:var(--text); }
+.smodal-lang-btn.active { background:var(--green-bg); border-color:var(--green); color:var(--green); }
+</style>
+
+<script>
+const isAuthenticated = {{ user.is_authenticated|yesno:'true,false' }};
+const backdrop = document.getElementById('smodal-backdrop');
+const lbEl     = document.getElementById('lightbox');
+let lbPhotos = [], lbCurrent = 0;
+let currentSpeciesKey = null;
+const currentPaisId = {{ pais.pk }};
+
+function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.length===2)return p.pop().split(';').shift();}
+
+function lbOpen(photos,i){lbPhotos=photos;lbCurrent=i;lbRender();lbEl.classList.add('open');}
+function lbClose(){lbEl.classList.remove('open');}
+function lbRender(){
+    const p=lbPhotos[lbCurrent],img=document.getElementById('lb-img');
+    img.style.opacity='0';setTimeout(()=>{img.src=p.url;img.style.opacity='1';},120);
+    document.getElementById('lb-caption').textContent=p.caption||'';
+    document.getElementById('lb-counter').textContent=`${lbCurrent+1} / ${lbPhotos.length}`;
+    const thumbs=document.getElementById('lb-thumbs');thumbs.innerHTML='';
+    lbPhotos.forEach((ph,i)=>{const t=document.createElement('img');t.src=ph.url;t.className='lightbox-thumb'+(i===lbCurrent?' active':'');t.onclick=()=>{lbCurrent=i;lbRender();};thumbs.appendChild(t);});
+}
+document.getElementById('lb-close').onclick=lbClose;
+document.getElementById('lb-prev').onclick=()=>{lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length;lbRender();};
+document.getElementById('lb-next').onclick=()=>{lbCurrent=(lbCurrent+1)%lbPhotos.length;lbRender();};
+
+function openModal(speciesKey){
+    backdrop.classList.add('open');document.body.style.overflow='hidden';
+    currentSpeciesKey=speciesKey;
+    document.getElementById('smodal-sci').textContent='Cargando...';
+    document.getElementById('smodal-common').textContent='';
+    document.getElementById('smodal-kingdom-badge').textContent='';
+    document.getElementById('smodal-iucn-badge').style.display='none';
+    document.getElementById('smodal-hero-img').src='';
+    document.getElementById('smodal-names-list').innerHTML='';
+    document.getElementById('smodal-names-wrap').style.display='none';
+    document.getElementById('smodal-desc-wrap').style.display='none';
+    document.getElementById('gallery-grid').style.display='none';
+    document.getElementById('smodal-gallery-loading').style.display='flex';
+    document.getElementById('btn-favorito').className='smodal-action-btn';
+    document.getElementById('btn-miatlas').className='smodal-action-btn';
+    document.getElementById('btn-favorito-text').textContent='Favorito';
+    document.getElementById('btn-miatlas-text').textContent='Mi Atlas';
+    ['smodal-kingdom','smodal-phylum','smodal-class','smodal-order','smodal-family','smodal-genus'].forEach(id=>document.getElementById(id).textContent='—');
+    document.querySelector('.smodal-right').scrollTop=0;
+
+    const lang=localStorage.getItem('bioatlas-lang')||'es';
+    fetch(`/api/especie/${speciesKey}/?pais_id={{ pais.pk }}&lang=${lang}`)
+        .then(r=>r.json())
+        .then(data=>{
+            if(!data.success)return;
+            const sp=data.especie;
+            document.getElementById('smodal-sci').textContent=sp.canonical_name||sp.scientific_name;
+            document.getElementById('smodal-common').textContent=sp.common_name||'';
+            document.getElementById('smodal-kingdom-badge').textContent=sp.kingdom||'';
+            if(sp.image_url) document.getElementById('smodal-hero-img').src=sp.image_url;
+            const iucnL={"EX":"💀 Extinta","EW":"💀 Ext. silvestre","CR":"🔴 Peligro crítico","EN":"🟠 En peligro","VU":"🟡 Vulnerable","NT":"🟢 Casi amenazada","LC":"⚪ Preoc. menor"};
+            const iucnC={"EX":"#1a1a1a","EW":"#1a1a1a","CR":"rgba(220,38,38,0.8)","EN":"rgba(234,88,12,0.8)","VU":"rgba(202,138,4,0.8)","NT":"rgba(45,138,78,0.6)","LC":"rgba(0,0,0,0.3)"};
+            const badge=document.getElementById('smodal-iucn-badge');
+            if(sp.iucn_status&&iucnL[sp.iucn_status]){badge.textContent=iucnL[sp.iucn_status];badge.style.background=iucnC[sp.iucn_status];badge.style.color='#fff';badge.style.display='inline-block';}
+            document.getElementById('smodal-kingdom').textContent=sp.kingdom||'—';
+            document.getElementById('smodal-phylum').textContent=sp.phylum||'—';
+            document.getElementById('smodal-class').textContent=sp.class||'—';
+            document.getElementById('smodal-order').textContent=sp.order||'—';
+            document.getElementById('smodal-family').textContent=sp.family||'—';
+            document.getElementById('smodal-genus').textContent=sp.genus||'—';
+            if(sp.common_names&&sp.common_names.length){
+                document.getElementById('smodal-names-wrap').style.display='';
+                const list=document.getElementById('smodal-names-list');
+                sp.common_names.forEach(cn=>{const pill=document.createElement('span');pill.className='smodal-name-pill';pill.textContent=cn.name;list.appendChild(pill);});
+            }
+            if(sp.description){document.getElementById('smodal-desc-wrap').style.display='';document.getElementById('smodal-description').textContent=sp.description;}
+            if(data.es_favorito){document.getElementById('btn-favorito').className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent='En favoritos';}
+            if(data.en_biolog){document.getElementById('btn-miatlas').className='smodal-action-btn active-atlas';document.getElementById('btn-miatlas-text').textContent='En Mi Atlas ✓';}
+            document.getElementById('btn-avistamiento').href='/perfil/avistamientos/nuevo/'+speciesKey+'/';
+            loadGallery(sp.canonical_name||sp.scientific_name);
+        })
+        .catch(()=>{document.getElementById('smodal-sci').textContent='Error cargando datos';});
+}
+
+function changeDescLang(lang){
+    document.querySelectorAll('.smodal-lang-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.lang===lang));
+    if(currentSpeciesKey){
+        fetch(`/api/especie/${currentSpeciesKey}/?pais_id=${currentPaisId}&lang=${lang}`)
+        .then(r=>r.json()).then(data=>{if(data.success&&data.especie.description){document.getElementById('smodal-description').textContent=data.especie.description;document.getElementById('smodal-desc-wrap').style.display='';}});
+    }
+}
+
+function loadGallery(name){
+    const grid=document.getElementById('gallery-grid'),loading=document.getElementById('smodal-gallery-loading');
+    const heroImg=document.getElementById('smodal-hero-img');
+    const BAD=['label','specimen','herbarium','museum','holotype','illustration','illustrat','drawing','painting','artwork','cartoon','animated','clipart','vector','composite','montage','photoshop','white_background','cutout','isolated','shutterstock','gettyimages','alamy'];
+    function isGood(url,attr){if(!url)return false;const u=url.toLowerCase(),a=(attr||'').toLowerCase();if(BAD.some(k=>u.includes(k)))return false;if(['illustrat','drawn by','painted by','artwork by','digital art','ai generated'].some(k=>a.includes(k)))return false;return true;}
+    fetch(`https://api.inaturalist.org/v1/observations?taxon_name=${encodeURIComponent(name)}&photos=true&quality_grade=research,needs_id&order_by=votes&per_page=20`)
+    .then(r=>r.json()).then(data=>{
+        const photos=[];
+        (data.results||[]).forEach(obs=>(obs.photos||[]).forEach(p=>{const url=(p.url||'').replace('/square.','/original.');if(isGood(url,p.attribution)&&!photos.find(x=>x.url===url))photos.push({url,caption:name});}));
+        loading.style.display='none';
+        if(photos.length>0){
+            heroImg.src=photos[0].url.replace('/original.','/medium.');
+        }
+        if(!photos.length){grid.style.display='none';return;}
+        grid.innerHTML='';grid.style.display='grid';
+        photos.slice(0,6).forEach((ph,i)=>{const item=document.createElement('div');item.className='gallery-item';item.innerHTML=`<img src="${ph.url}" alt="${name}" loading="lazy" onerror="this.closest('.gallery-item').style.display='none'"><div class="gallery-item-overlay"><span class="gallery-zoom-icon">🔍</span></div>`;item.onclick=()=>lbOpen(photos.slice(0,6),i);grid.appendChild(item);});
+    }).catch(()=>{loading.style.display='none';});
+}
+
+function closeModal(){backdrop.classList.remove('open');document.body.style.overflow='';}
+document.getElementById('smodal-close').onclick=closeModal;
+backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeModal();});
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){if(lbEl.classList.contains('open'))lbClose();else closeModal();}
+    if(!lbEl.classList.contains('open'))return;
+    if(e.key==='ArrowLeft'){lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length;lbRender();}
+    if(e.key==='ArrowRight'){lbCurrent=(lbCurrent+1)%lbPhotos.length;lbRender();}
+});
+
+function toggleFavorito(){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    const btn=document.getElementById('btn-favorito');btn.disabled=true;
+    fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:currentSpeciesKey})})
+    .then(r=>r.json()).then(data=>{
+        btn.disabled=false;
+        if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
+        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent='En favoritos';BioNotify.toast('Añadido a favoritos','❤️');updateCardFav(currentSpeciesKey,true);}
+        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent='Favorito';BioNotify.toast('Eliminado de favoritos','💔');updateCardFav(currentSpeciesKey,false);}
+    }).catch(()=>{btn.disabled=false;});
+}
+
+function toggleMiAtlas(){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    const btn=document.getElementById('btn-miatlas');btn.disabled=true;
+    fetch('/api/biolog/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:currentSpeciesKey,pais_id:currentPaisId})})
+    .then(r=>r.json()).then(data=>{
+        btn.disabled=false;
+        if(data.success){
+            if(data.en_biolog){btn.className='smodal-action-btn active-atlas';document.getElementById('btn-miatlas-text').textContent='En Mi Atlas ✓';BioNotify.toast('Añadida a Mi Atlas','🌿');updateCardAtlas(currentSpeciesKey,true);}
+            else{btn.className='smodal-action-btn';document.getElementById('btn-miatlas-text').textContent='Mi Atlas';BioNotify.toast('Eliminada de Mi Atlas','🌿');updateCardAtlas(currentSpeciesKey,false);}
+        }else if(data.limite)BioNotify.limitePremium(data.error);
+    }).catch(()=>{btn.disabled=false;});
+}
+
+function quickFavorito(speciesKey,btn){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    btn.disabled=true;
+    fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
+    .then(r=>r.json()).then(data=>{btn.disabled=false;if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}updateCardFav(speciesKey,data.es_favorito);BioNotify.toast(data.es_favorito?'Añadido a favoritos':'Eliminado de favoritos',data.es_favorito?'❤️':'💔');}).catch(()=>{btn.disabled=false;});
+}
+
+function quickAtlas(speciesKey,paisId,btn){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    btn.disabled=true;
+    fetch('/api/biolog/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey,pais_id:paisId})})
+    .then(r=>r.json()).then(data=>{btn.disabled=false;if(data.success){updateCardAtlas(speciesKey,data.en_biolog);BioNotify.toast(data.en_biolog?'Añadida a Mi Atlas':'Eliminada de Mi Atlas','🌿');}else if(data.limite)BioNotify.limitePremium(data.error);}).catch(()=>{btn.disabled=false;});
+}
+
+function updateCardFav(sk,active){const btn=document.getElementById('qa-fav-'+sk);if(!btn)return;btn.textContent=active?'❤️':'🤍';btn.classList.toggle('active-fav',active);}
+function updateCardAtlas(sk,active){const btn=document.getElementById('qa-atlas-'+sk),badge=document.getElementById('badge-'+sk);if(btn){btn.textContent=active?'🌿':'🪴';btn.classList.toggle('active-atlas',active);}if(badge){badge.textContent=active?'✓ Atlas':'';badge.classList.toggle('visible',active);}}
+
+document.querySelectorAll('.species-card').forEach(card=>{
+    card.addEventListener('click',()=>openModal(card.dataset.speciesKey));
+});
+</script>
+{% endblock %}

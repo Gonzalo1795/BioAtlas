@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BioAtlas — Atlas Mundial de Biodiversidad{% endblock %}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'atlas/css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+    <style>
+        .navbar { position: sticky; top: 0; z-index: 10000; }
+
+        /* Hamburguesa */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            margin-left: auto;
+            background: none;
+            border: none;
+            flex-shrink: 0;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: #F0F4F1;
+            border-radius: 2px;
+        }
+
+        /* Menú móvil — oculto por defecto con JS, no CSS */
+        #nav-mobile-menu {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: #0A0F0D;
+            border-bottom: 1px solid rgba(74,222,128,0.08);
+            padding: 1rem 1.5rem 1.5rem;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 9999;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        #nav-mobile-menu a {
+            display: block;
+            padding: 11px 14px;
+            border-radius: 8px;
+            color: #F0F4F1;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+        }
+        #nav-mobile-menu a:hover { background: rgba(255,255,255,0.06); }
+        .nav-mobile-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
+        .nav-mobile-lang { display: flex; gap: 8px; padding: 4px 0; }
+        .nav-mobile-lang button {
+            flex: 1; padding: 9px; text-align: center;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: #8A9E8E;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+        }
+        .nav-mobile-lang button.active { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,0.08); }
+
+        @media (max-width: 600px) {
+            #global-search-wrapper,
+            #country-search-wrapper,
+            #nav-desktop { display: none !important; }
+            .nav-hamburger { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+
+        <a href="{% url 'atlas:index' %}" class="logo">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M16 3 C9 9, 9 23, 16 29" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <path d="M16 3 C23 9, 23 23, 16 29" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <line x1="3" y1="16" x2="29" y2="16" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+            </svg>
+            Bio<em>Atlas</em>
+        </a>
+
+        <div class="search-wrapper" id="global-search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search-input" placeholder="Buscar especie..." autocomplete="off"/>
+            <div class="search-dropdown" id="search-dropdown"></div>
+        </div>
+
+        <div class="search-wrapper" id="country-search-wrapper">
+            <span class="search-icon">🌍</span>
+            <input type="text" id="country-search-input" placeholder="Buscar país..." autocomplete="off"/>
+            <div id="country-search-dropdown" style="display:none; position:absolute; top:calc(100% + 8px); left:0; width:280px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.4); z-index:10001; overflow:hidden; max-height:320px; overflow-y:auto;"></div>
+        </div>
+
+        <div id="nav-desktop" style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+            <a href="{% url 'atlas:index' %}" class="nav-link" data-i18n="nav.inicio">Inicio</a>
+            <a href="{% url 'atlas:buscar_especie' %}" class="nav-link" data-i18n="nav.explorar">Explorar</a>
+            {% if user.is_authenticated %}
+                {% with suscripcion=user.suscripcion %}
+                    {% if not suscripcion.es_premium %}<a href="{% url 'atlas:premium' %}" class="btn-premium-nav">✨ Premium</a>{% endif %}
+                {% endwith %}
+                <div class="nav-user" id="nav-user">
+                    <div class="nav-user-btn" id="nav-user-btn">
+                        {% with suscripcion=user.suscripcion %}
+                            <div class="nav-user-avatar {% if suscripcion.es_premium %}premium{% endif %}">{% if suscripcion.es_premium %}✨{% else %}{{ user.username|first|upper }}{% endif %}</div>
+                        {% endwith %}
+                        {{ user.username }}
+                        <span style="font-size:0.65rem; color:var(--text-faint);">▾</span>
+                    </div>
+                    <div class="nav-user-dropdown" id="nav-user-dropdown">
+                        <a href="{% url 'atlas:perfil' %}">👤 <span data-i18n="menu.perfil">Mi perfil</span></a>
+                        <a href="{% url 'atlas:biolog' %}">🌿 <span data-i18n="menu.atlas">Mi Atlas</span></a>
+                        <a href="{% url 'atlas:mis_favoritos' %}">❤️ <span data-i18n="menu.favoritos">Mis favoritos</span></a>
+                        <a href="{% url 'atlas:mis_avistamientos' %}">📍 <span data-i18n="menu.avistamientos">Mis avistamientos</span></a>
+                        {% with suscripcion=user.suscripcion %}
+                            {% if not suscripcion.es_premium %}
+                                <div class="divider"></div>
+                                <a href="{% url 'atlas:premium' %}" class="premium-link">✨ <span data-i18n="menu.premium">Hazte Premium</span></a>
+                            {% endif %}
+                        {% endwith %}
+                        {% if user.is_superuser %}<div class="divider"></div><a href="/admin/" style="color:var(--gold);">⚙️ Panel Admin</a>{% endif %}
+                        <div class="divider"></div>
+                        <form method="POST" action="{% url 'atlas:logout' %}">{% csrf_token %}<button type="submit" class="logout-btn">🚪 <span data-i18n="menu.logout">Cerrar sesión</span></button></form>
+                    </div>
+                </div>
+            {% else %}
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <a href="{% url 'atlas:login' %}" class="btn-login" data-i18n="nav.login">Iniciar sesión</a>
+                    <a href="{% url 'atlas:registro' %}" class="btn-registro" data-i18n="nav.registro">Registrarse</a>
+                </div>
+            {% endif %}
+            <div class="lang-selector" id="lang-selector">
+                <button class="lang-btn" id="lang-btn">
+                    <span id="lang-flag">🇪🇸</span><span id="lang-label">ES</span>
+                    <span style="font-size:0.6rem; opacity:0.6;">▾</span>
+                </button>
+                <div class="lang-dropdown" id="lang-dropdown">
+                    <div class="lang-option active" onclick="setLang('es')">🇪🇸 Español</div>
+                    <div class="lang-option" onclick="setLang('en')">🇬🇧 English</div>
+                    <div class="lang-option" onclick="setLang('fr')">🇫🇷 Français</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="nav-hamburger" id="nav-hamburger">
+            <span></span><span></span><span></span>
+        </button>
+
+    </div>
+</nav>
+
+<!-- Menú móvil — controlado por JS, oculto por defecto -->
+<div id="nav-mobile-menu" style="display:none;">
+    <a href="{% url 'atlas:index' %}">🏠 Inicio</a>
+    <a href="{% url 'atlas:buscar_especie' %}">🔍 Explorar</a>
+    <div class="nav-mobile-divider"></div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'atlas:perfil' %}">👤 Mi perfil</a>
+        <a href="{% url 'atlas:biolog' %}">🌿 Mi Atlas</a>
+        <a href="{% url 'atlas:mis_favoritos' %}">❤️ Mis favoritos</a>
+        <a href="{% url 'atlas:mis_avistamientos' %}">📍 Mis avistamientos</a>
+        {% with suscripcion=user.suscripcion %}
+            {% if not suscripcion.es_premium %}
+                <div class="nav-mobile-divider"></div>
+                <a href="{% url 'atlas:premium' %}" style="background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-weight:700; text-align:center; border-radius:8px; padding:10px 14px; text-decoration:none;">✨ Hazte Premium</a>
+            {% endif %}
+        {% endwith %}
+        <div class="nav-mobile-divider"></div>
+        <form method="POST" action="{% url 'atlas:logout' %}">
+            {% csrf_token %}
+            <button type="submit" style="color:#F87171; background:none; border:none; padding:10px 14px; font-size:0.92rem; font-family:'DM Sans',sans-serif; cursor:pointer; width:100%; text-align:left;">🚪 Cerrar sesión</button>
+        </form>
+    {% else %}
+        <a href="{% url 'atlas:login' %}">🔑 Iniciar sesión</a>
+        <a href="{% url 'atlas:registro' %}" style="background:#4ADE80; color:#0A0F0D; font-weight:700; text-align:center; border-radius:8px; padding:10px 14px; text-decoration:none;">Registrarse</a>
+    {% endif %}
+    <div class="nav-mobile-divider"></div>
+    <div class="nav-mobile-lang">
+        <button onclick="setLang('es'); closeMobileMenu();" id="mlang-es" class="active">🇪🇸 ES</button>
+        <button onclick="setLang('en'); closeMobileMenu();" id="mlang-en">🇬🇧 EN</button>
+        <button onclick="setLang('fr'); closeMobileMenu();" id="mlang-fr">🇫🇷 FR</button>
+    </div>
+</div>
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2026 BioAtlas &mdash; <span data-i18n="footer.desc">Atlas Mundial de Biodiversidad</span></p>
+        <p class="footer-credits"><span data-i18n="footer.data">Datos de biodiversidad proporcionados por</span> <a href="https://www.gbif.org/" target="_blank" rel="noopener">GBIF</a></p>
+    </div>
+</footer>
+
+<div id="bioatlas-notify-backdrop">
+    <div id="bioatlas-notify-box">
+        <div id="bioatlas-notify-icon">⚠️</div>
+        <h3 id="bioatlas-notify-title"></h3>
+        <p id="bioatlas-notify-msg"></p>
+        <div class="bioatlas-notify-actions" id="bioatlas-notify-actions"></div>
+    </div>
+</div>
+<div id="bioatlas-toast"><span id="bioatlas-toast-icon">✓</span><span id="bioatlas-toast-msg"></span></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const TRANSLATIONS={es:{"nav.inicio":"Inicio","nav.explorar":"Explorar","nav.login":"Iniciar sesión","nav.registro":"Registrarse","menu.perfil":"Mi perfil","menu.atlas":"Mi Atlas","menu.favoritos":"Mis favoritos","menu.avistamientos":"Mis avistamientos","menu.premium":"Hazte Premium","menu.logout":"Cerrar sesión","footer.desc":"Atlas Mundial de Biodiversidad","footer.data":"Datos de biodiversidad proporcionados por","search.placeholder":"Buscar especie...","search.loading":"Buscando...","search.noresults":"Sin resultados para","search.viewall":"Ver todos los resultados →","hero.eyebrow":"🌿 Atlas de Biodiversidad Global","hero.title":"Explora la <em>Biodiversidad</em><br>del Mundo","hero.subtitle":"Descubre fauna y vegetación de cualquier país navegando el mapa interactivo con datos en tiempo real","hero.btn.map":"Explorar el mapa","hero.btn.search":"Buscar especie","hero.stat.species":"Especies registradas","hero.stat.countries":"Países","hero.stat.kingdoms":"Reinos","map.title":"Mapa Mundial Interactivo","map.subtitle":"Haz clic en cualquier país para explorar su biodiversidad","map.btn":"Ver Especies →","continents.label":"Geografía","continents.title":"Explorar por Continente","continents.countries":"países","about.label":"Acerca de","about.title":"Sobre BioAtlas","about.edu.title":"Educativo","about.edu.desc":"Diseñado para estudiantes y entusiastas de la biología que quieren explorar la diversidad de especies del planeta.","about.exp.title":"Explorativo","about.exp.desc":"Navega interactivamente por continentes y países a través de un mapa mundial inmersivo.","about.upd.title":"Actualizado","about.upd.desc":"Datos de biodiversidad en tiempo real proporcionados por GBIF — la mayor base de datos de biodiversidad del mundo."},en:{"nav.inicio":"Home","nav.explorar":"Explore","nav.login":"Sign in","nav.registro":"Sign up","menu.perfil":"My profile","menu.atlas":"My Atlas","menu.favoritos":"My favourites","menu.avistamientos":"My sightings","menu.premium":"Go Premium","menu.logout":"Sign out","footer.desc":"World Biodiversity Atlas","footer.data":"Biodiversity data provided by","search.placeholder":"Search species...","search.loading":"Searching...","search.noresults":"No results for","search.viewall":"View all results →","hero.eyebrow":"🌿 Global Biodiversity Atlas","hero.title":"Explore the <em>Biodiversity</em><br>of the World","hero.subtitle":"Discover wildlife and vegetation of any country by navigating the interactive map with real-time data","hero.btn.map":"Explore the map","hero.btn.search":"Search species","hero.stat.species":"Registered species","hero.stat.countries":"Countries","hero.stat.kingdoms":"Kingdoms","map.title":"Interactive World Map","map.subtitle":"Click on any country to explore its biodiversity","map.btn":"View Species →","continents.label":"Geography","continents.title":"Explore by Continent","continents.countries":"countries","about.label":"About","about.title":"About BioAtlas","about.edu.title":"Educational","about.edu.desc":"Designed for students and biology enthusiasts who want to explore the diversity of species on the planet.","about.exp.title":"Exploratory","about.exp.desc":"Navigate interactively through continents and countries via an immersive world map.","about.upd.title":"Up to date","about.upd.desc":"Real-time biodiversity data provided by GBIF — the world's largest biodiversity database."},fr:{"nav.inicio":"Accueil","nav.explorar":"Explorer","nav.login":"Se connecter","nav.registro":"S'inscrire","menu.perfil":"Mon profil","menu.atlas":"Mon Atlas","menu.favoritos":"Mes favoris","menu.avistamientos":"Mes observations","menu.premium":"Devenir Premium","menu.logout":"Se déconnecter","footer.desc":"Atlas Mondial de la Biodiversité","footer.data":"Données de biodiversité fournies par","search.placeholder":"Rechercher une espèce...","search.loading":"Recherche...","search.noresults":"Aucun résultat pour","search.viewall":"Voir tous les résultats →","hero.eyebrow":"🌿 Atlas Mondial de la Biodiversité","hero.title":"Explorez la <em>Biodiversité</em><br>du Monde","hero.subtitle":"Découvrez la faune et la végétation de n'importe quel pays en naviguant sur la carte interactive","hero.btn.map":"Explorer la carte","hero.btn.search":"Rechercher espèce","hero.stat.species":"Espèces enregistrées","hero.stat.countries":"Pays","hero.stat.kingdoms":"Règnes","map.title":"Carte Mondiale Interactive","map.subtitle":"Cliquez sur n'importe quel pays pour explorer sa biodiversité","map.btn":"Voir les Espèces →","continents.label":"Géographie","continents.title":"Explorer par Continent","continents.countries":"pays","about.label":"À propos","about.title":"À propos de BioAtlas","about.edu.title":"Éducatif","about.edu.desc":"Conçu pour les étudiants et les passionnés de biologie qui souhaitent explorer la diversité des espèces de la planète.","about.exp.title":"Exploratoire","about.exp.desc":"Naviguez interactivement à travers les continents et les pays via une carte mondiale immersive.","about.upd.title":"À jour","about.upd.desc":"Données de biodiversité en temps réel fournies par GBIF — la plus grande base de données de biodiversité au monde."}};
+const FLAGS={es:'🇪🇸',en:'🇬🇧',fr:'🇫🇷'};
+const LABELS={es:'ES',en:'EN',fr:'FR'};
+let currentLang=localStorage.getItem('bioatlas-lang')||'es';
+function t(key){return(TRANSLATIONS[currentLang]||TRANSLATIONS.es)[key]||key;}
+function applyTranslations(){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{const val=t(el.getAttribute('data-i18n'));if(val.includes('<'))el.innerHTML=val;else el.textContent=val;});
+    const si=document.getElementById('global-search-input');if(si)si.placeholder=t('search.placeholder');
+    document.getElementById('html-root').lang=currentLang;
+}
+function setLang(lang){
+    currentLang=lang;localStorage.setItem('bioatlas-lang',lang);
+    document.getElementById('lang-flag').textContent=FLAGS[lang];
+    document.getElementById('lang-label').textContent=LABELS[lang];
+    document.querySelectorAll('.lang-option').forEach((el,i)=>el.classList.toggle('active',['es','en','fr'][i]===lang));
+    document.getElementById('lang-dropdown').classList.remove('open');
+    ['es','en','fr'].forEach(l=>{const b=document.getElementById('mlang-'+l);if(b)b.classList.toggle('active',l===lang);});
+    applyTranslations();
+    window.dispatchEvent(new Event('bioatlas-lang-changed'));
+}
+document.addEventListener('DOMContentLoaded',()=>setLang(currentLang));
+
+// Idioma desktop
+(function(){
+    const btn=document.getElementById('lang-btn'),dd=document.getElementById('lang-dropdown');
+    btn.addEventListener('click',e=>{e.stopPropagation();dd.classList.toggle('open');});
+    document.addEventListener('click',()=>dd.classList.remove('open'));
+})();
+
+// Hamburguesa — controlado puramente por JS
+(function(){
+    const hamburger=document.getElementById('nav-hamburger');
+    const menu=document.getElementById('nav-mobile-menu');
+    let open=false;
+    hamburger.addEventListener('click',e=>{
+        e.stopPropagation();
+        open=!open;
+        menu.style.display=open?'flex':'none';
+    });
+    document.addEventListener('click',e=>{
+        if(open&&!menu.contains(e.target)&&!hamburger.contains(e.target)){
+            open=false;menu.style.display='none';
+        }
+    });
+    window.closeMobileMenu=function(){open=false;menu.style.display='none';};
+})();
+
+// Buscador especies
+(function(){
+    const input=document.getElementById('global-search-input'),dropdown=document.getElementById('search-dropdown');
+    let timer=null;
+    function show(html){dropdown.innerHTML=html;dropdown.classList.add('active');}
+    function hide(){dropdown.classList.remove('active');}
+    function render(results,query){
+        if(!results.length){show(`<div class="search-loading">${t('search.noresults')} "${query}"</div>`);return;}
+        let html=results.map(e=>{const nombre=e.canonical_name||e.scientific_name;const img=e.image_url?`<img src="${e.image_url}" alt="${nombre}" onerror="this.style.display='none'">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🌿</div>`;return`<a class="search-item" href="/buscar/?q=${encodeURIComponent(e.scientific_name)}">${img}<div class="search-item-info"><div class="search-item-name">${nombre}</div><div class="search-item-kingdom">${e.kingdom||''}</div></div></a>`;}).join('');
+        html+=`<a class="search-item-all" href="/buscar/?q=${encodeURIComponent(query)}">${t('search.viewall')}</a>`;show(html);
+    }
+    input.addEventListener('input',function(){const q=this.value.trim();clearTimeout(timer);if(q.length<1){hide();return;}show(`<div class="search-loading">${t('search.loading')}</div>`);timer=setTimeout(()=>{fetch(`/api/buscar/?q=${encodeURIComponent(q)}`).then(r=>r.json()).then(d=>render(d.resultados||[],q)).catch(()=>hide());},300);});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&this.value.trim())window.location.href=`/buscar/?q=${encodeURIComponent(this.value.trim())}`;});
+    document.addEventListener('click',e=>{if(!document.getElementById('global-search-wrapper').contains(e.target))hide();});
+})();
+
+// Buscador países
+(function(){
+    const input=document.getElementById('country-search-input'),dropdown=document.getElementById('country-search-dropdown');
+    let timer=null;
+    function getFlagEmoji(c){if(!c||c.length!==2)return'🌍';const o=127397;return String.fromCodePoint(c.toUpperCase().charCodeAt(0)+o,c.toUpperCase().charCodeAt(1)+o);}
+    function show(html){dropdown.innerHTML=html;dropdown.style.display='block';}
+    function hide(){dropdown.style.display='none';}
+    function renderPaises(paises,query){
+        if(!paises.length){show(`<div style="padding:12px 14px;color:var(--text-faint);font-size:0.82rem;">Sin resultados para "${query}"</div>`);return;}
+        show(paises.slice(0,8).map(p=>{const flag=getFlagEmoji(p.codigo);const esp=p.num_especies?`${Number(p.num_especies).toLocaleString('es-ES')} especies`:'';return`<a href="/pais/${p.id}/" style="display:flex;align-items:center;gap:10px;padding:10px 14px;text-decoration:none;color:var(--text);font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(45,138,78,0.15)'" onmouseout="this.style.background='transparent'"><span style="font-size:1.3rem;">${flag}</span><div><div style="font-weight:600;">${p.nombre}</div><div style="font-size:0.72rem;color:var(--text-faint);">${p.continente}${esp?' · '+esp:''}</div></div></a>`;}).join(''));
+    }
+    function buscar(query){const q=query.toLowerCase().trim();if(!q){hide();return;}const fuente=window.paisesData||[];if(fuente.length){renderPaises(fuente.filter(p=>p.nombre&&p.nombre.toLowerCase().includes(q)||p.codigo&&p.codigo.toLowerCase()===q),query);}else{fetch(`/api/buscar-paises/?q=${encodeURIComponent(query)}`).then(r=>r.json()).then(d=>renderPaises(d.paises||[],query)).catch(()=>hide());}}
+    input.addEventListener('input',function(){const q=this.value.trim();clearTimeout(timer);if(q.length<1){hide();return;}timer=setTimeout(()=>buscar(q),200);});
+    input.addEventListener('keydown',e=>{if(e.key==='Escape'){hide();input.blur();}});
+    document.addEventListener('click',e=>{if(!document.getElementById('country-search-wrapper').contains(e.target))hide();});
+})();
+
+// Menú usuario
+(function(){
+    const btn=document.getElementById('nav-user-btn'),dd=document.getElementById('nav-user-dropdown');
+    if(!btn)return;
+    btn.addEventListener('click',e=>{e.stopPropagation();dd.classList.toggle('open');});
+    document.addEventListener('click',()=>{if(dd)dd.classList.remove('open');});
+})();
+
+// Notificaciones
+window.BioNotify={
+    show:function({icon='⚠️',title='',msg='',actions=[]}){
+        document.getElementById('bioatlas-notify-icon').textContent=icon;
+        document.getElementById('bioatlas-notify-title').textContent=title;
+        document.getElementById('bioatlas-notify-msg').textContent=msg;
+        const actionsEl=document.getElementById('bioatlas-notify-actions');actionsEl.innerHTML='';
+        if(!actions.length){const btn=document.createElement('button');btn.className='notify-btn-secondary';btn.textContent='Cerrar';btn.onclick=()=>BioNotify.close();actionsEl.appendChild(btn);}
+        else{actions.forEach(action=>{let el;if(action.href){el=document.createElement('a');el.href=action.href;el.className=action.primary?'notify-btn-primary':'notify-btn-secondary';}else{el=document.createElement('button');el.className=action.primary?'notify-btn-primary':'notify-btn-secondary';el.onclick=action.onclick||(()=>BioNotify.close());}el.textContent=action.label;actionsEl.appendChild(el);});}
+        document.getElementById('bioatlas-notify-backdrop').classList.add('open');
+    },
+    close:function(){document.getElementById('bioatlas-notify-backdrop').classList.remove('open');},
+    toast:function(msg,icon='✓',duration=3000){const toast=document.getElementById('bioatlas-toast');document.getElementById('bioatlas-toast-icon').textContent=icon;document.getElementById('bioatlas-toast-msg').textContent=msg;toast.classList.add('show');clearTimeout(toast._timer);toast._timer=setTimeout(()=>toast.classList.remove('show'),duration);},
+    limitePremium:function(msg){BioNotify.show({icon:'✨',title:'Función Premium',msg,actions:[{label:'✨ Ver Premium',href:'/premium/',primary:true},{label:'Cerrar',onclick:()=>BioNotify.close()}]});}
+};
+document.getElementById('bioatlas-notify-backdrop').addEventListener('click',function(e){if(e.target===this)BioNotify.close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')BioNotify.close();});
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
