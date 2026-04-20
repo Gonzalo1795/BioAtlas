@@ -26,6 +26,8 @@ SUGERENCIAS = [
     "Ursus arctos", "Canis lupus", "Amanita muscaria"
 ]
 
+REPTIL_CLASSES = ['Reptilia', 'Squamata', 'Testudines', 'Crocodylia', 'Rhynchocephalia']
+
 
 # =======================================================================
 # ÍNDICE Y GEOGRAFÍA
@@ -132,7 +134,11 @@ class PaisDetailView(DetailView):
         if iucn_status: especies_qs = especies_qs.filter(iucn_status=iucn_status)
         if kingdom:    especies_qs = especies_qs.filter(kingdom=kingdom)
         if phylum:     especies_qs = especies_qs.filter(phylum=phylum)
-        if class_name: especies_qs = especies_qs.filter(class_name=class_name)
+        if class_name:
+            if class_name == 'Reptilia':
+                especies_qs = especies_qs.filter(class_name__in=REPTIL_CLASSES)
+            else:
+                especies_qs = especies_qs.filter(class_name=class_name)
         if order:      especies_qs = especies_qs.filter(order=order)
         if family:     especies_qs = especies_qs.filter(family=family)
         if search:
@@ -326,7 +332,7 @@ def antartida_detail(request):
 # =======================================================================
 
 def buscar_especie(request):
-    query = request.GET.get("q", "").strip()
+    query = request.GET.get("q", "").strip()[:100]
 
     if not query:
         return render(request, "atlas/buscar_especie.html", {
@@ -733,9 +739,22 @@ def biolog_pais(request, pais_pk):
         .select_related('especie').order_by('-created_at')
     )
 
-    kingdom = request.GET.get("kingdom")
-    if kingdom:
-        entradas = entradas.filter(especie__kingdom=kingdom)
+    # ── Filtros ──────────────────────────────────────────────────────────
+    kingdom    = request.GET.get("kingdom", "")
+    class_name = request.GET.get("class_name", "")
+    iucn       = request.GET.get("iucn_status", "")
+    search     = request.GET.get("search", "").strip()[:100]
+
+    if kingdom:    entradas = entradas.filter(especie__kingdom=kingdom)
+    if class_name: entradas = entradas.filter(especie__class_name=class_name)
+    if iucn:       entradas = entradas.filter(especie__iucn_status=iucn)
+    if search:
+        from django.db.models import Q
+        entradas = entradas.filter(
+            Q(especie__scientific_name__icontains=search) |
+            Q(especie__canonical_name__icontains=search)  |
+            Q(especie__common_name__icontains=search)
+        )
 
     paginator           = Paginator(entradas, 24)
     page_obj            = paginator.get_page(request.GET.get("page", 1))
@@ -743,25 +762,49 @@ def biolog_pais(request, pais_pk):
     total_pais          = Especie.objects.filter(paises=pais).count()
     porcentaje          = round(total_coleccionadas / total_pais * 100, 1) if total_pais else 0
 
+    # ── Imágenes ─────────────────────────────────────────────────────────
     keys_pagina   = [e.especie.species_key for e in page_obj.object_list]
     imagenes_pais = {}
     for ep in EspeciePais.objects.filter(pais=pais, especie__species_key__in=keys_pagina):
         if ep.image_url:
             imagenes_pais[ep.especie.species_key] = ep.image_url
 
+    # ── Favoritos del usuario en esta página ─────────────────────────────
+    especies_favoritas = set(
+        Favorito.objects.filter(
+            usuario=request.user,
+            especie__species_key__in=keys_pagina
+        ).values_list('especie__species_key', flat=True)
+    )
+
+    # ── Opciones para los filtros (sobre todas las entradas sin filtrar) ──
+    todas_entradas = BioLog.objects.filter(usuario=request.user, pais=pais)
     kingdoms_disponibles = (
-        BioLog.objects.filter(usuario=request.user, pais=pais)
-        .values_list('especie__kingdom', flat=True).distinct().order_by('especie__kingdom')
+        todas_entradas.values_list('especie__kingdom', flat=True)
+        .distinct().order_by('especie__kingdom')
+    )
+    classes_disponibles = (
+        todas_entradas.values_list('especie__class_name', flat=True)
+        .distinct().order_by('especie__class_name')
     )
 
     return render(request, "atlas/biolog_pais.html", {
-        "pais": pais, "suscripcion": suscripcion,
-        "page_obj": page_obj, "paginator": paginator,
-        "total_coleccionadas": total_coleccionadas,
-        "total_pais": total_pais, "porcentaje": porcentaje,
-        "imagenes_pais": imagenes_pais,
-        "kingdoms_disponibles": kingdoms_disponibles,
-        "kingdom_filtro": kingdom, "limite_especies": BioLog.LIMITE_ESPECIES_FREE,
+        "pais":                  pais,
+        "suscripcion":           suscripcion,
+        "page_obj":              page_obj,
+        "paginator":             paginator,
+        "total_coleccionadas":   total_coleccionadas,
+        "total_pais":            total_pais,
+        "porcentaje":            porcentaje,
+        "imagenes_pais":         imagenes_pais,
+        "especies_favoritas":    especies_favoritas,
+        "kingdoms_disponibles":  kingdoms_disponibles,
+        "classes_disponibles":   classes_disponibles,
+        "kingdom_filtro":        kingdom,
+        "class_name_filtro":     class_name,
+        "iucn_filtro":           iucn,
+        "search_filtro":         search,
+        "limite_especies":       BioLog.LIMITE_ESPECIES_FREE,
     })
 
 

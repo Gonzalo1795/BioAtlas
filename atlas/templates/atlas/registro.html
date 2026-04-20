@@ -22,10 +22,10 @@
         <!-- Card -->
         <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; box-shadow:var(--shadow-lg);">
 
-            <h1 style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--text); margin:0 0 0.4rem; letter-spacing:-0.02em;">
+            <h1 style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--text); margin:0 0 0.4rem; letter-spacing:-0.02em;" data-i18n="registro.titulo">
                 Empieza a explorar
             </h1>
-            <p style="font-size:0.88rem; color:var(--text-muted); margin:0 0 2rem; line-height:1.5;">
+            <p style="font-size:0.88rem; color:var(--text-muted); margin:0 0 2rem; line-height:1.5;" data-i18n="registro.subtitulo">
                 Crea tu cuenta gratuita y empieza a coleccionar especies de todo el mundo
             </p>
 
@@ -39,10 +39,11 @@
                 {% csrf_token %}
 
                 <div style="margin-bottom:1.25rem;">
-                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;">
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;" data-i18n="registro.label.usuario">
                         Nombre de usuario
                     </label>
                     <input type="text" name="username" required autofocus
+                        data-i18n-placeholder="registro.ph.usuario"
                         placeholder="Ej: naturalista_pro"
                         style="width:100%; padding:11px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.9rem; font-family:var(--font-body); outline:none; box-sizing:border-box; transition:all 0.2s;"
                         onfocus="this.style.borderColor='var(--green-dim)'; this.style.boxShadow='0 0 0 3px var(--green-glow)'"
@@ -51,7 +52,8 @@
 
                 <div style="margin-bottom:1.25rem;">
                     <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;">
-                        Email <span style="color:var(--text-faint); font-weight:400; text-transform:none;">(opcional)</span>
+                        <span data-i18n="registro.label.email">Email</span>
+                        <span style="color:var(--text-faint); font-weight:400; text-transform:none;" data-i18n="registro.label.opcional">(opcional)</span>
                     </label>
                     <input type="email" name="email"
                         placeholder="tu@email.com"
@@ -61,10 +63,11 @@
                 </div>
 
                 <div style="margin-bottom:1.25rem;">
-                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;">
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;" data-i18n="registro.label.password">
                         Contraseña
                     </label>
                     <input type="password" name="password1" required
+                        data-i18n-placeholder="registro.ph.password"
                         placeholder="Mínimo 6 caracteres"
                         style="width:100%; padding:11px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.9rem; font-family:var(--font-body); outline:none; box-sizing:border-box; transition:all 0.2s;"
                         onfocus="this.style.borderColor='var(--green-dim)'; this.style.boxShadow='0 0 0 3px var(--green-glow)'"
@@ -72,10 +75,11 @@
                 </div>
 
                 <div style="margin-bottom:1.75rem;">
-                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;">
+                    <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.03em; text-transform:uppercase;" data-i18n="registro.label.confirmar">
                         Confirmar contraseña
                     </label>
                     <input type="password" name="password2" required
+                        data-i18n-placeholder="registro.ph.confirmar"
                         placeholder="Repite la contraseña"
                         style="width:100%; padding:11px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.9rem; font-family:var(--font-body); outline:none; box-sizing:border-box; transition:all 0.2s;"
                         onfocus="this.style.borderColor='var(--green-dim)'; this.style.boxShadow='0 0 0 3px var(--green-glow)'"
@@ -85,23 +89,25 @@
                 <button type="submit"
                     style="width:100%; padding:13px; background:var(--green); color:#0A0F0D; border:none; border-radius:999px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;"
                     onmouseover="this.style.background='#6EE79A'; this.style.transform='translateY(-1px)'"
-                    onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'">
+                    onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'"
+                    data-i18n="registro.btn">
                     Crear cuenta gratis →
                 </button>
             </form>
 
             <!-- Plan gratuito info -->
             <div style="margin-top:1.25rem; padding:12px 14px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm);">
-                <p style="font-size:0.78rem; color:var(--text-muted); margin:0; line-height:1.6;">
-                    ✓ Acceso a 197 países &nbsp;·&nbsp; ✓ 20 favoritos &nbsp;·&nbsp; ✓ 10 avistamientos<br>
-                    <a href="{% url 'atlas:premium' %}" style="color:var(--gold); text-decoration:none; font-weight:600;">✨ Ver plan Premium →</a>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin:0; line-height:1.6;" data-i18n="registro.plan_gratis">
+                    ✓ Acceso a 197 países &nbsp;·&nbsp; ✓ 20 favoritos &nbsp;·&nbsp; ✓ 10 avistamientos
                 </p>
+                <a href="{% url 'atlas:premium' %}" style="color:var(--gold); text-decoration:none; font-weight:600; font-size:0.78rem;" data-i18n="registro.ver_premium">✨ Ver plan Premium →</a>
             </div>
 
             <div style="text-align:center; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border);">
-                <span style="font-size:0.84rem; color:var(--text-muted);">¿Ya tienes cuenta?</span>
+                <span style="font-size:0.84rem; color:var(--text-muted);" data-i18n="registro.ya_tienes">¿Ya tienes cuenta?</span>
                 <a href="{% url 'atlas:login' %}"
-                    style="font-size:0.84rem; color:var(--green); font-weight:600; text-decoration:none; margin-left:6px;">
+                    style="font-size:0.84rem; color:var(--green); font-weight:600; text-decoration:none; margin-left:6px;"
+                    data-i18n="registro.ir_login">
                     Iniciar sesión →
                 </a>
             </div>
@@ -112,7 +118,8 @@
             <a href="{% url 'atlas:index' %}"
                 style="font-size:0.82rem; color:var(--text-faint); text-decoration:none;"
                 onmouseover="this.style.color='var(--text-muted)'"
-                onmouseout="this.style.color='var(--text-faint)'">
+                onmouseout="this.style.color='var(--text-faint)'"
+                data-i18n="registro.volver">
                 ← Volver al atlas
             </a>
         </div>

@@ -11,7 +11,6 @@
     <style>
         .navbar { position: sticky; top: 0; z-index: 10000; }
 
-        /* Hamburguesa */
         .nav-hamburger {
             display: none;
             flex-direction: column;
@@ -31,7 +30,6 @@
             border-radius: 2px;
         }
 
-        /* Menú móvil — oculto por defecto con JS, no CSS */
         #nav-mobile-menu {
             position: fixed;
             top: 60px;
@@ -68,7 +66,7 @@
         }
         .nav-mobile-lang button.active { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,0.08); }
 
-        @media (max-width: 600px) {
+        @media (max-width: 1024px) {
             #global-search-wrapper,
             #country-search-wrapper,
             #nav-desktop { display: none !important; }
@@ -104,7 +102,7 @@
             <div id="country-search-dropdown" style="display:none; position:absolute; top:calc(100% + 8px); left:0; width:280px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.4); z-index:10001; overflow:hidden; max-height:320px; overflow-y:auto;"></div>
         </div>
 
-        <div id="nav-desktop" style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+        <div id="nav-desktop" style="margin-left:auto;">
             <a href="{% url 'atlas:index' %}" class="nav-link" data-i18n="nav.inicio">Inicio</a>
             <a href="{% url 'atlas:buscar_especie' %}" class="nav-link" data-i18n="nav.explorar">Explorar</a>
             {% if user.is_authenticated %}
@@ -215,13 +213,414 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const TRANSLATIONS={es:{"nav.inicio":"Inicio","nav.explorar":"Explorar","nav.login":"Iniciar sesión","nav.registro":"Registrarse","menu.perfil":"Mi perfil","menu.atlas":"Mi Atlas","menu.favoritos":"Mis favoritos","menu.avistamientos":"Mis avistamientos","menu.premium":"Hazte Premium","menu.logout":"Cerrar sesión","footer.desc":"Atlas Mundial de Biodiversidad","footer.data":"Datos de biodiversidad proporcionados por","search.placeholder":"Buscar especie...","search.loading":"Buscando...","search.noresults":"Sin resultados para","search.viewall":"Ver todos los resultados →","hero.eyebrow":"🌿 Atlas de Biodiversidad Global","hero.title":"Explora la <em>Biodiversidad</em><br>del Mundo","hero.subtitle":"Descubre fauna y vegetación de cualquier país navegando el mapa interactivo con datos en tiempo real","hero.btn.map":"Explorar el mapa","hero.btn.search":"Buscar especie","hero.stat.species":"Especies registradas","hero.stat.countries":"Países","hero.stat.kingdoms":"Reinos","map.title":"Mapa Mundial Interactivo","map.subtitle":"Haz clic en cualquier país para explorar su biodiversidad","map.btn":"Ver Especies →","continents.label":"Geografía","continents.title":"Explorar por Continente","continents.countries":"países","about.label":"Acerca de","about.title":"Sobre BioAtlas","about.edu.title":"Educativo","about.edu.desc":"Diseñado para estudiantes y entusiastas de la biología que quieren explorar la diversidad de especies del planeta.","about.exp.title":"Explorativo","about.exp.desc":"Navega interactivamente por continentes y países a través de un mapa mundial inmersivo.","about.upd.title":"Actualizado","about.upd.desc":"Datos de biodiversidad en tiempo real proporcionados por GBIF — la mayor base de datos de biodiversidad del mundo."},en:{"nav.inicio":"Home","nav.explorar":"Explore","nav.login":"Sign in","nav.registro":"Sign up","menu.perfil":"My profile","menu.atlas":"My Atlas","menu.favoritos":"My favourites","menu.avistamientos":"My sightings","menu.premium":"Go Premium","menu.logout":"Sign out","footer.desc":"World Biodiversity Atlas","footer.data":"Biodiversity data provided by","search.placeholder":"Search species...","search.loading":"Searching...","search.noresults":"No results for","search.viewall":"View all results →","hero.eyebrow":"🌿 Global Biodiversity Atlas","hero.title":"Explore the <em>Biodiversity</em><br>of the World","hero.subtitle":"Discover wildlife and vegetation of any country by navigating the interactive map with real-time data","hero.btn.map":"Explore the map","hero.btn.search":"Search species","hero.stat.species":"Registered species","hero.stat.countries":"Countries","hero.stat.kingdoms":"Kingdoms","map.title":"Interactive World Map","map.subtitle":"Click on any country to explore its biodiversity","map.btn":"View Species →","continents.label":"Geography","continents.title":"Explore by Continent","continents.countries":"countries","about.label":"About","about.title":"About BioAtlas","about.edu.title":"Educational","about.edu.desc":"Designed for students and biology enthusiasts who want to explore the diversity of species on the planet.","about.exp.title":"Exploratory","about.exp.desc":"Navigate interactively through continents and countries via an immersive world map.","about.upd.title":"Up to date","about.upd.desc":"Real-time biodiversity data provided by GBIF — the world's largest biodiversity database."},fr:{"nav.inicio":"Accueil","nav.explorar":"Explorer","nav.login":"Se connecter","nav.registro":"S'inscrire","menu.perfil":"Mon profil","menu.atlas":"Mon Atlas","menu.favoritos":"Mes favoris","menu.avistamientos":"Mes observations","menu.premium":"Devenir Premium","menu.logout":"Se déconnecter","footer.desc":"Atlas Mondial de la Biodiversité","footer.data":"Données de biodiversité fournies par","search.placeholder":"Rechercher une espèce...","search.loading":"Recherche...","search.noresults":"Aucun résultat pour","search.viewall":"Voir tous les résultats →","hero.eyebrow":"🌿 Atlas Mondial de la Biodiversité","hero.title":"Explorez la <em>Biodiversité</em><br>du Monde","hero.subtitle":"Découvrez la faune et la végétation de n'importe quel pays en naviguant sur la carte interactive","hero.btn.map":"Explorer la carte","hero.btn.search":"Rechercher espèce","hero.stat.species":"Espèces enregistrées","hero.stat.countries":"Pays","hero.stat.kingdoms":"Règnes","map.title":"Carte Mondiale Interactive","map.subtitle":"Cliquez sur n'importe quel pays pour explorer sa biodiversité","map.btn":"Voir les Espèces →","continents.label":"Géographie","continents.title":"Explorer par Continent","continents.countries":"pays","about.label":"À propos","about.title":"À propos de BioAtlas","about.edu.title":"Éducatif","about.edu.desc":"Conçu pour les étudiants et les passionnés de biologie qui souhaitent explorer la diversité des espèces de la planète.","about.exp.title":"Exploratoire","about.exp.desc":"Naviguez interactivement à travers les continents et les pays via une carte mondiale immersive.","about.upd.title":"À jour","about.upd.desc":"Données de biodiversité en temps réel fournies par GBIF — la plus grande base de données de biodiversité au monde."}};
+const TRANSLATIONS={
+  es:{
+    "nav.inicio":"Inicio","nav.explorar":"Explorar","nav.login":"Iniciar sesión","nav.registro":"Registrarse",
+    "menu.perfil":"Mi perfil","menu.atlas":"Mi Atlas","menu.favoritos":"Mis favoritos",
+    "menu.avistamientos":"Mis avistamientos","menu.premium":"Hazte Premium","menu.logout":"Cerrar sesión",
+    "footer.desc":"Atlas Mundial de Biodiversidad","footer.data":"Datos de biodiversidad proporcionados por",
+    "search.placeholder":"Buscar especie...","search.loading":"Buscando...","search.noresults":"Sin resultados para","search.viewall":"Ver todos los resultados →",
+    "hero.eyebrow":"🌿 Atlas de Biodiversidad Global","hero.title":"Explora la <em>Biodiversidad</em><br>del Mundo",
+    "hero.subtitle":"Descubre fauna y vegetación de cualquier país navegando el mapa interactivo con datos en tiempo real",
+    "hero.btn.map":"Explorar el mapa","hero.btn.search":"Buscar especie",
+    "hero.stat.species":"Especies registradas","hero.stat.countries":"Países","hero.stat.kingdoms":"Reinos",
+    "map.title":"Mapa Mundial Interactivo","map.subtitle":"Haz clic en cualquier país para explorar su biodiversidad","map.btn":"Ver Especies →",
+    "continents.label":"Geografía","continents.title":"Explorar por Continente","continents.countries":"países",
+    "about.label":"Acerca de","about.title":"Sobre BioAtlas",
+    "about.edu.title":"Educativo","about.edu.desc":"Diseñado para estudiantes y entusiastas de la biología que quieren explorar la diversidad de especies del planeta.",
+    "about.exp.title":"Explorativo","about.exp.desc":"Navega interactivamente por continentes y países a través de un mapa mundial inmersivo.",
+    "about.upd.title":"Actualizado","about.upd.desc":"Datos de biodiversidad en tiempo real proporcionados por GBIF — la mayor base de datos de biodiversidad del mundo.",
+    // pais_detail — filtros
+    "filters.title":"Filtros","filters.search":"Buscar especie...","filters.all_kingdoms":"Todos los reinos",
+    "filters.all_phylums":"Todos los filos","filters.all_classes":"Todas las clases",
+    "filters.all_orders":"Todos los órdenes","filters.all_families":"Todas las familias",
+    "filters.iucn_all":"Estado IUCN — Todos","filters.apply":"Aplicar filtros","filters.clear":"Limpiar",
+    // pais_detail — pills
+    "pill.all":"🌐 Todos",
+    "pill.mammalia":"🦁 Mamíferos","pill.aves":"🦅 Aves","pill.reptilia":"🦎 Reptiles",
+    "pill.amphibia":"🐸 Anfibios","pill.peces":"🐟 Peces","pill.insecta":"🦋 Insectos","pill.plantas":"🌸 Plantas",
+    // pais_detail — empty
+    "species.empty":"No se encontraron especies con los filtros seleccionados.",
+    // pais_detail — paginacion
+    "pagination.prev":"« Anterior","pagination.next":"Siguiente »",
+    // pais_detail — overlay
+    "species.details":"Ver detalles →",
+    // modal
+    "modal.loading":"Cargando...","modal.error":"Error cargando datos",
+    "modal.favorito":"Favorito","modal.en_favoritos":"En favoritos",
+    "modal.miatlas":"Mi Atlas","modal.en_miatlas":"En Mi Atlas ✓",
+    "modal.avistamiento":"📍 Avistamiento",
+    "modal.descripcion":"Descripción","modal.nombres_comunes":"Nombres comunes",
+    "modal.taxonomia":"Clasificación taxonómica","modal.galeria":"Galería de fotos",
+    "taxo.reino":"Reino","taxo.filo":"Filo","taxo.clase":"Clase",
+    "taxo.orden":"Orden","taxo.familia":"Familia","taxo.genero":"Género",
+    // especies registradas
+    "pais.especies":"especies registradas","pais.en_atlas":"en tu Mi Atlas",
+    // buscar especie
+    "buscar.titulo":"Buscar especie","buscar.subtitulo":"Explora más de 185.000 especies de todo el mundo",
+    "buscar.placeholder":"Nombre científico o común...","buscar.btn":"Buscar",
+    "buscar.sin_resultados":"No se encontraron resultados","buscar.sin_resultados_tip":"Prueba con el nombre científico o en inglés",
+    "buscar.sugerencias":"Sugerencias",
+    // perfil
+    "perfil.miembro":"Miembro de BioAtlas","perfil.hazte_premium":"✨ Hazte Premium",
+    "perfil.cancelar_premium":"Cancelar Premium",
+    "perfil.stat.favoritos":"Favoritos","perfil.stat.avistamientos":"Avistamientos","perfil.stat.atlas":"En Mi Atlas",
+    "perfil.buscar_rapido":"🔍 Añadir especie rápidamente","perfil.buscar_placeholder":"Busca una especie para añadir a favoritos...",
+    "perfil.ultimos_avist":"Últimos avistamientos","perfil.ver_todos":"Ver todos →",
+    "perfil.modal.añadir_fav":"Añadir a favoritos","perfil.modal.registrar_avist":"Registrar avistamiento","perfil.modal.cancelar":"Cancelar",
+    // registro
+    "registro.titulo":"Empieza a explorar","registro.subtitulo":"Crea tu cuenta gratuita y empieza a coleccionar especies de todo el mundo",
+    "registro.label.usuario":"Nombre de usuario","registro.ph.usuario":"Ej: naturalista_pro",
+    "registro.label.email":"Email","registro.label.opcional":"(opcional)",
+    "registro.label.password":"Contraseña","registro.ph.password":"Mínimo 6 caracteres",
+    "registro.label.confirmar":"Confirmar contraseña","registro.ph.confirmar":"Repite la contraseña",
+    "registro.btn":"Crear cuenta gratis →",
+    "registro.plan_gratis":"✓ Acceso a 197 países · ✓ 20 favoritos · ✓ 10 avistamientos",
+    "registro.ver_premium":"✨ Ver plan Premium →",
+    "registro.ya_tienes":"¿Ya tienes cuenta?","registro.ir_login":"Iniciar sesión →",
+    "registro.volver":"← Volver al atlas",
+    // login
+    "login.titulo":"Bienvenido de nuevo","login.subtitulo":"Inicia sesión para acceder a tu atlas personal",
+    "login.label.usuario":"Usuario","login.ph.usuario":"Tu nombre de usuario",
+    "login.label.password":"Contraseña",
+    "login.btn":"Iniciar sesión →",
+    "login.no_cuenta":"¿No tienes cuenta?","login.ir_registro":"Regístrate gratis →",
+    "login.volver":"← Volver al atlas",
+    // favoritos
+    "favs.titulo":"Mis favoritos","favs.guardadas":"especies guardadas",
+    "favs.volver":"← Volver al perfil",
+    "favs.añadir_titulo":"Añadir especie a favoritos","favs.buscar_placeholder":"Busca una especie por nombre...",
+    "favs.añadir_btn":"Favorito","favs.quitar":"🗑️ Quitar",
+    "favs.añadida":"añadida a favoritos","favs.eliminada":"eliminada de favoritos","favs.eliminado_toast":"Eliminado de favoritos",
+    "favs.vacio_titulo":"Aún no tienes favoritos","favs.vacio_sub":"Usa el buscador de arriba o explora el atlas",
+    "favs.explorar":"Explorar atlas",
+    // avistamientos
+    "avist.titulo":"Mis avistamientos","avist.registrados":"avistamientos registrados",
+    "avist.volver":"← Volver al perfil",
+    "avist.nuevo_titulo":"Registrar nuevo avistamiento","avist.buscar_placeholder":"Busca la especie que has visto...",
+    "avist.registrar_btn":"Registrar","avist.eliminar":"🗑️ Eliminar",
+    "avist.confirm_titulo":"¿Eliminar avistamiento?","avist.confirm_msg":"Esta acción no se puede deshacer.",
+    "avist.confirm_si":"Sí, eliminar","avist.confirm_no":"Cancelar",
+    "avist.vacio_titulo":"Aún no has registrado ningún avistamiento",
+    "avist.vacio_sub":"Usa el buscador de arriba para registrar tu primer avistamiento",
+    // Mi Atlas
+    "atlas.titulo":"Mi Atlas","atlas.subtitulo":"Tu atlas personal de biodiversidad",
+    "atlas.stat.especies":"Especies","atlas.stat.paises":"Países","atlas.stat.paises_lower":"países","atlas.especies_lower":"especies",
+    "atlas.plan_gratis":"Plan Gratuito","atlas.sin_limites":"Sin límites",
+    "atlas.limite_alcanzado":"Has alcanzado el límite de países.",
+    "atlas.limite_sub":" Hazte Premium para desbloquear todos los países.",
+    "atlas.ver_premium":"Ver Premium",
+    "atlas.vacio_titulo":"Tu Mi Atlas está vacío",
+    "atlas.vacio_sub":"Explora cualquier país y pulsa 🌿 Mi Atlas en la ficha de cada especie para empezar tu colección.",
+    "atlas.explorar":"Explorar el atlas",
+    // premium
+    "premium.hero_titulo":"Explora la biodiversidad sin ningún límite",
+    "premium.hero_sub":"Accede a todas las funciones de BioAtlas con una suscripción mensual. Cancela cuando quieras.",
+    "premium.ya_premium":"Ya eres usuario Premium",
+    "premium.btn_cta":"✨ Hazte Premium — 2,99€/mes",
+    "premium.sin_compromiso":"Cancela cuando quieras · Sin permanencia",
+    "premium.plan_gratis":"Gratuito","premium.recomendado":"Recomendado","premium.mes":"/mes",
+    "premium.f1":"✓ Acceso a 197 países","premium.f2":"✓ Búsqueda global de especies",
+    "premium.f3":"✓ 20 favoritos","premium.f4":"✓ 10 avistamientos",
+    "premium.f5":"✗ Mi Atlas limitado (3 países)","premium.f6":"✗ Sin estadísticas avanzadas",
+    "premium.p1":"✓ Todo lo del plan gratuito","premium.p2":"✓ Favoritos ilimitados",
+    "premium.p3":"✓ Avistamientos ilimitados","premium.p4":"✓ Mi Atlas sin límites",
+    "premium.p5":"✓ Todos los países del mundo",
+    "premium.btn_empezar":"Empezar ahora →",
+    // nuevo avistamiento
+    "nuevo_avist.volver":"← Volver a mis avistamientos",
+    "nuevo_avist.registrar_label":"📍 Registrar avistamiento",
+    "nuevo_avist.limite_msg":"Has alcanzado el límite de avistamientos del plan gratuito.",
+    "nuevo_avist.limite_cta":"Hazte Premium →",
+    "nuevo_avist.label.fecha":"Fecha *","nuevo_avist.label.lugar":"Lugar *",
+    "nuevo_avist.ph.lugar":"Ej: Parque Nacional de Doñana, España",
+    "nuevo_avist.label.notas":"Notas","nuevo_avist.ph.notas":"Describe lo que viste...",
+    "nuevo_avist.label.foto":"Foto",
+    "nuevo_avist.btn":"Guardar avistamiento →",
+    // premium success
+    "success.titulo":"¡Bienvenido a BioAtlas Premium!",
+    "success.subtitulo":"Tu suscripción está activa. Ya puedes explorar la biodiversidad del mundo sin ningún límite.",
+    "success.btn_atlas":"Ir a Mi Atlas →","success.btn_explorar":"Explorar el atlas",
+    // continente
+    "cont.antartida_sub":"Territorio de investigación científica · Sin soberanía nacional",
+    "cont.paises_sub":"países · Explora la biodiversidad de cada uno",
+    "cont.antartida_titulo":"La Antártida no tiene países",
+    "cont.antartida_desc":"La Antártida está administrada por el Tratado Antártico (1959) y no tiene soberanía nacional. Sin embargo, alberga una biodiversidad única adaptada a condiciones extremas.",
+    "cont.antartida_btn":"🌿 Ver biodiversidad antártica",
+    "cont.especies":"especies","cont.sin_datos":"Sin datos aún","cont.sin_paises":"No hay países disponibles.",
+    "ant.titulo":"Antártida","ant.subtitulo":"Territorio de investigación científica",
+    "ant.banner_titulo":"Territorio Especial — Sin soberanía nacional",
+    "ant.datos":"Datos","ant.total_especies":"Total especies",
+    "ant.codigo_gbif":"Código GBIF","ant.tratado":"Tratado",
+    "ant.sin_especies":"Aún no hay especies sincronizadas",
+    // biolog_pais
+    "biolog_pais.coleccionadas":"especies coleccionadas de","biolog_pais.disponibles":"disponibles",
+    "biolog_pais.progreso":"Progreso en",
+    "biolog_pais.sin_filtro":"No hay especies con este filtro.","biolog_pais.ver_todas":"Ver todas →",
+  },
+  en:{
+    "nav.inicio":"Home","nav.explorar":"Explore","nav.login":"Sign in","nav.registro":"Sign up",
+    "menu.perfil":"My profile","menu.atlas":"My Atlas","menu.favoritos":"My favourites",
+    "menu.avistamientos":"My sightings","menu.premium":"Go Premium","menu.logout":"Sign out",
+    "footer.desc":"World Biodiversity Atlas","footer.data":"Biodiversity data provided by",
+    "search.placeholder":"Search species...","search.loading":"Searching...","search.noresults":"No results for","search.viewall":"View all results →",
+    "hero.eyebrow":"🌿 Global Biodiversity Atlas","hero.title":"Explore the <em>Biodiversity</em><br>of the World",
+    "hero.subtitle":"Discover wildlife and vegetation of any country by navigating the interactive map with real-time data",
+    "hero.btn.map":"Explore the map","hero.btn.search":"Search species",
+    "hero.stat.species":"Registered species","hero.stat.countries":"Countries","hero.stat.kingdoms":"Kingdoms",
+    "map.title":"Interactive World Map","map.subtitle":"Click on any country to explore its biodiversity","map.btn":"View Species →",
+    "continents.label":"Geography","continents.title":"Explore by Continent","continents.countries":"countries",
+    "about.label":"About","about.title":"About BioAtlas",
+    "about.edu.title":"Educational","about.edu.desc":"Designed for students and biology enthusiasts who want to explore the diversity of species on the planet.",
+    "about.exp.title":"Exploratory","about.exp.desc":"Navigate interactively through continents and countries via an immersive world map.",
+    "about.upd.title":"Up to date","about.upd.desc":"Real-time biodiversity data provided by GBIF — the world's largest biodiversity database.",
+    "filters.title":"Filters","filters.search":"Search species...","filters.all_kingdoms":"All kingdoms",
+    "filters.all_phylums":"All phylums","filters.all_classes":"All classes",
+    "filters.all_orders":"All orders","filters.all_families":"All families",
+    "filters.iucn_all":"IUCN Status — All","filters.apply":"Apply filters","filters.clear":"Clear",
+    "pill.all":"🌐 All",
+    "pill.mammalia":"🦁 Mammals","pill.aves":"🦅 Birds","pill.reptilia":"🦎 Reptiles",
+    "pill.amphibia":"🐸 Amphibians","pill.peces":"🐟 Fish","pill.insecta":"🦋 Insects","pill.plantas":"🌸 Plants",
+    "species.empty":"No species found with the selected filters.",
+    "pagination.prev":"« Previous","pagination.next":"Next »",
+    "species.details":"View details →",
+    "modal.loading":"Loading...","modal.error":"Error loading data",
+    "modal.favorito":"Favourite","modal.en_favoritos":"In favourites",
+    "modal.miatlas":"My Atlas","modal.en_miatlas":"In My Atlas ✓",
+    "modal.avistamiento":"📍 Sighting",
+    "modal.descripcion":"Description","modal.nombres_comunes":"Common names",
+    "modal.taxonomia":"Taxonomic classification","modal.galeria":"Photo gallery",
+    "taxo.reino":"Kingdom","taxo.filo":"Phylum","taxo.clase":"Class",
+    "taxo.orden":"Order","taxo.familia":"Family","taxo.genero":"Genus",
+    "pais.especies":"species registered","pais.en_atlas":"in your My Atlas",
+    "buscar.titulo":"Search species","buscar.subtitulo":"Explore more than 185,000 species worldwide",
+    "buscar.placeholder":"Scientific or common name...","buscar.btn":"Search",
+    "buscar.sin_resultados":"No results found","buscar.sin_resultados_tip":"Try with the scientific name or in English",
+    "buscar.sugerencias":"Suggestions",
+    "perfil.miembro":"BioAtlas member","perfil.hazte_premium":"✨ Go Premium",
+    "perfil.cancelar_premium":"Cancel Premium",
+    "perfil.stat.favoritos":"Favourites","perfil.stat.avistamientos":"Sightings","perfil.stat.atlas":"In My Atlas",
+    "perfil.buscar_rapido":"🔍 Add species quickly","perfil.buscar_placeholder":"Search a species to add to favourites...",
+    "perfil.ultimos_avist":"Latest sightings","perfil.ver_todos":"View all →",
+    "perfil.modal.añadir_fav":"Add to favourites","perfil.modal.registrar_avist":"Record sighting","perfil.modal.cancelar":"Cancel",
+    "registro.titulo":"Start exploring","registro.subtitulo":"Create your free account and start collecting species from around the world",
+    "registro.label.usuario":"Username","registro.ph.usuario":"E.g: nature_lover",
+    "registro.label.email":"Email","registro.label.opcional":"(optional)",
+    "registro.label.password":"Password","registro.ph.password":"Minimum 6 characters",
+    "registro.label.confirmar":"Confirm password","registro.ph.confirmar":"Repeat password",
+    "registro.btn":"Create free account →",
+    "registro.plan_gratis":"✓ Access to 197 countries · ✓ 20 favourites · ✓ 10 sightings",
+    "registro.ver_premium":"✨ View Premium plan →",
+    "registro.ya_tienes":"Already have an account?","registro.ir_login":"Sign in →",
+    "registro.volver":"← Back to atlas",
+    "login.titulo":"Welcome back","login.subtitulo":"Sign in to access your personal atlas",
+    "login.label.usuario":"Username","login.ph.usuario":"Your username",
+    "login.label.password":"Password",
+    "login.btn":"Sign in →",
+    "login.no_cuenta":"Don't have an account?","login.ir_registro":"Register for free →",
+    "login.volver":"← Back to atlas",
+    "favs.titulo":"My favourites","favs.guardadas":"saved species",
+    "favs.volver":"← Back to profile",
+    "favs.añadir_titulo":"Add species to favourites","favs.buscar_placeholder":"Search a species by name...",
+    "favs.añadir_btn":"Favourite","favs.quitar":"🗑️ Remove",
+    "favs.añadida":"added to favourites","favs.eliminada":"removed from favourites","favs.eliminado_toast":"Removed from favourites",
+    "favs.vacio_titulo":"You have no favourites yet","favs.vacio_sub":"Use the search above or explore the atlas",
+    "favs.explorar":"Explore atlas",
+    "avist.titulo":"My sightings","avist.registrados":"sightings recorded",
+    "avist.volver":"← Back to profile",
+    "avist.nuevo_titulo":"Record new sighting","avist.buscar_placeholder":"Search the species you have seen...",
+    "avist.registrar_btn":"Record","avist.eliminar":"🗑️ Delete",
+    "avist.confirm_titulo":"Delete sighting?","avist.confirm_msg":"This action cannot be undone.",
+    "avist.confirm_si":"Yes, delete","avist.confirm_no":"Cancel",
+    "avist.vacio_titulo":"You haven't recorded any sightings yet",
+    "avist.vacio_sub":"Use the search above to record your first sighting",
+    "atlas.titulo":"My Atlas","atlas.subtitulo":"Your personal biodiversity atlas",
+    "atlas.stat.especies":"Species","atlas.stat.paises":"Countries","atlas.stat.paises_lower":"countries","atlas.especies_lower":"species",
+    "atlas.plan_gratis":"Free Plan","atlas.sin_limites":"Unlimited",
+    "atlas.limite_alcanzado":"You have reached the country limit.",
+    "atlas.limite_sub":" Go Premium to unlock all countries.",
+    "atlas.ver_premium":"View Premium",
+    "atlas.vacio_titulo":"Your My Atlas is empty",
+    "atlas.vacio_sub":"Explore any country and tap 🌿 My Atlas on each species card to start your collection.",
+    "atlas.explorar":"Explore the atlas",
+    "premium.hero_titulo":"Explore biodiversity without any limits",
+    "premium.hero_sub":"Access all BioAtlas features with a monthly subscription. Cancel anytime.",
+    "premium.ya_premium":"You are already a Premium user",
+    "premium.btn_cta":"✨ Go Premium — €2.99/month",
+    "premium.sin_compromiso":"Cancel anytime · No commitment",
+    "premium.plan_gratis":"Free","premium.recomendado":"Recommended","premium.mes":"/month",
+    "premium.f1":"✓ Access to 197 countries","premium.f2":"✓ Global species search",
+    "premium.f3":"✓ 20 favourites","premium.f4":"✓ 10 sightings",
+    "premium.f5":"✗ My Atlas limited (3 countries)","premium.f6":"✗ No advanced statistics",
+    "premium.p1":"✓ Everything in the free plan","premium.p2":"✓ Unlimited favourites",
+    "premium.p3":"✓ Unlimited sightings","premium.p4":"✓ My Atlas unlimited",
+    "premium.p5":"✓ All countries in the world",
+    "premium.btn_empezar":"Get started →",
+    "nuevo_avist.volver":"← Back to my sightings",
+    "nuevo_avist.registrar_label":"📍 Record sighting",
+    "nuevo_avist.limite_msg":"You have reached the sighting limit of the free plan.",
+    "nuevo_avist.limite_cta":"Go Premium →",
+    "nuevo_avist.label.fecha":"Date *","nuevo_avist.label.lugar":"Location *",
+    "nuevo_avist.ph.lugar":"E.g: Doñana National Park, Spain",
+    "nuevo_avist.label.notas":"Notes","nuevo_avist.ph.notas":"Describe what you saw...",
+    "nuevo_avist.label.foto":"Photo",
+    "nuevo_avist.btn":"Save sighting →",
+    "success.titulo":"Welcome to BioAtlas Premium!",
+    "success.subtitulo":"Your subscription is active. You can now explore the world's biodiversity without any limits.",
+    "success.btn_atlas":"Go to My Atlas →","success.btn_explorar":"Explore the atlas",
+    "cont.antartida_sub":"Scientific research territory · No national sovereignty",
+    "cont.paises_sub":"countries · Explore the biodiversity of each one",
+    "cont.antartida_titulo":"Antarctica has no countries",
+    "cont.antartida_desc":"Antarctica is governed by the Antarctic Treaty (1959) and has no national sovereignty. However, it harbours unique biodiversity adapted to extreme conditions.",
+    "cont.antartida_btn":"🌿 View Antarctic biodiversity",
+    "cont.especies":"species","cont.sin_datos":"No data yet","cont.sin_paises":"No countries available.",
+    "ant.titulo":"Antarctica","ant.subtitulo":"Scientific research territory",
+    "ant.banner_titulo":"Special Territory — No national sovereignty",
+    "ant.datos":"Data","ant.total_especies":"Total species",
+    "ant.codigo_gbif":"GBIF code","ant.tratado":"Treaty",
+    "ant.sin_especies":"No species synced yet",
+    "biolog_pais.coleccionadas":"species collected out of","biolog_pais.disponibles":"available",
+    "biolog_pais.progreso":"Progress in",
+    "biolog_pais.sin_filtro":"No species with this filter.","biolog_pais.ver_todas":"View all →",
+  },
+  fr:{
+    "nav.inicio":"Accueil","nav.explorar":"Explorer","nav.login":"Se connecter","nav.registro":"S'inscrire",
+    "menu.perfil":"Mon profil","menu.atlas":"Mon Atlas","menu.favoritos":"Mes favoris",
+    "menu.avistamientos":"Mes observations","menu.premium":"Devenir Premium","menu.logout":"Se déconnecter",
+    "footer.desc":"Atlas Mondial de la Biodiversité","footer.data":"Données de biodiversité fournies par",
+    "search.placeholder":"Rechercher une espèce...","search.loading":"Recherche...","search.noresults":"Aucun résultat pour","search.viewall":"Voir tous les résultats →",
+    "hero.eyebrow":"🌿 Atlas Mondial de la Biodiversité","hero.title":"Explorez la <em>Biodiversité</em><br>du Monde",
+    "hero.subtitle":"Découvrez la faune et la végétation de n'importe quel pays en naviguant sur la carte interactive",
+    "hero.btn.map":"Explorer la carte","hero.btn.search":"Rechercher espèce",
+    "hero.stat.species":"Espèces enregistrées","hero.stat.countries":"Pays","hero.stat.kingdoms":"Règnes",
+    "map.title":"Carte Mondiale Interactive","map.subtitle":"Cliquez sur n'importe quel pays pour explorer sa biodiversité","map.btn":"Voir les Espèces →",
+    "continents.label":"Géographie","continents.title":"Explorer par Continent","continents.countries":"pays",
+    "about.label":"À propos","about.title":"À propos de BioAtlas",
+    "about.edu.title":"Éducatif","about.edu.desc":"Conçu pour les étudiants et les passionnés de biologie qui souhaitent explorer la diversité des espèces de la planète.",
+    "about.exp.title":"Exploratoire","about.exp.desc":"Naviguez interactivement à travers les continents et les pays via une carte mondiale immersive.",
+    "about.upd.title":"À jour","about.upd.desc":"Données de biodiversité en temps réel fournies par GBIF — la plus grande base de données de biodiversité au monde.",
+    "filters.title":"Filtres","filters.search":"Rechercher espèce...","filters.all_kingdoms":"Tous les règnes",
+    "filters.all_phylums":"Tous les phylums","filters.all_classes":"Toutes les classes",
+    "filters.all_orders":"Tous les ordres","filters.all_families":"Toutes les familles",
+    "filters.iucn_all":"Statut UICN — Tous","filters.apply":"Appliquer les filtres","filters.clear":"Effacer",
+    "pill.all":"🌐 Tous",
+    "pill.mammalia":"🦁 Mammifères","pill.aves":"🦅 Oiseaux","pill.reptilia":"🦎 Reptiles",
+    "pill.amphibia":"🐸 Amphibiens","pill.peces":"🐟 Poissons","pill.insecta":"🦋 Insectes","pill.plantas":"🌸 Plantes",
+    "species.empty":"Aucune espèce trouvée avec les filtres sélectionnés.",
+    "pagination.prev":"« Précédent","pagination.next":"Suivant »",
+    "species.details":"Voir les détails →",
+    "modal.loading":"Chargement...","modal.error":"Erreur de chargement",
+    "modal.favorito":"Favori","modal.en_favoritos":"Dans les favoris",
+    "modal.miatlas":"Mon Atlas","modal.en_miatlas":"Dans Mon Atlas ✓",
+    "modal.avistamiento":"📍 Observation",
+    "modal.descripcion":"Description","modal.nombres_comunes":"Noms communs",
+    "modal.taxonomia":"Classification taxonomique","modal.galeria":"Galerie de photos",
+    "taxo.reino":"Règne","taxo.filo":"Embranchement","taxo.clase":"Classe",
+    "taxo.orden":"Ordre","taxo.familia":"Famille","taxo.genero":"Genre",
+    "pais.especies":"espèces enregistrées","pais.en_atlas":"dans votre Mon Atlas",
+    "buscar.titulo":"Rechercher espèce","buscar.subtitulo":"Explorez plus de 185 000 espèces dans le monde",
+    "buscar.placeholder":"Nom scientifique ou commun...","buscar.btn":"Rechercher",
+    "buscar.sin_resultados":"Aucun résultat trouvé","buscar.sin_resultados_tip":"Essayez avec le nom scientifique ou en anglais",
+    "buscar.sugerencias":"Suggestions",
+    "perfil.miembro":"Membre de BioAtlas","perfil.hazte_premium":"✨ Devenir Premium",
+    "perfil.cancelar_premium":"Annuler Premium",
+    "perfil.stat.favoritos":"Favoris","perfil.stat.avistamientos":"Observations","perfil.stat.atlas":"Dans Mon Atlas",
+    "perfil.buscar_rapido":"🔍 Ajouter une espèce rapidement","perfil.buscar_placeholder":"Cherchez une espèce à ajouter aux favoris...",
+    "perfil.ultimos_avist":"Dernières observations","perfil.ver_todos":"Voir tout →",
+    "perfil.modal.añadir_fav":"Ajouter aux favoris","perfil.modal.registrar_avist":"Enregistrer observation","perfil.modal.cancelar":"Annuler",
+    "registro.titulo":"Commencez à explorer","registro.subtitulo":"Créez votre compte gratuit et commencez à collectionner des espèces du monde entier",
+    "registro.label.usuario":"Nom d'utilisateur","registro.ph.usuario":"Ex: naturaliste_pro",
+    "registro.label.email":"Email","registro.label.opcional":"(optionnel)",
+    "registro.label.password":"Mot de passe","registro.ph.password":"6 caractères minimum",
+    "registro.label.confirmar":"Confirmer le mot de passe","registro.ph.confirmar":"Répétez le mot de passe",
+    "registro.btn":"Créer un compte gratuit →",
+    "registro.plan_gratis":"✓ Accès à 197 pays · ✓ 20 favoris · ✓ 10 observations",
+    "registro.ver_premium":"✨ Voir le plan Premium →",
+    "registro.ya_tienes":"Vous avez déjà un compte ?","registro.ir_login":"Se connecter →",
+    "registro.volver":"← Retour à l'atlas",
+    "login.titulo":"Bienvenue de retour","login.subtitulo":"Connectez-vous pour accéder à votre atlas personnel",
+    "login.label.usuario":"Utilisateur","login.ph.usuario":"Votre nom d'utilisateur",
+    "login.label.password":"Mot de passe",
+    "login.btn":"Se connecter →",
+    "login.no_cuenta":"Vous n'avez pas de compte ?","login.ir_registro":"S'inscrire gratuitement →",
+    "login.volver":"← Retour à l'atlas",
+    "favs.titulo":"Mes favoris","favs.guardadas":"espèces sauvegardées",
+    "favs.volver":"← Retour au profil",
+    "favs.añadir_titulo":"Ajouter une espèce aux favoris","favs.buscar_placeholder":"Recherchez une espèce par nom...",
+    "favs.añadir_btn":"Favori","favs.quitar":"🗑️ Retirer",
+    "favs.añadida":"ajoutée aux favoris","favs.eliminada":"retirée des favoris","favs.eliminado_toast":"Retiré des favoris",
+    "favs.vacio_titulo":"Vous n'avez pas encore de favoris","favs.vacio_sub":"Utilisez la recherche ci-dessus ou explorez l'atlas",
+    "favs.explorar":"Explorer l'atlas",
+    "avist.titulo":"Mes observations","avist.registrados":"observations enregistrées",
+    "avist.volver":"← Retour au profil",
+    "avist.nuevo_titulo":"Enregistrer une nouvelle observation","avist.buscar_placeholder":"Recherchez l'espèce que vous avez vue...",
+    "avist.registrar_btn":"Enregistrer","avist.eliminar":"🗑️ Supprimer",
+    "avist.confirm_titulo":"Supprimer l'observation ?","avist.confirm_msg":"Cette action est irréversible.",
+    "avist.confirm_si":"Oui, supprimer","avist.confirm_no":"Annuler",
+    "avist.vacio_titulo":"Vous n'avez pas encore enregistré d'observations",
+    "avist.vacio_sub":"Utilisez la recherche ci-dessus pour enregistrer votre première observation",
+    "atlas.titulo":"Mon Atlas","atlas.subtitulo":"Votre atlas personnel de biodiversité",
+    "atlas.stat.especies":"Espèces","atlas.stat.paises":"Pays","atlas.stat.paises_lower":"pays","atlas.especies_lower":"espèces",
+    "atlas.plan_gratis":"Plan Gratuit","atlas.sin_limites":"Illimité",
+    "atlas.limite_alcanzado":"Vous avez atteint la limite de pays.",
+    "atlas.limite_sub":" Devenez Premium pour débloquer tous les pays.",
+    "atlas.ver_premium":"Voir Premium",
+    "atlas.vacio_titulo":"Votre Mon Atlas est vide",
+    "atlas.vacio_sub":"Explorez n'importe quel pays et appuyez sur 🌿 Mon Atlas sur chaque fiche d'espèce pour commencer votre collection.",
+    "atlas.explorar":"Explorer l'atlas",
+    "premium.hero_titulo":"Explorez la biodiversité sans aucune limite",
+    "premium.hero_sub":"Accédez à toutes les fonctions de BioAtlas avec un abonnement mensuel. Annulez quand vous voulez.",
+    "premium.ya_premium":"Vous êtes déjà utilisateur Premium",
+    "premium.btn_cta":"✨ Devenir Premium — 2,99€/mois",
+    "premium.sin_compromiso":"Annulez quand vous voulez · Sans engagement",
+    "premium.plan_gratis":"Gratuit","premium.recomendado":"Recommandé","premium.mes":"/mois",
+    "premium.f1":"✓ Accès à 197 pays","premium.f2":"✓ Recherche mondiale d'espèces",
+    "premium.f3":"✓ 20 favoris","premium.f4":"✓ 10 observations",
+    "premium.f5":"✗ Mon Atlas limité (3 pays)","premium.f6":"✗ Pas de statistiques avancées",
+    "premium.p1":"✓ Tout du plan gratuit","premium.p2":"✓ Favoris illimités",
+    "premium.p3":"✓ Observations illimitées","premium.p4":"✓ Mon Atlas illimité",
+    "premium.p5":"✓ Tous les pays du monde",
+    "premium.btn_empezar":"Commencer maintenant →",
+    "nuevo_avist.volver":"← Retour à mes observations",
+    "nuevo_avist.registrar_label":"📍 Enregistrer une observation",
+    "nuevo_avist.limite_msg":"Vous avez atteint la limite d'observations du plan gratuit.",
+    "nuevo_avist.limite_cta":"Devenir Premium →",
+    "nuevo_avist.label.fecha":"Date *","nuevo_avist.label.lugar":"Lieu *",
+    "nuevo_avist.ph.lugar":"Ex: Parc National de Doñana, Espagne",
+    "nuevo_avist.label.notas":"Notes","nuevo_avist.ph.notas":"Décrivez ce que vous avez vu...",
+    "nuevo_avist.label.foto":"Photo",
+    "nuevo_avist.btn":"Enregistrer l'observation →",
+    "success.titulo":"Bienvenue sur BioAtlas Premium !",
+    "success.subtitulo":"Votre abonnement est actif. Vous pouvez maintenant explorer la biodiversité mondiale sans aucune limite.",
+    "success.btn_atlas":"Aller à Mon Atlas →","success.btn_explorar":"Explorer l'atlas",
+    "cont.antartida_sub":"Territoire de recherche scientifique · Sans souveraineté nationale",
+    "cont.paises_sub":"pays · Explorez la biodiversité de chacun",
+    "cont.antartida_titulo":"L'Antarctique n'a pas de pays",
+    "cont.antartida_desc":"L'Antarctique est régi par le Traité sur l'Antarctique (1959) et n'a pas de souveraineté nationale. Il abrite cependant une biodiversité unique adaptée à des conditions extrêmes.",
+    "cont.antartida_btn":"🌿 Voir la biodiversité antarctique",
+    "cont.especies":"espèces","cont.sin_datos":"Pas encore de données","cont.sin_paises":"Aucun pays disponible.",
+    "ant.titulo":"Antarctique","ant.subtitulo":"Territoire de recherche scientifique",
+    "ant.banner_titulo":"Territoire Spécial — Sans souveraineté nationale",
+    "ant.datos":"Données","ant.total_especies":"Total espèces",
+    "ant.codigo_gbif":"Code GBIF","ant.tratado":"Traité",
+    "ant.sin_especies":"Aucune espèce synchronisée pour l'instant",
+    "biolog_pais.coleccionadas":"espèces collectées sur","biolog_pais.disponibles":"disponibles",
+    "biolog_pais.progreso":"Progression en",
+    "biolog_pais.sin_filtro":"Aucune espèce avec ce filtre.","biolog_pais.ver_todas":"Voir tout →",
+  }
+};
 const FLAGS={es:'🇪🇸',en:'🇬🇧',fr:'🇫🇷'};
 const LABELS={es:'ES',en:'EN',fr:'FR'};
 let currentLang=localStorage.getItem('bioatlas-lang')||'es';
 function t(key){return(TRANSLATIONS[currentLang]||TRANSLATIONS.es)[key]||key;}
 function applyTranslations(){
-    document.querySelectorAll('[data-i18n]').forEach(el=>{const val=t(el.getAttribute('data-i18n'));if(val.includes('<'))el.innerHTML=val;else el.textContent=val;});
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const val=t(el.getAttribute('data-i18n'));
+        if(val.includes('<'))el.innerHTML=val;else el.textContent=val;
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+        el.placeholder=t(el.getAttribute('data-i18n-placeholder'));
+    });
     const si=document.getElementById('global-search-input');if(si)si.placeholder=t('search.placeholder');
     document.getElementById('html-root').lang=currentLang;
 }
@@ -237,14 +636,12 @@ function setLang(lang){
 }
 document.addEventListener('DOMContentLoaded',()=>setLang(currentLang));
 
-// Idioma desktop
 (function(){
     const btn=document.getElementById('lang-btn'),dd=document.getElementById('lang-dropdown');
     btn.addEventListener('click',e=>{e.stopPropagation();dd.classList.toggle('open');});
     document.addEventListener('click',()=>dd.classList.remove('open'));
 })();
 
-// Hamburguesa — controlado puramente por JS
 (function(){
     const hamburger=document.getElementById('nav-hamburger');
     const menu=document.getElementById('nav-mobile-menu');
@@ -262,7 +659,6 @@ document.addEventListener('DOMContentLoaded',()=>setLang(currentLang));
     window.closeMobileMenu=function(){open=false;menu.style.display='none';};
 })();
 
-// Buscador especies
 (function(){
     const input=document.getElementById('global-search-input'),dropdown=document.getElementById('search-dropdown');
     let timer=null;
@@ -278,7 +674,6 @@ document.addEventListener('DOMContentLoaded',()=>setLang(currentLang));
     document.addEventListener('click',e=>{if(!document.getElementById('global-search-wrapper').contains(e.target))hide();});
 })();
 
-// Buscador países
 (function(){
     const input=document.getElementById('country-search-input'),dropdown=document.getElementById('country-search-dropdown');
     let timer=null;
@@ -295,7 +690,6 @@ document.addEventListener('DOMContentLoaded',()=>setLang(currentLang));
     document.addEventListener('click',e=>{if(!document.getElementById('country-search-wrapper').contains(e.target))hide();});
 })();
 
-// Menú usuario
 (function(){
     const btn=document.getElementById('nav-user-btn'),dd=document.getElementById('nav-user-dropdown');
     if(!btn)return;
@@ -303,7 +697,6 @@ document.addEventListener('DOMContentLoaded',()=>setLang(currentLang));
     document.addEventListener('click',()=>{if(dd)dd.classList.remove('open');});
 })();
 
-// Notificaciones
 window.BioNotify={
     show:function({icon='⚠️',title='',msg='',actions=[]}){
         document.getElementById('bioatlas-notify-icon').textContent=icon;

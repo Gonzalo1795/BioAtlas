@@ -9,22 +9,23 @@
     <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(212,175,55,0.02) 1px, transparent 1px),linear-gradient(90deg, rgba(212,175,55,0.02) 1px, transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);"></div>
     <div class="container" style="text-align:center; position:relative; z-index:1;">
         <div style="display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(212,175,55,0.3); background:rgba(212,175,55,0.06); padding:6px 16px; border-radius:999px; margin-bottom:1.5rem;">✨ BioAtlas Premium</div>
-        <h1 style="font-family:var(--font-display); font-size:clamp(2.5rem,5vw,4rem); font-weight:700; color:var(--text); letter-spacing:-0.03em; line-height:1.1; margin-bottom:1rem;">Explora la biodiversidad<br><em style="color:var(--gold);">sin ningún límite</em></h1>
-        <p style="font-size:1.1rem; color:var(--text-muted); max-width:520px; margin:0 auto 2.5rem; line-height:1.7; font-weight:300;">Accede a todas las funciones de BioAtlas con una suscripción mensual. Cancela cuando quieras.</p>
+        <h1 style="font-family:var(--font-display); font-size:clamp(2.5rem,5vw,4rem); font-weight:700; color:var(--text); letter-spacing:-0.03em; line-height:1.1; margin-bottom:1rem;" data-i18n="premium.hero_titulo">Explora la biodiversidad<br><em style="color:var(--gold);">sin ningún límite</em></h1>
+        <p style="font-size:1.1rem; color:var(--text-muted); max-width:520px; margin:0 auto 2.5rem; line-height:1.7; font-weight:300;" data-i18n="premium.hero_sub">Accede a todas las funciones de BioAtlas con una suscripción mensual. Cancela cuando quieras.</p>
 
         {% if suscripcion and suscripcion.es_premium %}
         <div style="display:inline-flex; align-items:center; gap:10px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1rem 2rem;">
             <span style="font-size:1.5rem;">✨</span>
-            <span style="font-size:1rem; font-weight:700; color:var(--gold);">Ya eres usuario Premium</span>
+            <span style="font-size:1rem; font-weight:700; color:var(--gold);" data-i18n="premium.ya_premium">Ya eres usuario Premium</span>
         </div>
         {% else %}
         <a href="{% url 'atlas:premium_checkout' %}"
            style="display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-size:1rem; font-weight:700; border-radius:999px; text-decoration:none; transition:all 0.2s; box-shadow:0 8px 24px rgba(212,175,55,0.25);"
            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(212,175,55,0.35)'"
-           onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px rgba(212,175,55,0.25)'">
+           onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px rgba(212,175,55,0.25)'"
+           data-i18n="premium.btn_cta">
             ✨ Hazte Premium — 2,99€/mes
         </a>
-        <p style="font-size:0.8rem; color:var(--text-faint); margin-top:1rem;">Cancela cuando quieras · Sin permanencia</p>
+        <p style="font-size:0.8rem; color:var(--text-faint); margin-top:1rem;" data-i18n="premium.sin_compromiso">Cancela cuando quieras · Sin permanencia</p>
         {% endif %}
     </div>
 </div>
@@ -35,39 +36,37 @@
 
         <!-- Plan gratuito -->
         <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2rem;">
-            <h3 style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 1.5rem;">Gratuito</h3>
+            <h3 style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 1.5rem;" data-i18n="premium.plan_gratis">Gratuito</h3>
             <div style="font-family:var(--font-display); font-size:2.5rem; font-weight:700; color:var(--text); margin-bottom:1.5rem;">0€</div>
             <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;">
-                {% for item in "123456"|make_list %}
-                {% if forloop.counter == 1 %}<li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);">✓ Acceso a 197 países</li>
-                {% elif forloop.counter == 2 %}<li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);">✓ Búsqueda global de especies</li>
-                {% elif forloop.counter == 3 %}<li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);">✓ 20 favoritos</li>
-                {% elif forloop.counter == 4 %}<li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);">✓ 10 avistamientos</li>
-                {% elif forloop.counter == 5 %}<li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-faint);">✗ Mi Atlas limitado (3 países)</li>
-                {% elif forloop.counter == 6 %}<li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-faint);">✗ Sin estadísticas avanzadas</li>
-                {% endif %}
-                {% endfor %}
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);" data-i18n="premium.f1">✓ Acceso a 197 países</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);" data-i18n="premium.f2">✓ Búsqueda global de especies</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);" data-i18n="premium.f3">✓ 20 favoritos</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-muted);" data-i18n="premium.f4">✓ 10 avistamientos</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-faint);" data-i18n="premium.f5">✗ Mi Atlas limitado (3 países)</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text-faint);" data-i18n="premium.f6">✗ Sin estadísticas avanzadas</li>
             </ul>
         </div>
 
         <!-- Plan premium -->
         <div style="background:linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.03) 100%); border:1px solid rgba(212,175,55,0.25); border-radius:var(--radius-lg); padding:2rem; position:relative;">
-            <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-size:0.68rem; font-weight:800; padding:3px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap;">Recomendado</div>
+            <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-size:0.68rem; font-weight:800; padding:3px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap;" data-i18n="premium.recomendado">Recomendado</div>
             <h3 style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin:0 0 1.5rem;">✨ Premium</h3>
             <div style="margin-bottom:1.5rem;">
                 <span style="font-family:var(--font-display); font-size:2.5rem; font-weight:700; color:var(--text);">2,99€</span>
-                <span style="font-size:0.88rem; color:var(--text-muted);">/mes</span>
+                <span style="font-size:0.88rem; color:var(--text-muted);" data-i18n="premium.mes">/mes</span>
             </div>
             <ul style="list-style:none; padding:0; margin:0 0 1.5rem; display:flex; flex-direction:column; gap:10px;">
-                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);">✓ Todo lo del plan gratuito</li>
-                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);">✓ Favoritos ilimitados</li>
-                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);">✓ Avistamientos ilimitados</li>
-                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);">✓ Mi Atlas sin límites</li>
-                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);">✓ Todos los países del mundo</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);" data-i18n="premium.p1">✓ Todo lo del plan gratuito</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);" data-i18n="premium.p2">✓ Favoritos ilimitados</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);" data-i18n="premium.p3">✓ Avistamientos ilimitados</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);" data-i18n="premium.p4">✓ Mi Atlas sin límites</li>
+                <li style="display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);" data-i18n="premium.p5">✓ Todos los países del mundo</li>
             </ul>
             {% if not suscripcion or not suscripcion.es_premium %}
             <a href="{% url 'atlas:premium_checkout' %}"
-               style="display:block; text-align:center; padding:12px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.88rem;">
+               style="display:block; text-align:center; padding:12px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.88rem;"
+               data-i18n="premium.btn_empezar">
                 Empezar ahora →
             </a>
             {% endif %}

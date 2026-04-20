@@ -5,10 +5,10 @@
 {% block content %}
 <div class="page-header">
     <div class="container">
-        <h1>🔍 Buscar especie</h1>
+        <h1>🔍 <span data-i18n="buscar.titulo">Buscar especie</span></h1>
         <p class="page-subtitle">
-            {% if query %}{{ total }} resultado{{ total|pluralize:"s" }} para "{{ query }}"
-            {% else %}Explora más de 185.000 especies de todo el mundo{% endif %}
+            {% if query %}{{ total }} <span data-i18n="buscar.resultado{{ total|pluralize:'s' }}">resultado</span> para "{{ query }}"
+            {% else %}<span data-i18n="buscar.subtitulo">Explora más de 185.000 especies de todo el mundo</span>{% endif %}
         </p>
     </div>
 </div>
@@ -18,14 +18,17 @@
     <!-- Buscador -->
     <form method="GET" style="margin-bottom:2.5rem;">
         <div style="display:flex; gap:10px; max-width:600px;">
-            <input type="text" name="q" value="{{ query }}" placeholder="Nombre científico o común..."
+            <input type="text" name="q" value="{{ query }}"
+                   data-i18n-placeholder="buscar.placeholder"
+                   placeholder="Nombre científico o común..."
                    autofocus
                    style="flex:1; padding:12px 18px; background:var(--bg-card); border:1px solid var(--border); border-radius:999px; color:var(--text); font-size:0.95rem; font-family:var(--font-body); outline:none; transition:all 0.2s;"
                    onfocus="this.style.borderColor='var(--green-dim)';this.style.boxShadow='0 0 0 3px var(--green-glow)'"
                    onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
             <button type="submit"
                 style="padding:12px 24px; background:var(--green); color:#0A0F0D; border:none; border-radius:999px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:var(--font-body); transition:all 0.2s; white-space:nowrap;"
-                onmouseover="this.style.background='#6EE79A'" onmouseout="this.style.background='var(--green)'">
+                onmouseover="this.style.background='#6EE79A'" onmouseout="this.style.background='var(--green)'"
+                data-i18n="buscar.btn">
                 Buscar
             </button>
         </div>
@@ -60,7 +63,7 @@
                 {% if especie.kingdom %}
                 <span class="sc-kingdom sc-kingdom--{{ especie.kingdom|lower }}">{{ especie.kingdom }}</span>
                 {% endif %}
-                <div class="sc-overlay"><span class="sc-overlay-text">Ver detalles →</span></div>
+                <div class="sc-overlay"><span class="sc-overlay-text" data-i18n="species.details">Ver detalles →</span></div>
             </div>
             <div class="sc-body">
                 <p class="sc-sci-name">{{ especie.canonical_name|default:especie.scientific_name }}</p>
@@ -87,13 +90,13 @@
     {% elif query and not resultados %}
     <div style="text-align:center; padding:4rem 2rem;">
         <div style="font-size:3rem; margin-bottom:1rem;">🔍</div>
-        <p style="font-size:1rem; font-weight:600; color:var(--text-muted);">No se encontraron resultados para "{{ query }}"</p>
-        <p style="font-size:0.88rem; color:var(--text-faint); margin-top:6px;">Prueba con el nombre científico o en inglés</p>
+        <p style="font-size:1rem; font-weight:600; color:var(--text-muted);" data-i18n="buscar.sin_resultados">No se encontraron resultados para "{{ query }}"</p>
+        <p style="font-size:0.88rem; color:var(--text-faint); margin-top:6px;" data-i18n="buscar.sin_resultados_tip">Prueba con el nombre científico o en inglés</p>
     </div>
 
     {% else %}
     <div>
-        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin-bottom:1rem;">Sugerencias</p>
+        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin-bottom:1rem;" data-i18n="buscar.sugerencias">Sugerencias</p>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
             {% for s in sugerencias %}
             <a href="?q={{ s }}"
@@ -109,14 +112,10 @@
 
 </div>
 
-<!-- ═══════════════════════════════════════
-     MODAL HORIZONTAL (igual que pais_detail)
-════════════════════════════════════════ -->
+<!-- MODAL HORIZONTAL -->
 <div class="smodal-backdrop" id="smodal-backdrop">
     <div class="smodal">
         <button class="smodal-close" id="smodal-close">✕</button>
-
-        <!-- IZQUIERDA: imagen fija -->
         <div class="smodal-left">
             <img class="smodal-hero-img" id="smodal-hero-img" src="" alt="">
             <div class="smodal-hero-gradient"></div>
@@ -127,23 +126,15 @@
                 <p id="smodal-common" class="smodal-common"></p>
             </div>
         </div>
-
-        <!-- DERECHA: info scrollable -->
         <div class="smodal-right">
-
-            <!-- Acciones -->
             <div class="smodal-actions">
                 <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn">
-                    🤍 <span id="btn-favorito-text">Favorito</span>
+                    🤍 <span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span>
                 </button>
-                <a id="btn-avistamiento" href="#" class="smodal-action-btn">
-                    📍 Avistamiento
-                </a>
+                <a id="btn-avistamiento" href="#" class="smodal-action-btn" data-i18n="modal.avistamiento">📍 Avistamiento</a>
             </div>
-
-            <!-- Descripción -->
             <div id="smodal-desc-wrap" style="display:none;">
-                <p class="smodal-section-title">Descripción</p>
+                <p class="smodal-section-title" data-i18n="modal.descripcion">Descripción</p>
                 <div id="smodal-description" class="smodal-description"></div>
                 <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
                     <button onclick="changeDescLang('es')" class="smodal-lang-btn active" data-lang="es">🇪🇸 ES</button>
@@ -151,33 +142,26 @@
                     <button onclick="changeDescLang('fr')" class="smodal-lang-btn" data-lang="fr">🇫🇷 FR</button>
                 </div>
             </div>
-
-            <!-- Nombres comunes -->
             <div id="smodal-names-wrap" style="display:none;">
-                <p class="smodal-section-title">Nombres comunes</p>
+                <p class="smodal-section-title" data-i18n="modal.nombres_comunes">Nombres comunes</p>
                 <div class="smodal-names-list" id="smodal-names-list"></div>
             </div>
-
-            <!-- Taxonomía -->
-            <p class="smodal-section-title">Clasificación taxonómica</p>
+            <p class="smodal-section-title" data-i18n="modal.taxonomia">Clasificación taxonómica</p>
             <div class="smodal-taxo-grid">
-                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Reino</span><span class="smodal-taxo-value" id="smodal-kingdom"></span></div>
-                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Filo</span><span class="smodal-taxo-value" id="smodal-phylum"></span></div>
-                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Clase</span><span class="smodal-taxo-value" id="smodal-class"></span></div>
-                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Orden</span><span class="smodal-taxo-value" id="smodal-order"></span></div>
-                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Familia</span><span class="smodal-taxo-value" id="smodal-family"></span></div>
-                <div class="smodal-taxo-item"><span class="smodal-taxo-label">Género</span><span class="smodal-taxo-value" id="smodal-genus"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.reino">Reino</span><span class="smodal-taxo-value" id="smodal-kingdom"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.filo">Filo</span><span class="smodal-taxo-value" id="smodal-phylum"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.clase">Clase</span><span class="smodal-taxo-value" id="smodal-class"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.orden">Orden</span><span class="smodal-taxo-value" id="smodal-order"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.familia">Familia</span><span class="smodal-taxo-value" id="smodal-family"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.genero">Género</span><span class="smodal-taxo-value" id="smodal-genus"></span></div>
             </div>
-
-            <!-- Galería -->
-            <p class="smodal-section-title">Galería de fotos</p>
+            <p class="smodal-section-title" data-i18n="modal.galeria">Galería de fotos</p>
             <div class="smodal-gallery">
                 <div class="smodal-gallery-loading" id="smodal-gallery-loading"><span></span><span></span><span></span></div>
                 <div class="gallery-grid" id="gallery-grid" style="display:none;"></div>
             </div>
-
-        </div><!-- /smodal-right -->
-    </div><!-- /smodal -->
+        </div>
+    </div>
 </div>
 
 <!-- LIGHTBOX -->
@@ -210,7 +194,6 @@ let currentSpeciesKey = null;
 
 function getCookie(n){ const v=`; ${document.cookie}`,p=v.split(`; ${n}=`); if(p.length===2)return p.pop().split(';').shift(); }
 
-// ── Cargar imágenes tarjetas desde iNaturalist (recientes verificadas) ──
 function loadCardImages() {
     const cards = document.querySelectorAll('.species-card[data-sci-name]');
     cards.forEach(card => {
@@ -219,7 +202,6 @@ function loadCardImages() {
         const img  = document.getElementById('img-' + key);
         const ph   = document.getElementById('placeholder-' + key);
         if (!img || !name) return;
-
         fetch(`https://api.inaturalist.org/v1/observations?taxon_name=${encodeURIComponent(name)}&photos=true&quality_grade=research&order_by=id&order=desc&per_page=10`)
             .then(r => r.json())
             .then(data => {
@@ -227,22 +209,16 @@ function loadCardImages() {
                     for (const p of (obs.photos || [])) {
                         const url = (p.url || '').replace('/square.', '/medium.');
                         if (url && url.includes('inaturalist')) {
-                            img.src = url;
-                            img.style.display = 'block';
-                            ph.classList.add('hidden');
-                            return;
+                            img.src = url; img.style.display = 'block'; ph.classList.add('hidden'); return;
                         }
                     }
                 }
-            })
-            .catch(() => {});
+            }).catch(() => {});
     });
 }
-
 document.addEventListener('DOMContentLoaded', () => setTimeout(loadCardImages, 100));
 
-// ── Lightbox ──
-function lbOpen(photos,i){ lbPhotos=photos; lbCurrent=i; lbRender(); lbEl.classList.add('open'); }
+function lbOpen(photos,i){ lbPhotos=photos; lbCurrent=i; if(lbEl.parentNode!==document.body)document.body.appendChild(lbEl); document.body.style.overflow=''; lbRender(); lbEl.classList.add('open'); }
 function lbClose(){ lbEl.classList.remove('open'); }
 function lbRender(){
     const p=lbPhotos[lbCurrent], img=document.getElementById('lb-img');
@@ -256,22 +232,23 @@ document.getElementById('lb-close').onclick=lbClose;
 document.getElementById('lb-prev').onclick=()=>{ lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length; lbRender(); };
 document.getElementById('lb-next').onclick=()=>{ lbCurrent=(lbCurrent+1)%lbPhotos.length; lbRender(); };
 
-// ── Abrir modal ──
 function openModal(speciesKey) {
     backdrop.classList.add('open'); document.body.style.overflow='hidden';
     currentSpeciesKey = speciesKey;
-    document.getElementById('smodal-sci').textContent='Cargando...';
+    document.getElementById('smodal-sci').textContent=t('modal.loading');
     document.getElementById('smodal-common').textContent='';
     document.getElementById('smodal-kingdom-badge').textContent='';
     document.getElementById('smodal-iucn-badge').style.display='none';
-    document.getElementById('smodal-hero-img').src='';
+    const cardImg = document.querySelector(`.species-card[data-species-key="${speciesKey}"] .sc-img`);
+    const heroImg = document.getElementById('smodal-hero-img');
+    heroImg.src = cardImg ? cardImg.src : '';
     document.getElementById('smodal-names-list').innerHTML='';
     document.getElementById('smodal-names-wrap').style.display='none';
     document.getElementById('smodal-desc-wrap').style.display='none';
     document.getElementById('gallery-grid').style.display='none';
     document.getElementById('smodal-gallery-loading').style.display='flex';
     document.getElementById('btn-favorito').className='smodal-action-btn';
-    document.getElementById('btn-favorito-text').textContent='Favorito';
+    document.getElementById('btn-favorito-text').textContent=t('modal.favorito');
     ['smodal-kingdom','smodal-phylum','smodal-class','smodal-order','smodal-family','smodal-genus'].forEach(id=>document.getElementById(id).textContent='—');
     document.querySelector('.smodal-right').scrollTop=0;
 
@@ -285,31 +262,27 @@ function openModal(speciesKey) {
             document.getElementById('smodal-sci').textContent=nombre;
             document.getElementById('smodal-common').textContent=sp.common_name||'';
             document.getElementById('smodal-kingdom-badge').textContent=sp.kingdom||'';
-
             const iucnL={"EX":"💀 Extinta","EW":"💀 Ext. silvestre","CR":"🔴 Peligro crítico","EN":"🟠 En peligro","VU":"🟡 Vulnerable","NT":"🟢 Casi amenazada","LC":"⚪ Preoc. menor"};
             const iucnC={"EX":"#1a1a1a","EW":"#1a1a1a","CR":"rgba(220,38,38,0.8)","EN":"rgba(234,88,12,0.8)","VU":"rgba(202,138,4,0.8)","NT":"rgba(45,138,78,0.6)","LC":"rgba(0,0,0,0.3)"};
             const badge=document.getElementById('smodal-iucn-badge');
             if(sp.iucn_status&&iucnL[sp.iucn_status]){ badge.textContent=iucnL[sp.iucn_status]; badge.style.background=iucnC[sp.iucn_status]; badge.style.color='#fff'; badge.style.display='inline-block'; }
-
             document.getElementById('smodal-kingdom').textContent=sp.kingdom||'—';
             document.getElementById('smodal-phylum').textContent=sp.phylum||'—';
             document.getElementById('smodal-class').textContent=sp.class||'—';
             document.getElementById('smodal-order').textContent=sp.order||'—';
             document.getElementById('smodal-family').textContent=sp.family||'—';
             document.getElementById('smodal-genus').textContent=sp.genus||'—';
-
             if(sp.common_names&&sp.common_names.length){
                 document.getElementById('smodal-names-wrap').style.display='';
                 const list=document.getElementById('smodal-names-list');
                 sp.common_names.forEach(cn=>{ const pill=document.createElement('span'); pill.className='smodal-name-pill'; pill.textContent=cn.name; list.appendChild(pill); });
             }
             if(sp.description){ document.getElementById('smodal-desc-wrap').style.display=''; document.getElementById('smodal-description').textContent=sp.description; }
-            if(data.es_favorito){ document.getElementById('btn-favorito').className='smodal-action-btn active-fav'; document.getElementById('btn-favorito-text').textContent='En favoritos'; }
+            if(data.es_favorito){ document.getElementById('btn-favorito').className='smodal-action-btn active-fav'; document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos'); }
             document.getElementById('btn-avistamiento').href='/perfil/avistamientos/nuevo/'+speciesKey+'/';
-
             loadGallery(nombre, speciesKey);
         })
-        .catch(()=>{ document.getElementById('smodal-sci').textContent='Error cargando datos'; });
+        .catch(()=>{ document.getElementById('smodal-sci').textContent=t('modal.error'); });
 }
 
 function changeDescLang(lang){
@@ -320,45 +293,22 @@ function changeDescLang(lang){
     }
 }
 
-// ── Galería: iNaturalist recientes verificadas (evita fotos virales con excavadoras) ──
 function loadGallery(name, speciesKey) {
-    const grid    = document.getElementById('gallery-grid');
-    const loading = document.getElementById('smodal-gallery-loading');
-    const heroImg = document.getElementById('smodal-hero-img');
-
+    const grid=document.getElementById('gallery-grid'), loading=document.getElementById('smodal-gallery-loading');
+    const heroImg=document.getElementById('smodal-hero-img');
     fetch(`https://api.inaturalist.org/v1/observations?taxon_name=${encodeURIComponent(name)}&photos=true&quality_grade=research&order_by=id&order=desc&per_page=20`)
         .then(r=>r.json())
         .then(data=>{
             const photos=[];
-            (data.results||[]).forEach(obs=>{
-                (obs.photos||[]).forEach(p=>{
-                    const url=(p.url||'').replace('/square.','/large.');
-                    if(url && url.includes('inaturalist') && !photos.find(x=>x.url===url)){
-                        photos.push({ url, caption: name });
-                    }
-                });
-            });
-
+            (data.results||[]).forEach(obs=>{ (obs.photos||[]).forEach(p=>{ const url=(p.url||'').replace('/square.','/large.'); if(url&&url.includes('inaturalist')&&!photos.find(x=>x.url===url)) photos.push({url,caption:name}); }); });
             loading.style.display='none';
-
-            // Hero con la primera foto
-            if(photos.length>0){ heroImg.src=photos[0].url.replace('/large.','/medium.'); }
-
+            // hero ya establecido desde sp.image_url;
             if(!photos.length){ grid.style.display='none'; return; }
-
             grid.innerHTML=''; grid.style.display='grid';
-            photos.slice(0,6).forEach((ph,i)=>{
-                const item=document.createElement('div');
-                item.className='gallery-item';
-                item.innerHTML=`<img src="${ph.url}" alt="${name}" loading="lazy" onerror="this.closest('.gallery-item').style.display='none'"><div class="gallery-item-overlay"><span class="gallery-zoom-icon">🔍</span></div>`;
-                item.onclick=()=>lbOpen(photos.slice(0,6),i);
-                grid.appendChild(item);
-            });
-        })
-        .catch(()=>{ loading.style.display='none'; });
+            photos.slice(0,6).forEach((ph,i)=>{ const item=document.createElement('div'); item.className='gallery-item'; item.innerHTML=`<img src="${ph.url}" alt="${name}" loading="lazy" onerror="this.closest('.gallery-item').style.display='none'"><div class="gallery-item-overlay"><span class="gallery-zoom-icon">🔍</span></div>`; item.onclick=()=>lbOpen(photos.slice(0,6),i); grid.appendChild(item); });
+        }).catch(()=>{ loading.style.display='none'; });
 }
 
-// ── Favorito ──
 function toggleFavorito(){
     if(!isAuthenticated){ window.location.href='/login/'; return; }
     const btn=document.getElementById('btn-favorito'); btn.disabled=true;
@@ -366,8 +316,8 @@ function toggleFavorito(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(!data.success){ if(data.limite)BioNotify.limitePremium(data.error); return; }
-        if(data.es_favorito){ btn.className='smodal-action-btn active-fav'; document.getElementById('btn-favorito-text').textContent='En favoritos'; BioNotify.toast('Añadido a favoritos','❤️'); }
-        else{ btn.className='smodal-action-btn'; document.getElementById('btn-favorito-text').textContent='Favorito'; BioNotify.toast('Eliminado de favoritos','💔'); }
+        if(data.es_favorito){ btn.className='smodal-action-btn active-fav'; document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos'); BioNotify.toast(t('modal.en_favoritos'),'❤️'); }
+        else{ btn.className='smodal-action-btn'; document.getElementById('btn-favorito-text').textContent=t('modal.favorito'); BioNotify.toast('Eliminado de favoritos','💔'); }
     }).catch(()=>{ btn.disabled=false; });
 }
 

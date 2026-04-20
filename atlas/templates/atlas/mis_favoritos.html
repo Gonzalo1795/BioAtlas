@@ -6,17 +6,19 @@
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
         <div>
-            <h1 style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--text); margin:0; letter-spacing:-0.02em;">❤️ Mis favoritos</h1>
-            <p style="color:var(--text-muted); font-size:0.88rem; margin:4px 0 0;">{{ total }} especie{{ total|pluralize:"s" }} guardada{{ total|pluralize:"s" }}</p>
+            <h1 style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--text); margin:0; letter-spacing:-0.02em;">❤️ <span data-i18n="favs.titulo">Mis favoritos</span></h1>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin:4px 0 0;">{{ total }} <span data-i18n="favs.guardadas">especie{{ total|pluralize:"s" }} guardada{{ total|pluralize:"s" }}</span></p>
         </div>
-        <a href="{% url 'atlas:perfil' %}" style="color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;">← Volver al perfil</a>
+        <a href="{% url 'atlas:perfil' %}" style="color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;" data-i18n="favs.volver">← Volver al perfil</a>
     </div>
 
     <!-- Buscador para añadir -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem;">
-        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 10px;">Añadir especie a favoritos</p>
+        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 10px;" data-i18n="favs.añadir_titulo">Añadir especie a favoritos</p>
         <div id="fav-search-wrap" style="position:relative;">
-            <input type="text" id="fav-search-input" placeholder="Busca una especie por nombre..."
+            <input type="text" id="fav-search-input"
+                   data-i18n-placeholder="favs.buscar_placeholder"
+                   placeholder="Busca una especie por nombre..."
                    style="width:100%; padding:10px 16px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.88rem; outline:none; box-sizing:border-box; font-family:var(--font-body); transition:all 0.2s;"
                    onfocus="this.style.borderColor='var(--green-dim)';this.style.boxShadow='0 0 0 3px var(--green-glow)'"
                    onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
@@ -44,7 +46,8 @@
                 <p style="font-size:0.7rem; color:var(--text-faint); margin:2px 0 8px;">{{ fav.created_at|date:"d/m/Y" }}</p>
                 <button onclick="quitarFavorito({{ fav.especie.species_key }}, this)"
                     style="width:100%; padding:6px; border-radius:var(--radius-sm); border:1px solid rgba(248,113,113,0.2); background:none; color:#F87171; font-size:0.75rem; cursor:pointer; font-weight:600; font-family:var(--font-body); transition:all 0.15s;"
-                    onmouseover="this.style.background='rgba(248,113,113,0.08)'" onmouseout="this.style.background='none'">
+                    onmouseover="this.style.background='rgba(248,113,113,0.08)'" onmouseout="this.style.background='none'"
+                    data-i18n="favs.quitar">
                     🗑️ Quitar
                 </button>
             </div>
@@ -54,18 +57,18 @@
 
     {% if page_obj.has_other_pages %}
     <div class="pagination">
-        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← Anterior</a>{% endif %}
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" data-i18n="pagination.prev">← Anterior</a>{% endif %}
         <span class="current">{{ page_obj.number }} / {{ paginator.num_pages }}</span>
-        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Siguiente →</a>{% endif %}
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" data-i18n="pagination.next">Siguiente →</a>{% endif %}
     </div>
     {% endif %}
 
     {% else %}
     <div style="text-align:center; padding:5rem 2rem;">
         <div style="font-size:3rem; margin-bottom:1rem;">❤️</div>
-        <p style="font-size:1rem; font-weight:600; color:var(--text-muted);">Aún no tienes favoritos</p>
-        <p style="font-size:0.88rem; color:var(--text-faint); margin-top:6px;">Usa el buscador de arriba o explora el atlas</p>
-        <a href="{% url 'atlas:index' %}" style="display:inline-block; margin-top:1.5rem; padding:10px 24px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.88rem;">Explorar atlas</a>
+        <p style="font-size:1rem; font-weight:600; color:var(--text-muted);" data-i18n="favs.vacio_titulo">Aún no tienes favoritos</p>
+        <p style="font-size:0.88rem; color:var(--text-faint); margin-top:6px;" data-i18n="favs.vacio_sub">Usa el buscador de arriba o explora el atlas</p>
+        <a href="{% url 'atlas:index' %}" style="display:inline-block; margin-top:1.5rem; padding:10px 24px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.88rem;" data-i18n="favs.explorar">Explorar atlas</a>
     </div>
     {% endif %}
 </div>
@@ -83,11 +86,11 @@ function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.l
         const q=this.value.trim(); clearTimeout(timer);
         if(q.length<1){dropdown.style.display='none';return;}
         dropdown.style.display='block';
-        dropdown.innerHTML='<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Buscando...</div>';
+        dropdown.innerHTML=`<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">${t('search.loading')}</div>`;
         timer=setTimeout(()=>{
             fetch(`/api/buscar/?q=${encodeURIComponent(q)}`).then(r=>r.json()).then(data=>{
                 const res=data.resultados||[];
-                if(!res.length){dropdown.innerHTML='<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Sin resultados</div>';return;}
+                if(!res.length){dropdown.innerHTML=`<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">${t('search.noresults')} "${q}"</div>`;return;}
                 dropdown.innerHTML=res.map(e=>{
                     const n=e.canonical_name||e.scientific_name;
                     const img=e.image_url?`<img src="${e.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;">🌿</div>`;
@@ -99,7 +102,7 @@ function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.l
                             <div style="font-size:0.85rem;font-weight:600;font-style:italic;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${n}</div>
                             <div style="font-size:0.72rem;color:var(--text-muted);">${e.kingdom||''}</div>
                         </div>
-                        <span style="font-size:0.75rem;color:var(--green);font-weight:700;white-space:nowrap;">+ Favorito</span>
+                        <span style="font-size:0.75rem;color:var(--green);font-weight:700;white-space:nowrap;">+ ${t('favs.añadir_btn')}</span>
                     </div>`;
                 }).join('');
             }).catch(()=>{dropdown.style.display='none';});
@@ -112,8 +115,8 @@ function addFavFromSearch(speciesKey,nombre){
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
     .then(r=>r.json()).then(data=>{
         if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
-        if(data.es_favorito){BioNotify.toast(`${nombre} añadida a favoritos`,'❤️');document.getElementById('fav-search-input').value='';document.getElementById('fav-search-dropdown').style.display='none';setTimeout(()=>location.reload(),1200);}
-        else BioNotify.toast(`${nombre} eliminada de favoritos`,'💔');
+        if(data.es_favorito){BioNotify.toast(`${nombre} ${t('favs.añadida')}`,'❤️');document.getElementById('fav-search-input').value='';document.getElementById('fav-search-dropdown').style.display='none';setTimeout(()=>location.reload(),1200);}
+        else BioNotify.toast(`${nombre} ${t('favs.eliminada')}`,'💔');
     });
 }
 
@@ -122,7 +125,7 @@ function quitarFavorito(speciesKey,btn){
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
     .then(r=>r.json()).then(data=>{
         if(data.success&&!data.es_favorito){
-            BioNotify.toast('Eliminado de favoritos','💔');
+            BioNotify.toast(t('favs.eliminado_toast'),'💔');
             const card=btn.closest('[style*="background:var(--bg-card)"]');
             if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>card.remove(),300);}
         }else btn.disabled=false;

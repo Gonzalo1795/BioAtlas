@@ -91,9 +91,10 @@ def _is_real_photo(url: str, attribution: str = "") -> bool:
 def _upgrade_url_quality(url: str) -> str:
     """Sube la resolución de una URL de iNaturalist a la máxima disponible."""
     return (url
-        .replace("/square.", "/large.")
-        .replace("/medium.", "/large.")
-        .replace("/small.", "/large.")
+        .replace("/square.", "/original.")
+        .replace("/medium.", "/original.")
+        .replace("/small.",  "/original.")
+        .replace("/large.",  "/original.")
     )
 
 

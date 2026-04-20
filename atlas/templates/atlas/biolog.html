@@ -5,10 +5,10 @@
 <div class="page-header">
     <div class="container">
         <nav class="breadcrumb">
-            <a href="{% url 'atlas:index' %}">Inicio</a><span>/</span><span>Mi Atlas</span>
+            <a href="{% url 'atlas:index' %}" data-i18n="nav.inicio">Inicio</a><span>/</span><span data-i18n="atlas.titulo">Mi Atlas</span>
         </nav>
-        <h1>🌿 Mi Atlas</h1>
-        <p class="page-subtitle">Tu atlas personal de biodiversidad</p>
+        <h1>🌿 <span data-i18n="atlas.titulo">Mi Atlas</span></h1>
+        <p class="page-subtitle" data-i18n="atlas.subtitulo">Tu atlas personal de biodiversidad</p>
     </div>
 </div>
 
@@ -18,22 +18,22 @@
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:2rem;">
         <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center;">
             <div style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--text);">{{ total_especies }}</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Especies</div>
+            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;" data-i18n="atlas.stat.especies">Especies</div>
         </div>
         <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center;">
             <div style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--text);">{{ total_paises }}</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Países</div>
+            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;" data-i18n="atlas.stat.paises">Países</div>
         </div>
         {% if not suscripcion.es_premium %}
         <div style="background:var(--bg-card); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1.25rem; text-align:center;">
-            <div style="font-size:0.9rem; font-weight:700; color:var(--gold); margin-bottom:4px;">Plan Gratuito</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">{{ total_paises }}/{{ limite_paises }} países</div>
+            <div style="font-size:0.9rem; font-weight:700; color:var(--gold); margin-bottom:4px;" data-i18n="atlas.plan_gratis">Plan Gratuito</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">{{ total_paises }}/{{ limite_paises }} <span data-i18n="atlas.stat.paises_lower">países</span></div>
             <a href="{% url 'atlas:premium' %}" style="display:inline-block; margin-top:8px; padding:4px 14px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; font-size:0.72rem; font-weight:700; text-decoration:none;">✨ Premium</a>
         </div>
         {% else %}
         <div style="background:var(--bg-card); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1.25rem; text-align:center;">
             <div style="font-size:0.9rem; font-weight:700; color:var(--gold);">✨ Premium</div>
-            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Sin límites</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;" data-i18n="atlas.sin_limites">Sin límites</div>
         </div>
         {% endif %}
     </div>
@@ -43,10 +43,10 @@
     <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1rem 1.25rem; display:flex; align-items:center; gap:12px; margin-bottom:1.5rem;">
         <span style="font-size:1.5rem;">⚠️</span>
         <div style="flex:1;">
-            <strong style="color:var(--gold);">Has alcanzado el límite de {{ limite_paises }} países.</strong>
-            <span style="color:var(--text-muted); font-size:0.88rem;"> Hazte Premium para desbloquear todos los países.</span>
+            <strong style="color:var(--gold);" data-i18n="atlas.limite_alcanzado">Has alcanzado el límite de países.</strong>
+            <span style="color:var(--text-muted); font-size:0.88rem;" data-i18n="atlas.limite_sub"> Hazte Premium para desbloquear todos los países.</span>
         </div>
-        <a href="{% url 'atlas:premium' %}" style="padding:8px 18px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; font-size:0.82rem; font-weight:700; text-decoration:none; white-space:nowrap;">Ver Premium</a>
+        <a href="{% url 'atlas:premium' %}" style="padding:8px 18px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; font-size:0.82rem; font-weight:700; text-decoration:none; white-space:nowrap;" data-i18n="atlas.ver_premium">Ver Premium</a>
     </div>
     {% endif %}
 
@@ -68,7 +68,7 @@
                 <div style="background:linear-gradient(90deg,var(--green),#6EE79A); height:100%; border-radius:999px; width:{{ p.porcentaje }}%; transition:width 0.6s ease;"></div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.78rem; color:var(--text-muted);"><strong style="color:var(--text);">{{ p.coleccionadas }}</strong> / {{ p.total }} especies</span>
+                <span style="font-size:0.78rem; color:var(--text-muted);"><strong style="color:var(--text);">{{ p.coleccionadas }}</strong> / {{ p.total }} <span data-i18n="atlas.especies_lower">especies</span></span>
                 <span style="font-size:0.78rem; font-weight:700; color:var(--green);">{{ p.porcentaje }}%</span>
             </div>
         </a>
@@ -78,11 +78,11 @@
     {% else %}
     <div style="text-align:center; padding:5rem 2rem;">
         <div style="font-size:4rem; margin-bottom:1rem;">🌱</div>
-        <h2 style="font-family:var(--font-display); color:var(--text); font-size:1.4rem; margin-bottom:0.5rem;">Tu Mi Atlas está vacío</h2>
-        <p style="color:var(--text-muted); font-size:0.95rem; max-width:420px; margin:0 auto 1.5rem; line-height:1.6;">
-            Explora cualquier país y pulsa <strong style="color:var(--green);">🌿 Mi Atlas</strong> en la ficha de cada especie para empezar tu colección.
+        <h2 style="font-family:var(--font-display); color:var(--text); font-size:1.4rem; margin-bottom:0.5rem;" data-i18n="atlas.vacio_titulo">Tu Mi Atlas está vacío</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; max-width:420px; margin:0 auto 1.5rem; line-height:1.6;" data-i18n="atlas.vacio_sub">
+            Explora cualquier país y pulsa 🌿 Mi Atlas en la ficha de cada especie para empezar tu colección.
         </p>
-        <a href="{% url 'atlas:index' %}" style="display:inline-block; padding:12px 28px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700;">Explorar el atlas</a>
+        <a href="{% url 'atlas:index' %}" style="display:inline-block; padding:12px 28px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700;" data-i18n="atlas.explorar">Explorar el atlas</a>
     </div>
     {% endif %}
 

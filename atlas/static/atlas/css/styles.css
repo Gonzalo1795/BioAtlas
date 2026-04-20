@@ -51,6 +51,12 @@ body {
    NAVBAR
    ═══════════════════════════════════════════════════════════════ */
 
+#nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .navbar {
   position: sticky; top: 0; z-index: 10000;
   background: var(--nav-bg);
@@ -321,14 +327,36 @@ body {
    MODAL HORIZONTAL
    ═══════════════════════════════════════════════════════════════ */
 
-.smodal-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+.smodal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem;
+  padding-top: 76px;
+}
 .smodal-backdrop.open { display: flex; }
 
-/* Modal más ancho para que la imagen se vea bien */
-.smodal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 1100px; height: min(640px, 90vh); display: flex; flex-direction: row; overflow: hidden; position: relative; box-shadow: var(--shadow-lg); animation: modalIn 0.25s ease; }
+.smodal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 1100px;
+  height: min(600px, calc(100vh - 96px));
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.25s ease;
+}
 @keyframes modalIn { from{transform:translateY(16px) scale(0.97);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
 
-/* Panel izquierdo más ancho — imagen principal más grande */
 .smodal-left { width: 440px; min-width: 440px; position: relative; background: var(--bg-surface); overflow: hidden; flex-shrink: 0; }
 .smodal-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .smodal-hero-gradient { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); }
@@ -375,7 +403,7 @@ body {
    LIGHTBOX
    ═══════════════════════════════════════════════════════════════ */
 
-.lightbox { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; }
+.lightbox { position: fixed; inset: 0; z-index: 10001; background: rgba(0,0,0,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; }
 .lightbox.open { display: flex; }
 .lightbox-main { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; flex: 1; padding: 1rem 4rem; box-sizing: border-box; }
 .lightbox-img { max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: var(--radius-sm); transition: opacity 0.2s; }
@@ -457,77 +485,55 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 .nav-mobile-menu.open { display: flex !important; }
-
 .nav-mobile-menu a {
-  display: block;
-  padding: 11px 14px;
-  border-radius: var(--radius-sm);
-  color: var(--nav-text);
-  text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 500;
-  font-family: var(--font-body);
-  transition: background 0.15s;
+  display: block; padding: 11px 14px; border-radius: var(--radius-sm);
+  color: var(--nav-text); text-decoration: none; font-size: 0.92rem;
+  font-weight: 500; font-family: var(--font-body); transition: background 0.15s;
 }
 .nav-mobile-menu a:hover { background: rgba(255,255,255,0.06); }
-
-.nav-mobile-divider {
-  height: 1px;
-  background: rgba(255,255,255,0.07);
-  margin: 6px 0;
-}
-
-.nav-mobile-lang {
-  display: flex;
-  gap: 8px;
-  padding: 4px 0;
-}
+.nav-mobile-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
+.nav-mobile-lang { display: flex; gap: 8px; padding: 4px 0; }
 .nav-mobile-lang button {
-  flex: 1;
-  padding: 9px;
-  text-align: center;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: var(--nav-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--font-body);
-  transition: all 0.15s;
+  flex: 1; padding: 9px; text-align: center; border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+  color: var(--nav-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); transition: all 0.15s;
 }
-.nav-mobile-lang button.active {
-  border-color: #4ADE80;
-  color: #4ADE80;
-  background: rgba(74,222,128,0.08);
-}
+.nav-mobile-lang button.active { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,0.08); }
 
 /* ═══════════════════════════════════════════════════════════════
-   RESPONSIVEE
+   RESPONSIVE
    ═══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 1200px) {
   .species-grid { grid-template-columns: repeat(4, 1fr); }
 }
-@media (max-width: 900px) {
+
+@media (max-width: 1024px) {
   .atlas-layout { grid-template-columns: 1fr; }
   .filters-sidebar { position: static; }
   .species-grid { grid-template-columns: repeat(3, 1fr); }
-  .smodal { flex-direction: column; height: 92vh; max-width: 100%; }
+  .smodal { flex-direction: column; height: calc(100vh - 80px); max-width: 100%; }
   .smodal-left { width: 100%; min-width: unset; height: 240px; }
   .smodal-hero-img { height: 100%; }
   .smodal-taxo-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-hamburger { display: flex; }
+  #nav-desktop { display: none; }
+  #global-search-wrapper { display: none; }
+  #country-search-wrapper { display: none; }
 }
+
 @media (max-width: 800px) {
   .species-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-title { font-size: 2.2rem; }
   .navbar { padding: 0 1rem; }
   .world-map { height: 320px; }
   .smodal-left { height: 200px; }
+}
 
-  #global-search-wrapper,
-  #country-search-wrapper,
-  #nav-desktop { display: none !important; }
-
-  .nav-hamburger { display: flex; }
+@media (max-width: 480px) {
+  .species-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { font-size: 1.8rem; }
+  .container { padding: 0 1rem; }
+  .page-header h1 { font-size: 1.5rem; }
 }

@@ -5,7 +5,7 @@
 <div class="page-header">
     <div class="container">
         <nav class="breadcrumb">
-            <a href="{% url 'atlas:index' %}">Inicio</a><span>/</span><span>{{ continente.nombre }}</span>
+            <a href="{% url 'atlas:index' %}" data-i18n="nav.inicio">Inicio</a><span>/</span><span>{{ continente.nombre }}</span>
         </nav>
         <h1>
             {% if continente.codigo == 'EU' %}🏰
@@ -19,9 +19,9 @@
         </h1>
         <p class="page-subtitle">
             {% if continente.codigo == 'AN' %}
-                Territorio de investigación científica · Sin soberanía nacional
+                <span data-i18n="cont.antartida_sub">Territorio de investigación científica · Sin soberanía nacional</span>
             {% else %}
-                {{ paises.count }} países · Explora la biodiversidad de cada uno
+                {{ paises.count }} <span data-i18n="cont.paises_sub">países · Explora la biodiversidad de cada uno</span>
             {% endif %}
         </p>
     </div>
@@ -32,10 +32,10 @@
     {% if continente.codigo == 'AN' %}
     <div style="max-width:600px; margin:0 auto; text-align:center; padding:3rem 0;">
         <div style="font-size:4rem; margin-bottom:1rem;">🧊</div>
-        <h2 style="font-family:var(--font-display); font-size:1.5rem; color:var(--text); margin-bottom:0.75rem;">
+        <h2 style="font-family:var(--font-display); font-size:1.5rem; color:var(--text); margin-bottom:0.75rem;" data-i18n="cont.antartida_titulo">
             La Antártida no tiene países
         </h2>
-        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:2rem; max-width:480px; margin-left:auto; margin-right:auto;">
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:2rem; max-width:480px; margin-left:auto; margin-right:auto;" data-i18n="cont.antartida_desc">
             La Antártida está administrada por el Tratado Antártico (1959) y no tiene
             soberanía nacional. Sin embargo, alberga una biodiversidad única adaptada
             a condiciones extremas: pingüinos, focas, krill y numerosas especies marinas.
@@ -46,7 +46,8 @@
                   background:var(--green); color:#fff; border-radius:999px;
                   text-decoration:none; font-weight:700; font-size:0.95rem; transition:all 0.2s;"
            onmouseover="this.style.background='#236B3C'; this.style.transform='translateY(-2px)'"
-           onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'">
+           onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'"
+           data-i18n="cont.antartida_btn">
             🌿 Ver biodiversidad antártica
         </a>
         {% endif %}
@@ -70,13 +71,13 @@
                 <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-faint); background:var(--bg-surface); padding:2px 6px; border-radius:4px; flex-shrink:0;">{{ pais.codigo }}</span>
             </div>
             {% if pais.num_especies %}
-            <span style="font-size:0.78rem; color:var(--green); font-weight:600;">🌿 {{ pais.num_especies }} especies</span>
+            <span style="font-size:0.78rem; color:var(--green); font-weight:600;">🌿 {{ pais.num_especies }} <span data-i18n="cont.especies">especies</span></span>
             {% else %}
-            <span style="font-size:0.75rem; color:var(--text-faint);">Sin datos aún</span>
+            <span style="font-size:0.75rem; color:var(--text-faint);" data-i18n="cont.sin_datos">Sin datos aún</span>
             {% endif %}
         </a>
         {% empty %}
-        <p style="color:var(--text-muted);">No hay países disponibles.</p>
+        <p style="color:var(--text-muted);" data-i18n="cont.sin_paises">No hay países disponibles.</p>
         {% endfor %}
     </div>
     {% endif %}

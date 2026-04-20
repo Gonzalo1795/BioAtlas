@@ -19,18 +19,19 @@
                 {% endif %}
                 {% endwith %}
             </div>
-            <p style="color:var(--text-muted); margin:4px 0 0; font-size:0.88rem;">Miembro de BioAtlas</p>
+            <p style="color:var(--text-muted); margin:4px 0 0; font-size:0.88rem;" data-i18n="perfil.miembro">Miembro de BioAtlas</p>
             {% if user.email %}<p style="color:var(--text-faint); font-size:0.82rem; margin:2px 0 0;">{{ user.email }}</p>{% endif %}
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1;">
             {% with suscripcion=user.suscripcion %}
             {% if not suscripcion.es_premium %}
-            <a href="{% url 'atlas:premium' %}" style="padding:10px 20px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.85rem;">✨ Hazte Premium</a>
+            <a href="{% url 'atlas:premium' %}" style="padding:10px 20px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.85rem;" data-i18n="perfil.hazte_premium">✨ Hazte Premium</a>
             {% else %}
             <form method="POST" action="{% url 'atlas:cancelar_suscripcion' %}">
                 {% csrf_token %}
                 <button type="submit" onclick="return confirm('¿Cancelar tu suscripción Premium?')"
-                    style="padding:8px 16px; background:var(--bg-surface); color:var(--text-muted); border:1px solid var(--border); border-radius:999px; font-size:0.8rem; cursor:pointer; font-family:var(--font-body);">
+                    style="padding:8px 16px; background:var(--bg-surface); color:var(--text-muted); border:1px solid var(--border); border-radius:999px; font-size:0.8rem; cursor:pointer; font-family:var(--font-body);"
+                    data-i18n="perfil.cancelar_premium">
                     Cancelar Premium
                 </button>
             </form>
@@ -44,28 +45,30 @@
         <a href="{% url 'atlas:mis_favoritos' %}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-decoration:none; text-align:center; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
             <div style="font-size:1.8rem; margin-bottom:0.5rem;">❤️</div>
             <div style="font-size:1.8rem; font-weight:800; color:var(--text); font-family:var(--font-display);">{{ num_favoritos }}</div>
-            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Favoritos</div>
+            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;" data-i18n="perfil.stat.favoritos">Favoritos</div>
             {% with suscripcion=user.suscripcion %}{% if not suscripcion.es_premium %}<div style="font-size:0.7rem; color:var(--text-faint); margin-top:2px;">{{ num_favoritos }}/{{ limite_favoritos }}</div>{% endif %}{% endwith %}
         </a>
         <a href="{% url 'atlas:mis_avistamientos' %}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-decoration:none; text-align:center; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
             <div style="font-size:1.8rem; margin-bottom:0.5rem;">📍</div>
             <div style="font-size:1.8rem; font-weight:800; color:var(--text); font-family:var(--font-display);">{{ num_avistamientos }}</div>
-            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Avistamientos</div>
+            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;" data-i18n="perfil.stat.avistamientos">Avistamientos</div>
             {% with suscripcion=user.suscripcion %}{% if not suscripcion.es_premium %}<div style="font-size:0.7rem; color:var(--text-faint); margin-top:2px;">{{ num_avistamientos }}/{{ limite_avistamientos }}</div>{% endif %}{% endwith %}
         </a>
         <a href="{% url 'atlas:biolog' %}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-decoration:none; text-align:center; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
             <div style="font-size:1.8rem; margin-bottom:0.5rem;">🌿</div>
             <div style="font-size:1.8rem; font-weight:800; color:var(--text); font-family:var(--font-display);">{{ num_biolog }}</div>
-            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">En Mi Atlas</div>
+            <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;" data-i18n="perfil.stat.atlas">En Mi Atlas</div>
             <div style="font-size:0.7rem; color:var(--text-faint); margin-top:2px;">{{ paises_biolog }} país{{ paises_biolog|pluralize:"es" }}</div>
         </a>
     </div>
 
     <!-- Buscador rápido -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem;">
-        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 10px;">🔍 Añadir especie rápidamente</p>
+        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 10px;" data-i18n="perfil.buscar_rapido">🔍 Añadir especie rápidamente</p>
         <div id="perfil-search-wrap" style="position:relative;">
-            <input type="text" id="perfil-search-input" placeholder="Busca una especie para añadir a favoritos..."
+            <input type="text" id="perfil-search-input"
+                   data-i18n-placeholder="perfil.buscar_placeholder"
+                   placeholder="Busca una especie para añadir a favoritos..."
                    style="width:100%; padding:10px 16px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:0.88rem; outline:none; box-sizing:border-box; font-family:var(--font-body); transition:all 0.2s;"
                    onfocus="this.style.borderColor='var(--green-dim)'; this.style.boxShadow='0 0 0 3px var(--green-glow)'"
                    onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
@@ -76,7 +79,7 @@
     <!-- Últimos avistamientos -->
     {% if ultimos_avistamientos %}
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;">
-        <h2 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text); margin:0 0 1.25rem;">📍 Últimos avistamientos</h2>
+        <h2 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text); margin:0 0 1.25rem;">📍 <span data-i18n="perfil.ultimos_avist">Últimos avistamientos</span></h2>
         {% for av in ultimos_avistamientos %}
         <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border);">
             {% if av.especie.image_url %}
@@ -90,7 +93,7 @@
             </div>
         </div>
         {% endfor %}
-        <a href="{% url 'atlas:mis_avistamientos' %}" style="display:block; text-align:center; margin-top:1rem; color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;">Ver todos →</a>
+        <a href="{% url 'atlas:mis_avistamientos' %}" style="display:block; text-align:center; margin-top:1rem; color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;" data-i18n="perfil.ver_todos">Ver todos →</a>
     </div>
     {% endif %}
 
@@ -104,14 +107,15 @@
         <div style="display:flex; gap:8px; flex-direction:column;">
             <button id="qm-fav-btn" onclick="quickAddFav()"
                 style="padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text-muted); font-size:0.88rem; font-weight:600; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
-                🤍 Añadir a favoritos
+                🤍 <span data-i18n="perfil.modal.añadir_fav">Añadir a favoritos</span>
             </button>
             <a id="qm-avist-btn" href="#"
-                style="padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text-muted); font-size:0.88rem; font-weight:600; text-decoration:none; display:block; transition:all 0.2s;">
+                style="padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text-muted); font-size:0.88rem; font-weight:600; text-decoration:none; display:block; transition:all 0.2s."
+                data-i18n="perfil.modal.registrar_avist">
                 📍 Registrar avistamiento
             </a>
         </div>
-        <button onclick="closeQuickModal()" style="margin-top:1rem; background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:0.85rem; font-family:var(--font-body);">Cancelar</button>
+        <button onclick="closeQuickModal()" style="margin-top:1rem; background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:0.85rem; font-family:var(--font-body);" data-i18n="perfil.modal.cancelar">Cancelar</button>
     </div>
 </div>
 {% endblock %}
@@ -129,11 +133,11 @@ function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.l
         const q=this.value.trim(); clearTimeout(timer);
         if(q.length<1){dropdown.style.display='none';return;}
         dropdown.style.display='block';
-        dropdown.innerHTML='<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Buscando...</div>';
+        dropdown.innerHTML=`<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">${t('search.loading')}</div>`;
         timer=setTimeout(()=>{
             fetch(`/api/buscar/?q=${encodeURIComponent(q)}`).then(r=>r.json()).then(data=>{
                 const res=data.resultados||[];
-                if(!res.length){dropdown.innerHTML='<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Sin resultados</div>';return;}
+                if(!res.length){dropdown.innerHTML=`<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">${t('search.noresults')} "${q}"</div>`;return;}
                 dropdown.innerHTML=res.map(e=>{
                     const n=e.canonical_name||e.scientific_name;
                     const img=e.image_url?`<img src="${e.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🌿</div>`;
@@ -158,7 +162,8 @@ function openQuickModal(speciesKey,nombre,imgUrl){
     document.getElementById('qm-name').textContent=nombre;
     const img=document.getElementById('qm-img');
     if(imgUrl){img.src=imgUrl;img.style.display='block';}else{img.style.display='none';}
-    document.getElementById('qm-fav-btn').textContent='🤍 Añadir a favoritos';
+    document.getElementById('qm-fav-btn').querySelector('[data-i18n]').textContent=t('perfil.modal.añadir_fav');
+    document.getElementById('qm-avist-btn').textContent='📍 '+t('perfil.modal.registrar_avist');
     document.getElementById('qm-avist-btn').href='/perfil/avistamientos/nuevo/'+speciesKey+'/';
     document.getElementById('quick-modal-backdrop').style.display='flex';
     document.getElementById('perfil-search-dropdown').style.display='none';
@@ -174,8 +179,8 @@ function quickAddFav(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
-        if(data.es_favorito){btn.textContent='❤️ En favoritos';BioNotify.toast('Añadido a favoritos','❤️');}
-        else{btn.textContent='🤍 Añadir a favoritos';BioNotify.toast('Eliminado de favoritos','💔');}
+        if(data.es_favorito){btn.querySelector('[data-i18n]').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'❤️');}
+        else{btn.querySelector('[data-i18n]').textContent=t('perfil.modal.añadir_fav');BioNotify.toast('Eliminado de favoritos','💔');}
     }).catch(()=>{btn.disabled=false;});
 }
 
