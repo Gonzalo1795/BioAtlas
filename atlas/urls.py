@@ -48,4 +48,10 @@ urlpatterns = [
     path('antartida/', views.antartida_detail, name='antartida_detail'),
 
     path('api/buscar-paises/', views.api_buscar_paises, name='api_buscar_paises'),
+
+
+    path('terminos/', views.terminos, name='terminos'),
+    path('privacidad/', views.privacidad, name='privacidad'),
+    path('cookies/', views.cookies, name='cookies'),
+    path('contacto/', views.contacto, name='contacto'),
 ]

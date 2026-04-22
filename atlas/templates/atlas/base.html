@@ -10,66 +10,17 @@
     {% block extra_css %}{% endblock %}
     <style>
         .navbar { position: sticky; top: 0; z-index: 10000; }
-
-        .nav-hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            padding: 6px;
-            margin-left: auto;
-            background: none;
-            border: none;
-            flex-shrink: 0;
-        }
-        .nav-hamburger span {
-            display: block;
-            width: 22px;
-            height: 2px;
-            background: #F0F4F1;
-            border-radius: 2px;
-        }
-
-        #nav-mobile-menu {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            background: #0A0F0D;
-            border-bottom: 1px solid rgba(74,222,128,0.08);
-            padding: 1rem 1.5rem 1.5rem;
-            flex-direction: column;
-            gap: 4px;
-            z-index: 9999;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
-        #nav-mobile-menu a {
-            display: block;
-            padding: 11px 14px;
-            border-radius: 8px;
-            color: #F0F4F1;
-            text-decoration: none;
-            font-size: 0.92rem;
-            font-weight: 500;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s;
-        }
+        .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; margin-left: auto; background: none; border: none; flex-shrink: 0; }
+        .nav-hamburger span { display: block; width: 22px; height: 2px; background: #F0F4F1; border-radius: 2px; }
+        #nav-mobile-menu { position: fixed; top: 60px; left: 0; right: 0; background: #0A0F0D; border-bottom: 1px solid rgba(74,222,128,0.08); padding: 1rem 1.5rem 1.5rem; flex-direction: column; gap: 4px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        #nav-mobile-menu a { display: block; padding: 11px 14px; border-radius: 8px; color: #F0F4F1; text-decoration: none; font-size: 0.92rem; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
         #nav-mobile-menu a:hover { background: rgba(255,255,255,0.06); }
         .nav-mobile-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
         .nav-mobile-lang { display: flex; gap: 8px; padding: 4px 0; }
-        .nav-mobile-lang button {
-            flex: 1; padding: 9px; text-align: center;
-            border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05); color: #8A9E8E;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            font-family: 'DM Sans', sans-serif; transition: all 0.15s;
-        }
+        .nav-mobile-lang button { flex: 1; padding: 9px; text-align: center; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #8A9E8E; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
         .nav-mobile-lang button.active { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,0.08); }
-
         @media (max-width: 1024px) {
-            #global-search-wrapper,
-            #country-search-wrapper,
-            #nav-desktop { display: none !important; }
+            #global-search-wrapper, #country-search-wrapper, #nav-desktop { display: none !important; }
             .nav-hamburger { display: flex; }
         }
     </style>
@@ -78,7 +29,6 @@
 
 <nav class="navbar">
     <div class="container">
-
         <a href="{% url 'atlas:index' %}" class="logo">
             <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
                 <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
@@ -128,7 +78,10 @@
                                 <a href="{% url 'atlas:premium' %}" class="premium-link">✨ <span data-i18n="menu.premium">Hazte Premium</span></a>
                             {% endif %}
                         {% endwith %}
-                        {% if user.is_superuser %}<div class="divider"></div><a href="/admin/" style="color:var(--gold);">⚙️ Panel Admin</a>{% endif %}
+                        {% if user.is_superuser %}
+                            <div class="divider"></div>
+                            <a href="/admin/" style="color:var(--gold);">⚙️ Panel Admin</a>
+                        {% endif %}
                         <div class="divider"></div>
                         <form method="POST" action="{% url 'atlas:logout' %}">{% csrf_token %}<button type="submit" class="logout-btn">🚪 <span data-i18n="menu.logout">Cerrar sesión</span></button></form>
                     </div>
@@ -155,7 +108,6 @@
         <button class="nav-hamburger" id="nav-hamburger">
             <span></span><span></span><span></span>
         </button>
-
     </div>
 </nav>
 
@@ -198,6 +150,16 @@
     <div class="container">
         <p>&copy; 2026 BioAtlas &mdash; <span data-i18n="footer.desc">Atlas Mundial de Biodiversidad</span></p>
         <p class="footer-credits"><span data-i18n="footer.data">Datos de biodiversidad proporcionados por</span> <a href="https://www.gbif.org/" target="_blank" rel="noopener">GBIF</a></p>
+        <p style="font-size:0.75rem; color:var(--text-faint); margin-top:6px;">
+            <a href="{% url 'atlas:terminos' %}" style="color:var(--text-faint); text-decoration:none;">Términos y condiciones</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'atlas:privacidad' %}" style="color:var(--text-faint); text-decoration:none;">Privacidad</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'atlas:cookies' %}" style="color:var(--text-faint); text-decoration:none;">Cookies</a>
+            &nbsp;·&nbsp;
+            <a href="mailto:bioatlas@gmail.com" style="color:var(--text-faint); text-decoration:none;">bioatlas@gmail.com</a>
+            <a href="{% url 'atlas:contacto' %}" style="color:var(--text-faint); text-decoration:none;">Contacto</a>
+        </p>
     </div>
 </footer>
 
@@ -230,22 +192,15 @@ const TRANSLATIONS={
     "about.edu.title":"Educativo","about.edu.desc":"Diseñado para estudiantes y entusiastas de la biología que quieren explorar la diversidad de especies del planeta.",
     "about.exp.title":"Explorativo","about.exp.desc":"Navega interactivamente por continentes y países a través de un mapa mundial inmersivo.",
     "about.upd.title":"Actualizado","about.upd.desc":"Datos de biodiversidad en tiempo real proporcionados por GBIF — la mayor base de datos de biodiversidad del mundo.",
-    // pais_detail — filtros
     "filters.title":"Filtros","filters.search":"Buscar especie...","filters.all_kingdoms":"Todos los reinos",
     "filters.all_phylums":"Todos los filos","filters.all_classes":"Todas las clases",
     "filters.all_orders":"Todos los órdenes","filters.all_families":"Todas las familias",
     "filters.iucn_all":"Estado IUCN — Todos","filters.apply":"Aplicar filtros","filters.clear":"Limpiar",
-    // pais_detail — pills
-    "pill.all":"🌐 Todos",
-    "pill.mammalia":"🦁 Mamíferos","pill.aves":"🦅 Aves","pill.reptilia":"🦎 Reptiles",
+    "pill.all":"🌐 Todos","pill.mammalia":"🦁 Mamíferos","pill.aves":"🦅 Aves","pill.reptilia":"🦎 Reptiles",
     "pill.amphibia":"🐸 Anfibios","pill.peces":"🐟 Peces","pill.insecta":"🦋 Insectos","pill.plantas":"🌸 Plantas",
-    // pais_detail — empty
     "species.empty":"No se encontraron especies con los filtros seleccionados.",
-    // pais_detail — paginacion
     "pagination.prev":"« Anterior","pagination.next":"Siguiente »",
-    // pais_detail — overlay
     "species.details":"Ver detalles →",
-    // modal
     "modal.loading":"Cargando...","modal.error":"Error cargando datos",
     "modal.favorito":"Favorito","modal.en_favoritos":"En favoritos",
     "modal.miatlas":"Mi Atlas","modal.en_miatlas":"En Mi Atlas ✓",
@@ -254,21 +209,17 @@ const TRANSLATIONS={
     "modal.taxonomia":"Clasificación taxonómica","modal.galeria":"Galería de fotos",
     "taxo.reino":"Reino","taxo.filo":"Filo","taxo.clase":"Clase",
     "taxo.orden":"Orden","taxo.familia":"Familia","taxo.genero":"Género",
-    // especies registradas
     "pais.especies":"especies registradas","pais.en_atlas":"en tu Mi Atlas",
-    // buscar especie
     "buscar.titulo":"Buscar especie","buscar.subtitulo":"Explora más de 185.000 especies de todo el mundo",
     "buscar.placeholder":"Nombre científico o común...","buscar.btn":"Buscar",
     "buscar.sin_resultados":"No se encontraron resultados","buscar.sin_resultados_tip":"Prueba con el nombre científico o en inglés",
     "buscar.sugerencias":"Sugerencias",
-    // perfil
     "perfil.miembro":"Miembro de BioAtlas","perfil.hazte_premium":"✨ Hazte Premium",
     "perfil.cancelar_premium":"Cancelar Premium",
     "perfil.stat.favoritos":"Favoritos","perfil.stat.avistamientos":"Avistamientos","perfil.stat.atlas":"En Mi Atlas",
     "perfil.buscar_rapido":"🔍 Añadir especie rápidamente","perfil.buscar_placeholder":"Busca una especie para añadir a favoritos...",
     "perfil.ultimos_avist":"Últimos avistamientos","perfil.ver_todos":"Ver todos →",
     "perfil.modal.añadir_fav":"Añadir a favoritos","perfil.modal.registrar_avist":"Registrar avistamiento","perfil.modal.cancelar":"Cancelar",
-    // registro
     "registro.titulo":"Empieza a explorar","registro.subtitulo":"Crea tu cuenta gratuita y empieza a coleccionar especies de todo el mundo",
     "registro.label.usuario":"Nombre de usuario","registro.ph.usuario":"Ej: naturalista_pro",
     "registro.label.email":"Email","registro.label.opcional":"(opcional)",
@@ -279,14 +230,11 @@ const TRANSLATIONS={
     "registro.ver_premium":"✨ Ver plan Premium →",
     "registro.ya_tienes":"¿Ya tienes cuenta?","registro.ir_login":"Iniciar sesión →",
     "registro.volver":"← Volver al atlas",
-    // login
     "login.titulo":"Bienvenido de nuevo","login.subtitulo":"Inicia sesión para acceder a tu atlas personal",
     "login.label.usuario":"Usuario","login.ph.usuario":"Tu nombre de usuario",
-    "login.label.password":"Contraseña",
-    "login.btn":"Iniciar sesión →",
+    "login.label.password":"Contraseña","login.btn":"Iniciar sesión →",
     "login.no_cuenta":"¿No tienes cuenta?","login.ir_registro":"Regístrate gratis →",
     "login.volver":"← Volver al atlas",
-    // favoritos
     "favs.titulo":"Mis favoritos","favs.guardadas":"especies guardadas",
     "favs.volver":"← Volver al perfil",
     "favs.añadir_titulo":"Añadir especie a favoritos","favs.buscar_placeholder":"Busca una especie por nombre...",
@@ -294,7 +242,6 @@ const TRANSLATIONS={
     "favs.añadida":"añadida a favoritos","favs.eliminada":"eliminada de favoritos","favs.eliminado_toast":"Eliminado de favoritos",
     "favs.vacio_titulo":"Aún no tienes favoritos","favs.vacio_sub":"Usa el buscador de arriba o explora el atlas",
     "favs.explorar":"Explorar atlas",
-    // avistamientos
     "avist.titulo":"Mis avistamientos","avist.registrados":"avistamientos registrados",
     "avist.volver":"← Volver al perfil",
     "avist.nuevo_titulo":"Registrar nuevo avistamiento","avist.buscar_placeholder":"Busca la especie que has visto...",
@@ -303,7 +250,6 @@ const TRANSLATIONS={
     "avist.confirm_si":"Sí, eliminar","avist.confirm_no":"Cancelar",
     "avist.vacio_titulo":"Aún no has registrado ningún avistamiento",
     "avist.vacio_sub":"Usa el buscador de arriba para registrar tu primer avistamiento",
-    // Mi Atlas
     "atlas.titulo":"Mi Atlas","atlas.subtitulo":"Tu atlas personal de biodiversidad",
     "atlas.stat.especies":"Especies","atlas.stat.paises":"Países","atlas.stat.paises_lower":"países","atlas.especies_lower":"especies",
     "atlas.plan_gratis":"Plan Gratuito","atlas.sin_limites":"Sin límites",
@@ -313,7 +259,6 @@ const TRANSLATIONS={
     "atlas.vacio_titulo":"Tu Mi Atlas está vacío",
     "atlas.vacio_sub":"Explora cualquier país y pulsa 🌿 Mi Atlas en la ficha de cada especie para empezar tu colección.",
     "atlas.explorar":"Explorar el atlas",
-    // premium
     "premium.hero_titulo":"Explora la biodiversidad sin ningún límite",
     "premium.hero_sub":"Accede a todas las funciones de BioAtlas con una suscripción mensual. Cancela cuando quieras.",
     "premium.ya_premium":"Ya eres usuario Premium",
@@ -327,7 +272,6 @@ const TRANSLATIONS={
     "premium.p3":"✓ Avistamientos ilimitados","premium.p4":"✓ Mi Atlas sin límites",
     "premium.p5":"✓ Todos los países del mundo",
     "premium.btn_empezar":"Empezar ahora →",
-    // nuevo avistamiento
     "nuevo_avist.volver":"← Volver a mis avistamientos",
     "nuevo_avist.registrar_label":"📍 Registrar avistamiento",
     "nuevo_avist.limite_msg":"Has alcanzado el límite de avistamientos del plan gratuito.",
@@ -335,13 +279,10 @@ const TRANSLATIONS={
     "nuevo_avist.label.fecha":"Fecha *","nuevo_avist.label.lugar":"Lugar *",
     "nuevo_avist.ph.lugar":"Ej: Parque Nacional de Doñana, España",
     "nuevo_avist.label.notas":"Notas","nuevo_avist.ph.notas":"Describe lo que viste...",
-    "nuevo_avist.label.foto":"Foto",
-    "nuevo_avist.btn":"Guardar avistamiento →",
-    // premium success
+    "nuevo_avist.label.foto":"Foto","nuevo_avist.btn":"Guardar avistamiento →",
     "success.titulo":"¡Bienvenido a BioAtlas Premium!",
     "success.subtitulo":"Tu suscripción está activa. Ya puedes explorar la biodiversidad del mundo sin ningún límite.",
     "success.btn_atlas":"Ir a Mi Atlas →","success.btn_explorar":"Explorar el atlas",
-    // continente
     "cont.antartida_sub":"Territorio de investigación científica · Sin soberanía nacional",
     "cont.paises_sub":"países · Explora la biodiversidad de cada uno",
     "cont.antartida_titulo":"La Antártida no tiene países",
@@ -353,7 +294,6 @@ const TRANSLATIONS={
     "ant.datos":"Datos","ant.total_especies":"Total especies",
     "ant.codigo_gbif":"Código GBIF","ant.tratado":"Tratado",
     "ant.sin_especies":"Aún no hay especies sincronizadas",
-    // biolog_pais
     "biolog_pais.coleccionadas":"especies coleccionadas de","biolog_pais.disponibles":"disponibles",
     "biolog_pais.progreso":"Progreso en",
     "biolog_pais.sin_filtro":"No hay especies con este filtro.","biolog_pais.ver_todas":"Ver todas →",
@@ -378,8 +318,7 @@ const TRANSLATIONS={
     "filters.all_phylums":"All phylums","filters.all_classes":"All classes",
     "filters.all_orders":"All orders","filters.all_families":"All families",
     "filters.iucn_all":"IUCN Status — All","filters.apply":"Apply filters","filters.clear":"Clear",
-    "pill.all":"🌐 All",
-    "pill.mammalia":"🦁 Mammals","pill.aves":"🦅 Birds","pill.reptilia":"🦎 Reptiles",
+    "pill.all":"🌐 All","pill.mammalia":"🦁 Mammals","pill.aves":"🦅 Birds","pill.reptilia":"🦎 Reptiles",
     "pill.amphibia":"🐸 Amphibians","pill.peces":"🐟 Fish","pill.insecta":"🦋 Insects","pill.plantas":"🌸 Plants",
     "species.empty":"No species found with the selected filters.",
     "pagination.prev":"« Previous","pagination.next":"Next »",
@@ -415,8 +354,7 @@ const TRANSLATIONS={
     "registro.volver":"← Back to atlas",
     "login.titulo":"Welcome back","login.subtitulo":"Sign in to access your personal atlas",
     "login.label.usuario":"Username","login.ph.usuario":"Your username",
-    "login.label.password":"Password",
-    "login.btn":"Sign in →",
+    "login.label.password":"Password","login.btn":"Sign in →",
     "login.no_cuenta":"Don't have an account?","login.ir_registro":"Register for free →",
     "login.volver":"← Back to atlas",
     "favs.titulo":"My favourites","favs.guardadas":"saved species",
@@ -463,8 +401,7 @@ const TRANSLATIONS={
     "nuevo_avist.label.fecha":"Date *","nuevo_avist.label.lugar":"Location *",
     "nuevo_avist.ph.lugar":"E.g: Doñana National Park, Spain",
     "nuevo_avist.label.notas":"Notes","nuevo_avist.ph.notas":"Describe what you saw...",
-    "nuevo_avist.label.foto":"Photo",
-    "nuevo_avist.btn":"Save sighting →",
+    "nuevo_avist.label.foto":"Photo","nuevo_avist.btn":"Save sighting →",
     "success.titulo":"Welcome to BioAtlas Premium!",
     "success.subtitulo":"Your subscription is active. You can now explore the world's biodiversity without any limits.",
     "success.btn_atlas":"Go to My Atlas →","success.btn_explorar":"Explore the atlas",
@@ -503,8 +440,7 @@ const TRANSLATIONS={
     "filters.all_phylums":"Tous les phylums","filters.all_classes":"Toutes les classes",
     "filters.all_orders":"Tous les ordres","filters.all_families":"Toutes les familles",
     "filters.iucn_all":"Statut UICN — Tous","filters.apply":"Appliquer les filtres","filters.clear":"Effacer",
-    "pill.all":"🌐 Tous",
-    "pill.mammalia":"🦁 Mammifères","pill.aves":"🦅 Oiseaux","pill.reptilia":"🦎 Reptiles",
+    "pill.all":"🌐 Tous","pill.mammalia":"🦁 Mammifères","pill.aves":"🦅 Oiseaux","pill.reptilia":"🦎 Reptiles",
     "pill.amphibia":"🐸 Amphibiens","pill.peces":"🐟 Poissons","pill.insecta":"🦋 Insectes","pill.plantas":"🌸 Plantes",
     "species.empty":"Aucune espèce trouvée avec les filtres sélectionnés.",
     "pagination.prev":"« Précédent","pagination.next":"Suivant »",
@@ -540,8 +476,7 @@ const TRANSLATIONS={
     "registro.volver":"← Retour à l'atlas",
     "login.titulo":"Bienvenue de retour","login.subtitulo":"Connectez-vous pour accéder à votre atlas personnel",
     "login.label.usuario":"Utilisateur","login.ph.usuario":"Votre nom d'utilisateur",
-    "login.label.password":"Mot de passe",
-    "login.btn":"Se connecter →",
+    "login.label.password":"Mot de passe","login.btn":"Se connecter →",
     "login.no_cuenta":"Vous n'avez pas de compte ?","login.ir_registro":"S'inscrire gratuitement →",
     "login.volver":"← Retour à l'atlas",
     "favs.titulo":"Mes favoris","favs.guardadas":"espèces sauvegardées",
@@ -588,8 +523,7 @@ const TRANSLATIONS={
     "nuevo_avist.label.fecha":"Date *","nuevo_avist.label.lugar":"Lieu *",
     "nuevo_avist.ph.lugar":"Ex: Parc National de Doñana, Espagne",
     "nuevo_avist.label.notas":"Notes","nuevo_avist.ph.notas":"Décrivez ce que vous avez vu...",
-    "nuevo_avist.label.foto":"Photo",
-    "nuevo_avist.btn":"Enregistrer l'observation →",
+    "nuevo_avist.label.foto":"Photo","nuevo_avist.btn":"Enregistrer l'observation →",
     "success.titulo":"Bienvenue sur BioAtlas Premium !",
     "success.subtitulo":"Votre abonnement est actif. Vous pouvez maintenant explorer la biodiversité mondiale sans aucune limite.",
     "success.btn_atlas":"Aller à Mon Atlas →","success.btn_explorar":"Explorer l'atlas",

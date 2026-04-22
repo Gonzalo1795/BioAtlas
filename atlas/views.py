@@ -51,7 +51,6 @@ def index(request):
         for p in paises
     ]
 
-    # Añadir la Antártida como marcador especial en el mapa
     try:
         ant = TerritorioEspecial.objects.get(codigo='AQ')
         paises_data.append({
@@ -122,25 +121,24 @@ class PaisDetailView(DetailView):
 
         especies_qs = Especie.objects.filter(paises=pais)
 
-        kingdom    = self.request.GET.get("kingdom")
-        phylum     = self.request.GET.get("phylum")
-        class_name = self.request.GET.get("class_name")
-        order      = self.request.GET.get("order")
-        family     = self.request.GET.get("family")
-        search     = self.request.GET.get("search")
+        kingdom     = self.request.GET.get("kingdom")
+        phylum      = self.request.GET.get("phylum")
+        class_name  = self.request.GET.get("class_name")
+        order       = self.request.GET.get("order")
+        family      = self.request.GET.get("family")
+        search      = self.request.GET.get("search")
         iucn_status = self.request.GET.get('iucn_status')
 
-
         if iucn_status: especies_qs = especies_qs.filter(iucn_status=iucn_status)
-        if kingdom:    especies_qs = especies_qs.filter(kingdom=kingdom)
-        if phylum:     especies_qs = especies_qs.filter(phylum=phylum)
+        if kingdom:     especies_qs = especies_qs.filter(kingdom=kingdom)
+        if phylum:      especies_qs = especies_qs.filter(phylum=phylum)
         if class_name:
             if class_name == 'Reptilia':
                 especies_qs = especies_qs.filter(class_name__in=REPTIL_CLASSES)
             else:
                 especies_qs = especies_qs.filter(class_name=class_name)
-        if order:      especies_qs = especies_qs.filter(order=order)
-        if family:     especies_qs = especies_qs.filter(family=family)
+        if order:  especies_qs = especies_qs.filter(order=order)
+        if family: especies_qs = especies_qs.filter(family=family)
         if search:
             especies_qs = especies_qs.filter(
                 Q(scientific_name__icontains=search) |
@@ -264,15 +262,9 @@ class PaisDetailView(DetailView):
 
 # =======================================================================
 # ANTÁRTIDA — Territorio Especial
-# La Antártida no es un país. Tiene su propia vista independiente.
 # =======================================================================
 
 def antartida_detail(request):
-    """
-    Página de biodiversidad de la Antártida.
-    La Antártida no es un país: es un territorio especial sin soberanía
-    administrado por el Tratado Antártico (1959).
-    """
     territorio  = get_object_or_404(TerritorioEspecial, codigo='AQ')
     especies_qs = Especie.objects.filter(territorios=territorio)
 
@@ -349,13 +341,13 @@ def buscar_especie(request):
         gbif_data = GBIFService.search_species(query)
         if gbif_data:
             especie, _ = Especie.objects.get_or_create(
-                species_key=gbif_data["species_key"],
+                species_key=gbif_data["key"],
                 defaults={
                     "scientific_name": gbif_data["scientific_name"],
                     "canonical_name":  gbif_data.get("canonical_name", ""),
                     "kingdom":         gbif_data.get("kingdom", ""),
                     "phylum":          gbif_data.get("phylum", ""),
-                    "class_name":      gbif_data.get("class_name", ""),
+                    "class_name":      gbif_data.get("class", ""),
                     "order":           gbif_data.get("order", ""),
                     "family":          gbif_data.get("family", ""),
                     "genus":           gbif_data.get("genus", ""),
@@ -739,17 +731,19 @@ def biolog_pais(request, pais_pk):
         .select_related('especie').order_by('-created_at')
     )
 
-    # ── Filtros ──────────────────────────────────────────────────────────
     kingdom    = request.GET.get("kingdom", "")
     class_name = request.GET.get("class_name", "")
     iucn       = request.GET.get("iucn_status", "")
     search     = request.GET.get("search", "").strip()[:100]
 
-    if kingdom:    entradas = entradas.filter(especie__kingdom=kingdom)
-    if class_name: entradas = entradas.filter(especie__class_name=class_name)
-    if iucn:       entradas = entradas.filter(especie__iucn_status=iucn)
+    if kingdom: entradas = entradas.filter(especie__kingdom=kingdom)
+    if class_name:
+        if class_name == 'Reptilia':
+            entradas = entradas.filter(especie__class_name__in=REPTIL_CLASSES)
+        else:
+            entradas = entradas.filter(especie__class_name=class_name)
+    if iucn:   entradas = entradas.filter(especie__iucn_status=iucn)
     if search:
-        from django.db.models import Q
         entradas = entradas.filter(
             Q(especie__scientific_name__icontains=search) |
             Q(especie__canonical_name__icontains=search)  |
@@ -762,14 +756,12 @@ def biolog_pais(request, pais_pk):
     total_pais          = Especie.objects.filter(paises=pais).count()
     porcentaje          = round(total_coleccionadas / total_pais * 100, 1) if total_pais else 0
 
-    # ── Imágenes ─────────────────────────────────────────────────────────
     keys_pagina   = [e.especie.species_key for e in page_obj.object_list]
     imagenes_pais = {}
     for ep in EspeciePais.objects.filter(pais=pais, especie__species_key__in=keys_pagina):
         if ep.image_url:
             imagenes_pais[ep.especie.species_key] = ep.image_url
 
-    # ── Favoritos del usuario en esta página ─────────────────────────────
     especies_favoritas = set(
         Favorito.objects.filter(
             usuario=request.user,
@@ -777,7 +769,6 @@ def biolog_pais(request, pais_pk):
         ).values_list('especie__species_key', flat=True)
     )
 
-    # ── Opciones para los filtros (sobre todas las entradas sin filtrar) ──
     todas_entradas = BioLog.objects.filter(usuario=request.user, pais=pais)
     kingdoms_disponibles = (
         todas_entradas.values_list('especie__kingdom', flat=True)
@@ -920,7 +911,6 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 
-
 def api_buscar_paises(request):
     q = request.GET.get('q', '').strip()
     if not q:
@@ -930,16 +920,30 @@ def api_buscar_paises(request):
     ).values('id', 'nombre', 'codigo', 'continente__nombre', 'num_especies')[:8]
     return JsonResponse({'paises': [
         {
-            'id':          p['id'],
-            'nombre':      p['nombre'],
-            'codigo':      p['codigo'],
-            'continente':  p['continente__nombre'] or '',
+            'id':           p['id'],
+            'nombre':       p['nombre'],
+            'codigo':       p['codigo'],
+            'continente':   p['continente__nombre'] or '',
             'num_especies': p['num_especies'] or 0,
         } for p in paises
     ]})
 
+
 def error_404(request, exception=None):
     return render(request, '404.html', status=404)
 
+
 def error_500(request):
-    return render(request, '500.html', status=500) 
+    return render(request, '500.html', status=500)
+
+def terminos(request):
+    return render(request, 'atlas/terminos.html')
+
+def privacidad(request):
+    return render(request, 'atlas/privacidad.html')
+
+def cookies(request):
+    return render(request, 'atlas/cookies.html')
+
+def contacto(request):
+    return render(request, 'atlas/contacto.html')

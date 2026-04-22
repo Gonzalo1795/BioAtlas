@@ -1,0 +1,72 @@
+{% extends 'atlas/base.html' %}
+{% block title %}Política de Cookies — BioAtlas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}" data-i18n="nav.inicio">Inicio</a>
+            <span>/</span>
+            <span>Política de Cookies</span>
+        </nav>
+        <h1>Política de Cookies</h1>
+        <p class="page-subtitle">Última actualización: abril de 2026</p>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom: 4rem; max-width: 860px;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; margin-top: 1.5rem; line-height: 1.8; color: var(--text-muted); font-size: 0.92rem;">
+
+        <p style="margin-bottom: 1.5rem;"><strong style="color:var(--text);">BioAtlas</strong> utiliza cookies estrictamente necesarias para el funcionamiento de la plataforma. Esta página explica qué cookies usamos y para qué.</p>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin: 2rem 0 0.75rem;">¿Qué es una cookie?</h2>
+        <p>Una cookie es un pequeño archivo de texto que se almacena en tu navegador cuando visitas una página web. Las cookies permiten que la web recuerde información sobre tu visita para mejorar tu experiencia.</p>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin: 2rem 0 0.75rem;">Cookies que utilizamos</h2>
+
+        <div style="border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 1rem 0;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+                <thead>
+                    <tr style="background: var(--bg-surface);">
+                        <th style="padding: 12px 16px; text-align: left; color: var(--text); font-weight: 700; border-bottom: 1px solid var(--border);">Cookie</th>
+                        <th style="padding: 12px 16px; text-align: left; color: var(--text); font-weight: 700; border-bottom: 1px solid var(--border);">Tipo</th>
+                        <th style="padding: 12px 16px; text-align: left; color: var(--text); font-weight: 700; border-bottom: 1px solid var(--border);">Finalidad</th>
+                        <th style="padding: 12px 16px; text-align: left; color: var(--text); font-weight: 700; border-bottom: 1px solid var(--border);">Duración</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--green);">sessionid</td>
+                        <td style="padding: 12px 16px;">Técnica</td>
+                        <td style="padding: 12px 16px;">Mantiene la sesión del usuario autenticado en la plataforma.</td>
+                        <td style="padding: 12px 16px;">Sesión</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--green);">csrftoken</td>
+                        <td style="padding: 12px 16px;">Seguridad</td>
+                        <td style="padding: 12px 16px;">Protege los formularios contra ataques CSRF (Cross-Site Request Forgery).</td>
+                        <td style="padding: 12px 16px;">1 año</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--green);">bioatlas-lang</td>
+                        <td style="padding: 12px 16px;">Preferencias</td>
+                        <td style="padding: 12px 16px;">Almacena el idioma seleccionado por el usuario (ES, EN, FR) en localStorage.</td>
+                        <td style="padding: 12px 16px;">Persistente</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin: 2rem 0 0.75rem;">Cookies de terceros</h2>
+        <p>BioAtlas <strong style="color:var(--text);">no utiliza cookies de seguimiento, publicidad ni analítica</strong>. No hay cookies de Google Analytics, Facebook Pixel ni ninguna otra herramienta de tracking.</p>
+        <p style="margin-top: 0.75rem;">Si contratas el plan Premium, Stripe puede establecer sus propias cookies durante el proceso de pago. Estas cookies son gestionadas exclusivamente por Stripe y están sujetas a su propia <a href="https://stripe.com/es/privacy" target="_blank" style="color: var(--green);">política de privacidad</a>.</p>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin: 2rem 0 0.75rem;">Cómo gestionar las cookies</h2>
+        <p>Puedes configurar tu navegador para bloquear o eliminar cookies en cualquier momento. Ten en cuenta que bloquear las cookies técnicas puede impedir el correcto funcionamiento de la plataforma, especialmente el inicio de sesión.</p>
+
+        <h2 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin: 2rem 0 0.75rem;">Contacto</h2>
+        <p>Si tienes alguna pregunta sobre el uso de cookies en BioAtlas, puedes contactarnos en <a href="mailto:bioatlas@gmail.com" style="color: var(--green);">bioatlas@gmail.com</a>.</p>
+
+    </div>
+</div>
+{% endblock %}

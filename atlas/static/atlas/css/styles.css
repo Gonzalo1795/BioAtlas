@@ -514,8 +514,8 @@ body {
   .filters-sidebar { position: static; }
   .species-grid { grid-template-columns: repeat(3, 1fr); }
   .smodal { flex-direction: column; height: calc(100vh - 80px); max-width: 100%; }
-  .smodal-left { width: 100%; min-width: unset; height: 240px; }
-  .smodal-hero-img { height: 100%; }
+  .smodal-left { width: 100% !important; min-width: unset !important; height: 240px; }
+  .smodal-hero-img { width: 100%; height: 100%; object-fit: cover; }
   .smodal-taxo-grid { grid-template-columns: repeat(2, 1fr); }
   .nav-hamburger { display: flex; }
   #nav-desktop { display: none; }

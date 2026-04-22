@@ -5,35 +5,24 @@ from typing import Dict, Optional, List
 
 # ═══════════════════════════════════════════════════════════════════════
 # FILTROS DE CALIDAD DE IMAGEN
-# Funciones que determinan si una imagen es una foto real en hábitat
-# natural o si es una ilustración, espécimen de museo, montaje, etc.
-# El objetivo es mostrar siempre fotos reales y atractivas.
 # ═══════════════════════════════════════════════════════════════════════
 
-# Keywords en la URL que indican imágenes NO reales
 BAD_KEYWORDS = [
-    # Especímenes de museo / colecciones
     "label", "specimen", "sheet", "collection", "herbarium", "museum",
     "holotype", "syntype", "paratype", "type specimen",
-    # Ilustraciones y arte digital
     "illustration", "illustrat", "drawing", "painting", "artwork",
     "cartoon", "animated", "animation", "clipart", "vector",
     "diagram", "sketch", "render", "3d", "cgi",
-    # Montajes / composites
     "composite", "montage", "collage", "photoshop", "manipulation",
-    # Fondos blancos / estudio
     "white_background", "white-background", "cutout", "isolated",
-    # Bancos de imágenes comerciales
     "shutterstock", "gettyimages", "alamy", "dreamstime",
     "depositphotos", "istockphoto", "123rf",
 ]
 
-# Keywords en la atribución que indican ilustrador en vez de fotógrafo
 BAD_ATTRIBUTION_KEYWORDS = [
     "illustrat", "drawn by", "painted by", "artwork by", "digital art",
 ]
 
-# Mapa nombre de país → código ISO para iNaturalist
 COUNTRY_CODE_MAP = {
     "Afghanistan": "AF", "Albania": "AL", "Algeria": "DZ", "Angola": "AO",
     "Argentina": "AR", "Australia": "AU", "Austria": "AT", "Bangladesh": "BD",
@@ -65,7 +54,6 @@ COUNTRY_CODE_MAP = {
 
 
 def _is_bad_image(url: str) -> bool:
-    """Devuelve True si la URL contiene keywords de imágenes no reales."""
     if not url:
         return True
     url_lower = url.lower()
@@ -73,10 +61,6 @@ def _is_bad_image(url: str) -> bool:
 
 
 def _is_real_photo(url: str, attribution: str = "") -> bool:
-    """
-    Devuelve True si la imagen parece una foto real en hábitat natural.
-    Filtra ilustraciones, montajes, especímenes de museo y bancos comerciales.
-    """
     if not url:
         return False
     if _is_bad_image(url):
@@ -89,7 +73,6 @@ def _is_real_photo(url: str, attribution: str = "") -> bool:
 
 
 def _upgrade_url_quality(url: str) -> str:
-    """Sube la resolución de una URL de iNaturalist a la máxima disponible."""
     return (url
         .replace("/square.", "/original.")
         .replace("/medium.", "/original.")
@@ -100,23 +83,14 @@ def _upgrade_url_quality(url: str) -> str:
 
 # ═══════════════════════════════════════════════════════════════════════
 # FUENTES DE IMÁGENES
-# Pipeline de 6 fuentes ordenadas por calidad y especificidad geográfica.
-# Se prioriza siempre la foto más específica del país y la más votada
-# por la comunidad científica (observaciones verificadas).
 # ═══════════════════════════════════════════════════════════════════════
 
 def _get_image_inaturalist_by_country(scientific_name: str, country_name: str) -> Optional[str]:
-    """
-    FUENTE 1: iNaturalist observaciones verificadas del país.
-    Busca fotos reales de la especie tomadas en ese país concreto,
-    ordenadas por votos de la comunidad (las más espectaculares primero).
-    """
     country_code = COUNTRY_CODE_MAP.get(country_name)
     if not country_code:
         return None
 
     try:
-        # Paso 1: obtener el taxon_id de la especie
         r = requests.get(
             "https://api.inaturalist.org/v1/taxa",
             params={"q": scientific_name, "per_page": 1},
@@ -128,7 +102,6 @@ def _get_image_inaturalist_by_country(scientific_name: str, country_name: str) -
             return None
         taxon_id = taxa[0]["id"]
 
-        # Paso 2: observaciones verificadas en ese país, ordenadas por votos
         r2 = requests.get(
             "https://api.inaturalist.org/v1/observations",
             params={
@@ -158,11 +131,6 @@ def _get_image_inaturalist_by_country(scientific_name: str, country_name: str) -
 
 
 def _get_inaturalist_data(scientific_name: str) -> Dict:
-    """
-    FUENTE 2: iNaturalist foto global del taxón.
-    Obtiene la mejor foto global de la especie y su nombre común.
-    Primero intenta la observación más votada, luego la foto por defecto.
-    """
     try:
         r = requests.get(
             "https://api.inaturalist.org/v1/taxa",
@@ -183,7 +151,6 @@ def _get_inaturalist_data(scientific_name: str) -> Dict:
         if common_name:
             common_name = common_name.capitalize()
 
-        # Intentar la observación más votada globalmente
         r2 = requests.get(
             "https://api.inaturalist.org/v1/observations",
             params={
@@ -205,7 +172,6 @@ def _get_inaturalist_data(scientific_name: str) -> Dict:
                 if _is_real_photo(url, attribution):
                     return {"image_url": _upgrade_url_quality(url), "common_name": common_name}
 
-        # Fallback: foto por defecto del taxón
         photo = taxon.get("default_photo")
         if photo:
             url = photo.get("medium_url") or photo.get("square_url") or ""
@@ -218,16 +184,10 @@ def _get_inaturalist_data(scientific_name: str) -> Dict:
 
 
 def _get_image_inaturalist(scientific_name: str) -> Optional[str]:
-    """Wrapper que solo devuelve la URL de imagen de iNaturalist."""
     return _get_inaturalist_data(scientific_name).get("image_url")
 
 
 def _get_image_wikimedia(scientific_name: str, country_name: Optional[str] = None) -> Optional[str]:
-    """
-    FUENTE 3: Wikimedia Commons.
-    Busca la mejor foto disponible en Commons. Si se pasa country_name,
-    intenta primero con el país para una foto más específica.
-    """
     queries = []
     if country_name:
         queries.append(f"{scientific_name} {country_name}")
@@ -276,7 +236,6 @@ def _get_image_wikimedia(scientific_name: str, country_name: Optional[str] = Non
         except Exception:
             pass
 
-    # Fallback: Wikipedia pageimages
     try:
         r = requests.get(
             "https://en.wikipedia.org/w/api.php",
@@ -303,10 +262,6 @@ def _get_image_wikimedia(scientific_name: str, country_name: Optional[str] = Non
 
 
 def _get_image_gbif_by_country(species_key: int, country_code: str) -> Optional[str]:
-    """
-    FUENTE 4: GBIF occurrences geolocalizadas del país.
-    Las fotos de GBIF son fotos de campo reales tomadas por observadores.
-    """
     try:
         r = requests.get(
             "https://api.gbif.org/v1/occurrence/search",
@@ -330,10 +285,6 @@ def _get_image_gbif_by_country(species_key: int, country_code: str) -> Optional[
 
 
 def _get_image_eol(scientific_name: str) -> Optional[str]:
-    """
-    FUENTE 5: Encyclopedia of Life (EOL).
-    Fuente de último recurso con una gran colección de imágenes de especies.
-    """
     try:
         r = requests.get(
             "https://eol.org/api/search/1.0.json",
@@ -364,8 +315,6 @@ def _get_image_eol(scientific_name: str) -> Optional[str]:
 
 # ═══════════════════════════════════════════════════════════════════════
 # PIPELINE PRINCIPAL DE IMÁGENES
-# Orquesta las 5 fuentes en orden de prioridad.
-# Siempre prioriza fotos específicas del país antes que fotos globales.
 # ═══════════════════════════════════════════════════════════════════════
 
 def get_best_image(scientific_name: str,
@@ -373,42 +322,27 @@ def get_best_image(scientific_name: str,
                    country_name: Optional[str] = None,
                    species_key: Optional[int] = None,
                    country_code: Optional[str] = None) -> Dict:
-    """
-    Pipeline completo de imágenes. Orden de prioridad:
-    1. iNaturalist observaciones verificadas del país (más votadas)
-    2. GBIF occurrences del país (fotos de campo geolocalizadas)
-    3. iNaturalist observaciones verificadas globales
-    4. Foto GBIF genérica pasada como parámetro
-    5. Wikimedia Commons (con y sin país)
-    6. EOL
-    """
-    # 1. iNaturalist por país
     if country_name:
         url = _get_image_inaturalist_by_country(scientific_name, country_name)
         if url:
             return {"url": url, "source": "inaturalist_country"}
 
-    # 2. GBIF fotos del país
     if species_key and country_code:
         url = _get_image_gbif_by_country(species_key, country_code)
         if url:
             return {"url": url, "source": "gbif_country"}
 
-    # 3. iNaturalist global
     url = _get_image_inaturalist(scientific_name)
     if url:
         return {"url": url, "source": "inaturalist"}
 
-    # 4. Foto GBIF genérica
     if gbif_image_url and _is_real_photo(gbif_image_url):
         return {"url": gbif_image_url, "source": "gbif"}
 
-    # 5. Wikimedia Commons
     url = _get_image_wikimedia(scientific_name, country_name)
     if url:
         return {"url": url, "source": "wikimedia"}
 
-    # 6. EOL
     url = _get_image_eol(scientific_name)
     if url:
         return {"url": url, "source": "eol"}
@@ -421,10 +355,6 @@ def get_best_image_and_common_name(scientific_name: str,
                                    country_name: Optional[str] = None,
                                    species_key: Optional[int] = None,
                                    country_code: Optional[str] = None) -> Dict:
-    """
-    Como get_best_image pero también devuelve el nombre común en español.
-    Se usa al crear una especie nueva para guardar nombre común e imagen a la vez.
-    """
     inat_data   = _get_inaturalist_data(scientific_name)
     common_name = inat_data.get("common_name")
     inat_url    = inat_data.get("image_url")
@@ -458,16 +388,9 @@ def get_best_image_and_common_name(scientific_name: str,
 
 # ═══════════════════════════════════════════════════════════════════════
 # WIKIPEDIA — DESCRIPCIONES MULTIIDIOMA
-# Obtiene el primer párrafo del artículo de Wikipedia de una especie
-# en los tres idiomas del proyecto (ES, EN, FR).
 # ═══════════════════════════════════════════════════════════════════════
 
 def get_wikipedia_description(scientific_name: str, common_name: Optional[str] = None) -> Dict:
-    """
-    Obtiene el primer párrafo de Wikipedia para una especie en ES, EN y FR.
-    Intenta primero con el nombre científico y luego con el nombre común.
-    Devuelve un dict: {"es": "...", "en": "...", "fr": "..."}
-    """
     descripciones = {}
     idiomas = {
         "es": ["es.wikipedia.org", scientific_name, common_name],
@@ -486,10 +409,6 @@ def get_wikipedia_description(scientific_name: str, common_name: Optional[str] =
 
 
 def _get_wiki_extract(dominio: str, titulo: str) -> Optional[str]:
-    """
-    Obtiene el primer párrafo de un artículo de Wikipedia.
-    Limpia el texto eliminando paréntesis de pronunciación y referencias.
-    """
     if not titulo:
         return None
     try:
@@ -501,7 +420,7 @@ def _get_wiki_extract(dominio: str, titulo: str) -> Optional[str]:
                 "prop":          "extracts",
                 "exintro":       True,
                 "explaintext":   True,
-                "exsentences":   3,   # Solo las primeras 3 frases
+                "exsentences":   3,
                 "redirects":     1,
                 "format":        "json",
             },
@@ -522,9 +441,6 @@ def _get_wiki_extract(dominio: str, titulo: str) -> Optional[str]:
 
 # ═══════════════════════════════════════════════════════════════════════
 # GBIF SERVICE
-# Clase principal para interactuar con la API de GBIF.
-# Gestiona la sincronización de especies por país adaptada a la
-# nueva arquitectura ManyToMany (sin duplicados).
 # ═══════════════════════════════════════════════════════════════════════
 
 class GBIFService:
@@ -534,10 +450,6 @@ class GBIFService:
 
     @staticmethod
     def safe_request(url: str, params: Optional[Dict] = None, retries: int = 5) -> Optional[Dict]:
-        """
-        Petición HTTP con reintentos automáticos y manejo de rate limiting.
-        Espera progresivamente más tiempo entre reintentos.
-        """
         for intento in range(retries):
             try:
                 response = requests.get(url, params=params, timeout=20)
@@ -558,10 +470,6 @@ class GBIFService:
     def get_species_by_country_paginated(country_code: str,
                                           limit: int = 300,
                                           offset: int = 0) -> Dict:
-        """
-        Obtiene una página de especies de un país desde GBIF.
-        Filtra por reinos válidos y extrae la foto del occurrence si existe.
-        """
         data = GBIFService.safe_request(
             f"{GBIFService.BASE_URL}/occurrence/search",
             params={
@@ -583,7 +491,6 @@ class GBIFService:
             if record.get("kingdom") not in GBIFService.VALID_KINGDOMS:
                 continue
 
-            # Extraer foto del occurrence (ya geolocada en el país)
             gbif_image = None
             for m in record.get("media", []):
                 identifier = m.get("identifier", "")
@@ -611,15 +518,10 @@ class GBIFService:
 
     @staticmethod
     def get_species_detail(species_key: int) -> Optional[Dict]:
-        """
-        Obtiene los detalles completos de una especie desde GBIF,
-        incluyendo taxonomía, nombres comunes, imagen y descripción.
-        """
         data = GBIFService.safe_request(f"{GBIFService.BASE_URL}/species/{species_key}")
         if not data:
             return None
 
-        # Buscar foto en occurrences
         occ_data = GBIFService.safe_request(
             f"{GBIFService.BASE_URL}/occurrence/search",
             params={"taxonKey": species_key, "mediaType": "StillImage", "limit": 10}
@@ -638,7 +540,6 @@ class GBIFService:
         canonical    = data.get("canonicalName") or data.get("scientificName", "")
         image_result = get_best_image_and_common_name(canonical, gbif_image)
 
-        # Obtener nombres vernáculos
         vernacular_data = GBIFService.safe_request(
             f"{GBIFService.BASE_URL}/species/{species_key}/vernacularNames"
         )
@@ -679,17 +580,26 @@ class GBIFService:
 
     @staticmethod
     def search_species(query: str) -> Optional[Dict]:
-        """Busca una especie por nombre en GBIF y devuelve sus detalles completos."""
+        """Busca una especie por nombre en GBIF usando el endpoint match (más preciso)."""
         data = GBIFService.safe_request(
-            f"{GBIFService.BASE_URL}/species/search",
-            params={"q": query, "limit": 1, "rank": "SPECIES"}
+            f"{GBIFService.BASE_URL}/species/match",
+            params={"name": query, "kingdom": "Animalia"}
         )
-        if not data or not data.get("results"):
+        if not data or data.get("matchType") == "NONE":
+            data = GBIFService.safe_request(
+                f"{GBIFService.BASE_URL}/species/match",
+                params={"name": query}
+            )
+        if not data or data.get("matchType") == "NONE":
             return None
-        result      = data["results"][0]
-        species_key = result.get("key")
+
+        species_key = data.get("usageKey") or data.get("speciesKey")
         if not species_key:
             return None
+
+        if data.get("kingdom") not in GBIFService.VALID_KINGDOMS:
+            return None
+
         return GBIFService.get_species_detail(species_key)
 
     @staticmethod
@@ -701,9 +611,6 @@ class GBIFService:
         - Cada especie se crea UNA SOLA VEZ en la BD (get_or_create por species_key)
         - Luego se vincula al país mediante EspeciePais (sin duplicados)
         - Si la especie ya existe de otro país, solo se añade la vinculación nueva
-
-        Esto es la diferencia clave respecto al proyecto anterior donde
-        se creaba una especie distinta por cada país.
         """
         from .models import Pais, Especie, EspeciePais
 
@@ -733,7 +640,6 @@ class GBIFService:
                     continue
                 species_seen.add(key)
 
-                # Crear la especie si no existe (sin duplicados)
                 especie, created = Especie.objects.get_or_create(
                     species_key=key,
                     defaults={
@@ -754,7 +660,6 @@ class GBIFService:
                 if created:
                     total_nuevas += 1
 
-                # Vincular la especie al país con su foto específica
                 ep, vinc_created = EspeciePais.objects.get_or_create(
                     especie=especie,
                     pais=pais,
