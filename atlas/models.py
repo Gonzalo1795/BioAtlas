@@ -447,3 +447,43 @@ class BioLog(models.Model):
             )
 
         return True, ""
+
+
+    # ═══════════════════════════════════════════════════════════════════════
+# QUIZ — Examen Visual de Zoología
+# ═══════════════════════════════════════════════════════════════════════
+
+class QuizPartida(models.Model):
+    """
+    Registra una partida del quiz de identificación de especies.
+    Guarda la puntuación, racha máxima y dificultad.
+    """
+    DIFICULTAD_CHOICES = [
+        ('facil',  'Fácil'),
+        ('normal', 'Normal'),
+        ('dificil', 'Difícil'),
+    ]
+
+    usuario        = models.ForeignKey(User, on_delete=models.CASCADE,
+                                       related_name='quiz_partidas')
+    puntuacion     = models.IntegerField(default=0)
+    racha_maxima   = models.IntegerField(default=0)
+    preguntas_total = models.IntegerField(default=0)
+    aciertos       = models.IntegerField(default=0)
+    dificultad     = models.CharField(max_length=10, choices=DIFICULTAD_CHOICES,
+                                      default='normal')
+    created_at     = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name        = "Partida Quiz"
+        verbose_name_plural = "Partidas Quiz"
+        ordering            = ['-puntuacion']
+
+    def __str__(self):
+        return f"{self.usuario.username} — {self.puntuacion} pts ({self.dificultad})"
+
+    @property
+    def porcentaje_aciertos(self):
+        if self.preguntas_total == 0:
+            return 0
+        return round(self.aciertos / self.preguntas_total * 100)

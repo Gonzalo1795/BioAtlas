@@ -268,12 +268,24 @@ def antartida_detail(request):
     territorio  = get_object_or_404(TerritorioEspecial, codigo='AQ')
     especies_qs = Especie.objects.filter(territorios=territorio)
 
-    kingdom    = request.GET.get('kingdom')
-    class_name = request.GET.get('class_name')
-    search     = request.GET.get('search')
+    kingdom     = request.GET.get('kingdom')
+    phylum      = request.GET.get('phylum')
+    class_name  = request.GET.get('class_name')
+    order       = request.GET.get('order')
+    family      = request.GET.get('family')
+    iucn_status = request.GET.get('iucn_status')
+    search      = request.GET.get('search')
 
-    if kingdom:    especies_qs = especies_qs.filter(kingdom=kingdom)
-    if class_name: especies_qs = especies_qs.filter(class_name=class_name)
+    if kingdom:     especies_qs = especies_qs.filter(kingdom=kingdom)
+    if phylum:      especies_qs = especies_qs.filter(phylum=phylum)
+    if class_name:
+        if class_name == 'Reptilia':
+            especies_qs = especies_qs.filter(class_name__in=REPTIL_CLASSES)
+        else:
+            especies_qs = especies_qs.filter(class_name=class_name)
+    if order:       especies_qs = especies_qs.filter(order=order)
+    if family:      especies_qs = especies_qs.filter(family=family)
+    if iucn_status: especies_qs = especies_qs.filter(iucn_status=iucn_status)
     if search:
         especies_qs = especies_qs.filter(
             Q(scientific_name__icontains=search) |
@@ -281,7 +293,7 @@ def antartida_detail(request):
             Q(common_name__icontains=search)
         )
 
-    especies_qs = especies_qs.order_by('scientific_name')
+    especies_qs = especies_qs.filter(image_url__isnull=False).exclude(image_url='').order_by('scientific_name')
     paginator   = Paginator(especies_qs, 25)
     page_obj    = paginator.get_page(request.GET.get('page', 1))
     keys        = [e.species_key for e in page_obj.object_list]
@@ -315,7 +327,10 @@ def antartida_detail(request):
         'imagenes_territorio':  imagenes_territorio,
         'especies_favoritas':   especies_favoritas,
         'kingdoms':             todas.values_list('kingdom',    flat=True).distinct().order_by('kingdom'),
+        'phylums':              todas.values_list('phylum',     flat=True).distinct().order_by('phylum'),
         'classes':              todas.values_list('class_name', flat=True).distinct().order_by('class_name'),
+        'orders':               todas.values_list('order',      flat=True).distinct().order_by('order'),
+        'families':             todas.values_list('family',     flat=True).distinct().order_by('family'),
     })
 
 
@@ -800,6 +815,133 @@ def biolog_pais(request, pais_pk):
 
 
 # =======================================================================
+# QUIZ
+# =======================================================================
+
+@login_required(login_url='/login/')
+def quiz(request):
+    import random
+    from .models import QuizPartida
+
+    dificultad = request.GET.get('dificultad', '')
+    iniciar    = request.GET.get('iniciar', '')
+
+    # Sin parámetros o sin iniciar — pantalla de inicio
+    if not dificultad or not iniciar:
+        ranking = QuizPartida.objects.select_related('usuario').order_by('-puntuacion')[:10]
+        return render(request, 'atlas/quiz.html', {
+            'preguntas':  [],
+            'dificultad': dificultad,
+            'especie':    {},
+            'ranking':    ranking,
+        })
+
+    # Con iniciar=1 — jugar de verdad
+    especies = Especie.objects.filter(
+        image_url__isnull=False
+    ).exclude(
+        image_url=''
+    ).exclude(
+        kingdom=''
+    ).exclude(
+        class_name=''
+    ).exclude(
+        order=''
+    ).exclude(
+        family=''
+    ).filter(
+        image_url__contains='inaturalist'
+    )
+
+    if not especies.exists():
+        return render(request, 'atlas/quiz.html', {'error': True, 'preguntas': [], 'especie': {}})
+
+    # Especie aleatoria sin order_by('?') — mucho más rápido
+    count  = min(especies.count(), 5000)
+    offset = random.randint(0, count - 1)
+    especie = list(especies.values(
+        'id', 'species_key', 'canonical_name', 'scientific_name',
+        'image_url', 'kingdom', 'phylum', 'class_name',
+        'order', 'family', 'genus', 'common_name'
+    )[offset:offset + 1])[0]
+
+    def get_opciones(campo, valor_correcto, n=4):
+        valores = list(
+            Especie.objects.exclude(**{campo: ''})
+            .exclude(**{campo: valor_correcto})
+            .values_list(campo, flat=True)
+            .distinct()[:50]
+        )
+        muestra  = random.sample(valores, min(n - 1, len(valores)))
+        opciones = muestra + [valor_correcto]
+        random.shuffle(opciones)
+        return opciones
+
+    campos = {
+        'facil':   ['kingdom', 'class_name'],
+        'normal':  ['kingdom', 'phylum', 'class_name', 'order', 'family'],
+        'dificil': ['kingdom', 'phylum', 'class_name', 'order', 'family', 'genus'],
+    }
+
+    preguntas = []
+    for campo in campos.get(dificultad, campos['normal']):
+        valor = especie.get(campo, '')
+        if not valor:
+            continue
+        labels = {
+            'kingdom': 'Reino', 'phylum': 'Filo', 'class_name': 'Clase',
+            'order': 'Orden', 'family': 'Familia', 'genus': 'Género'
+        }
+        preguntas.append({
+            'campo':    campo,
+            'label':    labels.get(campo, campo),
+            'correcto': valor,
+            'opciones': get_opciones(campo, valor) if dificultad != 'dificil' else [],
+        })
+
+    return render(request, 'atlas/quiz.html', {
+        'especie':    especie,
+        'preguntas':  preguntas,
+        'dificultad': dificultad,
+    })
+
+
+@login_required(login_url='/login/')
+@require_POST
+def quiz_responder(request):
+    from .models import QuizPartida
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False}, status=400)
+
+    puntuacion      = int(data.get('puntuacion', 0))
+    racha_maxima    = int(data.get('racha_maxima', 0))
+    preguntas_total = int(data.get('preguntas_total', 0))
+    aciertos        = int(data.get('aciertos', 0))
+    dificultad      = data.get('dificultad', 'normal')
+
+    QuizPartida.objects.create(
+        usuario         = request.user,
+        puntuacion      = puntuacion,
+        racha_maxima    = racha_maxima,
+        preguntas_total = preguntas_total,
+        aciertos        = aciertos,
+        dificultad      = dificultad,
+    )
+
+    mejor = QuizPartida.objects.filter(
+        usuario=request.user, dificultad=dificultad
+    ).order_by('-puntuacion').first()
+
+    return JsonResponse({
+        'success':   True,
+        'es_record': puntuacion >= (mejor.puntuacion if mejor else 0),
+    })
+
+
+# =======================================================================
 # PREMIUM Y STRIPE
 # =======================================================================
 
@@ -936,14 +1078,18 @@ def error_404(request, exception=None):
 def error_500(request):
     return render(request, '500.html', status=500)
 
+
 def terminos(request):
     return render(request, 'atlas/terminos.html')
+
 
 def privacidad(request):
     return render(request, 'atlas/privacidad.html')
 
+
 def cookies(request):
     return render(request, 'atlas/cookies.html')
+
 
 def contacto(request):
     return render(request, 'atlas/contacto.html')

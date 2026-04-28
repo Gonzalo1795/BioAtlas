@@ -29,14 +29,7 @@
 
 <nav class="navbar">
     <div class="container">
-        <a href="{% url 'atlas:index' %}" class="logo">
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-                <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M16 3 C9 9, 9 23, 16 29" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                <path d="M16 3 C23 9, 23 23, 16 29" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                <line x1="3" y1="16" x2="29" y2="16" stroke="currentColor" stroke-width="1.5"/>
-                <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
-            </svg>
+        <a href="{% url 'atlas:index' %}" class="logo"><img src="/static/atlas/img/logo.svg" style="width:110px;height:110px;object-fit:contain;vertical-align:middle;">
             Bio<em>Atlas</em>
         </a>
 
@@ -55,6 +48,7 @@
         <div id="nav-desktop" style="margin-left:auto;">
             <a href="{% url 'atlas:index' %}" class="nav-link" data-i18n="nav.inicio">Inicio</a>
             <a href="{% url 'atlas:buscar_especie' %}" class="nav-link" data-i18n="nav.explorar">Explorar</a>
+            <a href="{% url 'atlas:quiz' %}" class="nav-link" data-i18n="quiz.titulo">Quiz Visual</a>
             {% if user.is_authenticated %}
                 {% with suscripcion=user.suscripcion %}
                     {% if not suscripcion.es_premium %}<a href="{% url 'atlas:premium' %}" class="btn-premium-nav">✨ Premium</a>{% endif %}
@@ -68,10 +62,10 @@
                         <span style="font-size:0.65rem; color:var(--text-faint);">▾</span>
                     </div>
                     <div class="nav-user-dropdown" id="nav-user-dropdown">
-                        <a href="{% url 'atlas:perfil' %}">👤 <span data-i18n="menu.perfil">Mi perfil</span></a>
-                        <a href="{% url 'atlas:biolog' %}">🌿 <span data-i18n="menu.atlas">Mi Atlas</span></a>
-                        <a href="{% url 'atlas:mis_favoritos' %}">❤️ <span data-i18n="menu.favoritos">Mis favoritos</span></a>
-                        <a href="{% url 'atlas:mis_avistamientos' %}">📍 <span data-i18n="menu.avistamientos">Mis avistamientos</span></a>
+                        <a href="{% url 'atlas:perfil' %}"><img src="/static/atlas/img/menu/Perfil.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.perfil">Mi perfil</span></a>
+                        <a href="{% url 'atlas:biolog' %}"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.atlas">Mi Atlas</span></a>
+                        <a href="{% url 'atlas:mis_favoritos' %}"><img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.favoritos">Mis favoritos</span></a>
+                        <a href="{% url 'atlas:mis_avistamientos' %}"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.avistamientos">Mis avistamientos</span></a>
                         {% with suscripcion=user.suscripcion %}
                             {% if not suscripcion.es_premium %}
                                 <div class="divider"></div>
@@ -83,7 +77,7 @@
                             <a href="/admin/" style="color:var(--gold);">⚙️ Panel Admin</a>
                         {% endif %}
                         <div class="divider"></div>
-                        <form method="POST" action="{% url 'atlas:logout' %}">{% csrf_token %}<button type="submit" class="logout-btn">🚪 <span data-i18n="menu.logout">Cerrar sesión</span></button></form>
+                        <form method="POST" action="{% url 'atlas:logout' %}">{% csrf_token %}<button type="submit" class="logout-btn"><img src="/static/atlas/img/menu/cerrar_sesion.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.logout">Cerrar sesión</span></button></form>
                     </div>
                 </div>
             {% else %}
@@ -111,10 +105,10 @@
     </div>
 </nav>
 
-<!-- Menú móvil — controlado por JS, oculto por defecto -->
 <div id="nav-mobile-menu" style="display:none;">
     <a href="{% url 'atlas:index' %}">🏠 Inicio</a>
     <a href="{% url 'atlas:buscar_especie' %}">🔍 Explorar</a>
+    <a href="{% url 'atlas:quiz' %}">🧬 Quiz Visu</a>
     <div class="nav-mobile-divider"></div>
     {% if user.is_authenticated %}
         <a href="{% url 'atlas:perfil' %}">👤 Mi perfil</a>
@@ -151,14 +145,15 @@
         <p>&copy; 2026 BioAtlas &mdash; <span data-i18n="footer.desc">Atlas Mundial de Biodiversidad</span></p>
         <p class="footer-credits"><span data-i18n="footer.data">Datos de biodiversidad proporcionados por</span> <a href="https://www.gbif.org/" target="_blank" rel="noopener">GBIF</a></p>
         <p style="font-size:0.75rem; color:var(--text-faint); margin-top:6px;">
-            <a href="{% url 'atlas:terminos' %}" style="color:var(--text-faint); text-decoration:none;">Términos y condiciones</a>
+            <a href="{% url 'atlas:terminos' %}" style="color:var(--text-faint); text-decoration:none;" data-i18n="terminos.titulo">Términos y condiciones</a>
             &nbsp;·&nbsp;
-            <a href="{% url 'atlas:privacidad' %}" style="color:var(--text-faint); text-decoration:none;">Privacidad</a>
+            <a href="{% url 'atlas:privacidad' %}" style="color:var(--text-faint); text-decoration:none;" data-i18n="privacidad.titulo">Privacidad</a>
             &nbsp;·&nbsp;
-            <a href="{% url 'atlas:cookies' %}" style="color:var(--text-faint); text-decoration:none;">Cookies</a>
+            <a href="{% url 'atlas:cookies' %}" style="color:var(--text-faint); text-decoration:none;" data-i18n="cookies.titulo">Cookies</a>
             &nbsp;·&nbsp;
             <a href="mailto:bioatlas@gmail.com" style="color:var(--text-faint); text-decoration:none;">bioatlas@gmail.com</a>
-            <a href="{% url 'atlas:contacto' %}" style="color:var(--text-faint); text-decoration:none;">Contacto</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'atlas:contacto' %}" style="color:var(--text-faint); text-decoration:none;" data-i18n="contacto.titulo">Contacto</a>
         </p>
     </div>
 </footer>
@@ -196,8 +191,8 @@ const TRANSLATIONS={
     "filters.all_phylums":"Todos los filos","filters.all_classes":"Todas las clases",
     "filters.all_orders":"Todos los órdenes","filters.all_families":"Todas las familias",
     "filters.iucn_all":"Estado IUCN — Todos","filters.apply":"Aplicar filtros","filters.clear":"Limpiar",
-    "pill.all":"🌐 Todos","pill.mammalia":"🦁 Mamíferos","pill.aves":"🦅 Aves","pill.reptilia":"🦎 Reptiles",
-    "pill.amphibia":"🐸 Anfibios","pill.peces":"🐟 Peces","pill.insecta":"🦋 Insectos","pill.plantas":"🌸 Plantas",
+    "pill.all":"Todos","pill.mammalia":"Mamíferos","pill.aves":"Aves","pill.reptilia":"Reptiles",
+    "pill.amphibia":"Anfibios","pill.peces":"Peces","pill.insecta":"Insectos","pill.plantas":"Plantas",
     "species.empty":"No se encontraron especies con los filtros seleccionados.",
     "pagination.prev":"« Anterior","pagination.next":"Siguiente »",
     "species.details":"Ver detalles →",
@@ -297,6 +292,91 @@ const TRANSLATIONS={
     "biolog_pais.coleccionadas":"especies coleccionadas de","biolog_pais.disponibles":"disponibles",
     "biolog_pais.progreso":"Progreso en",
     "biolog_pais.sin_filtro":"No hay especies con este filtro.","biolog_pais.ver_todas":"Ver todas →",
+    "legal.actualizado":"Última actualización: abril de 2026",
+    "legal.contacto_titulo":"Contacto","legal.contacto_p":"Para cualquier consulta, escríbenos a bioatlas@gmail.com.",
+    "contacto.titulo":"Contacto","contacto.subtitulo":"¿Tienes alguna pregunta o sugerencia? Escríbenos.",
+    "contacto.desc":"Atlas mundial de biodiversidad. Explorando la naturaleza del planeta a través de los datos de GBIF e iNaturalist.",
+    "contacto.ubicacion_label":"Ubicación","contacto.ubicacion":"Madrid, España",
+    "contacto.respuesta_label":"Respuesta","contacto.respuesta":"En menos de 24h",
+    "contacto.dev_titulo":"💡 ¿Eres desarrollador?",
+    "contacto.dev_desc":"Los datos de biodiversidad de BioAtlas provienen de GBIF e iNaturalist. Si quieres colaborar o reportar un error de datos, escríbenos.",
+    "contacto.form_titulo":"Envíanos un mensaje",
+    "contacto.form_sub":"Completa el formulario y se abrirá tu cliente de correo con el mensaje listo para enviar.",
+    "contacto.nombre_label":"Nombre *","contacto.nombre_ph":"Tu nombre","contacto.email_label":"Email *",
+    "contacto.asunto_label":"Asunto *",
+    "contacto.asunto1":"💬 Consulta general","contacto.asunto2":"🐛 Error en los datos",
+    "contacto.asunto3":"💡 Sugerencia de mejora","contacto.asunto4":"👤 Problema con mi cuenta",
+    "contacto.asunto5":"✨ Consulta sobre Premium","contacto.asunto6":"🤝 Colaboración","contacto.asunto7":"📌 Otro",
+    "contacto.mensaje_label":"Mensaje *","contacto.mensaje_ph":"Escribe tu mensaje aquí...",
+    "contacto.error":"Por favor rellena todos los campos obligatorios.",
+    "contacto.btn":"📧 Enviar mensaje",
+    "contacto.nota":"Al enviar se abrirá tu cliente de correo con el mensaje preparado.",
+    "contacto.ok_titulo":"¡Mensaje preparado!",
+    "contacto.ok_desc":"Tu cliente de correo se ha abierto con el mensaje listo. Pulsa enviar para hacérnoslo llegar.",
+    "contacto.otro_msg":"Enviar otro mensaje",
+    "privacidad.titulo":"Política de Privacidad",
+    "privacidad.intro":"En BioAtlas nos tomamos muy en serio la privacidad de nuestros usuarios.",
+    "privacidad.s1_titulo":"1. Datos que recopilamos","privacidad.s1_p":"Al registrarte en BioAtlas recopilamos los siguientes datos personales:",
+    "privacidad.s1_l1":"Nombre de usuario — necesario para identificarte en la plataforma.",
+    "privacidad.s1_l2":"Correo electrónico — necesario para la gestión de la cuenta y comunicaciones.",
+    "privacidad.s1_l3":"Contraseña — almacenada de forma cifrada, nunca en texto plano.",
+    "privacidad.s1_stripe":"Si contratas el plan Premium, el procesamiento del pago lo realiza Stripe. BioAtlas no almacena datos de tarjetas de crédito.",
+    "privacidad.s2_titulo":"2. Datos generados por el uso","privacidad.s2_p":"Durante el uso de la plataforma se generan los siguientes datos vinculados a tu cuenta:",
+    "privacidad.s2_l1":"Especies marcadas como favoritas.","privacidad.s2_l2":"Especies añadidas a tu colección Mi Atlas.",
+    "privacidad.s2_l3":"Avistamientos registrados, incluyendo fecha, lugar y notas.",
+    "privacidad.s3_titulo":"3. Cómo usamos tus datos","privacidad.s3_p":"Los datos recopilados se utilizan exclusivamente para:",
+    "privacidad.s3_l1":"Gestionar tu cuenta y personalizar tu experiencia.","privacidad.s3_l2":"Procesar pagos del plan Premium a través de Stripe.",
+    "privacidad.s3_l3":"Enviarte comunicaciones relacionadas con el servicio si así lo autorizas.",
+    "privacidad.s3_nota":"BioAtlas no vende ni comparte tus datos personales con terceros salvo los necesarios para pagos (Stripe).",
+    "privacidad.s4_titulo":"4. Seguridad","privacidad.s4_p":"BioAtlas implementa cifrado de contraseñas, protección CSRF y comunicaciones HTTPS en producción.",
+    "privacidad.s5_titulo":"5. Tus derechos","privacidad.s5_p":"Tienes derecho a acceder, rectificar o eliminar tus datos personales en cualquier momento contactando en bioatlas@gmail.com.",
+    "privacidad.s6_titulo":"6. Menores de edad","privacidad.s6_p":"BioAtlas no está dirigido a menores de 14 años. Necesitas el consentimiento de tu tutor legal para registrarte.",
+    "cookies.titulo":"Política de Cookies",
+    "cookies.intro":"BioAtlas utiliza cookies estrictamente necesarias para el funcionamiento de la plataforma.",
+    "cookies.s1_titulo":"¿Qué es una cookie?","cookies.s1_p":"Una cookie es un pequeño archivo de texto que se almacena en tu navegador para mejorar tu experiencia.",
+    "cookies.s2_titulo":"Cookies que utilizamos",
+    "cookies.th_cookie":"Cookie","cookies.th_tipo":"Tipo","cookies.th_fin":"Finalidad","cookies.th_dur":"Duración",
+    "cookies.c1_tipo":"Técnica","cookies.c1_fin":"Mantiene la sesión del usuario autenticado.","cookies.c1_dur":"Sesión",
+    "cookies.c2_tipo":"Seguridad","cookies.c2_fin":"Protege los formularios contra ataques CSRF.","cookies.c2_dur":"1 año",
+    "cookies.c3_tipo":"Preferencias","cookies.c3_fin":"Almacena el idioma seleccionado por el usuario (ES, EN, FR).","cookies.c3_dur":"Persistente",
+    "cookies.s3_titulo":"Cookies de terceros","cookies.s3_p1":"BioAtlas no utiliza cookies de seguimiento, publicidad ni analítica.",
+    "cookies.s3_p2":"Si contratas el plan Premium, Stripe puede establecer sus propias cookies durante el proceso de pago.",
+    "cookies.s4_titulo":"Cómo gestionar las cookies","cookies.s4_p":"Puedes configurar tu navegador para bloquear o eliminar cookies en cualquier momento.",
+    "terminos.titulo":"Términos y Condiciones",
+    "terminos.intro":"Bienvenido a BioAtlas. Al acceder y utilizar esta plataforma, aceptas los siguientes términos y condiciones.",
+    "terminos.s1_titulo":"1. Descripción del servicio","terminos.s1_p":"BioAtlas es una plataforma web de exploración de biodiversidad global con datos de GBIF e iNaturalist.",
+    "terminos.s2_titulo":"2. Planes de acceso","terminos.s2_p":"BioAtlas ofrece dos planes de acceso:",
+    "terminos.s2_l1":"Plan gratuito: acceso limitado a 20 favoritas, 10 avistamientos y colección en hasta 3 países.",
+    "terminos.s2_l2":"Plan Premium: acceso ilimitado mediante suscripción mensual.",
+    "terminos.s2_nota":"Los precios pueden modificarse con un preaviso de 30 días.",
+    "terminos.s3_titulo":"3. Registro y cuenta","terminos.s3_p":"El usuario es responsable de mantener la confidencialidad de sus credenciales.",
+    "terminos.s4_titulo":"4. Propiedad intelectual","terminos.s4_p":"El diseño y código de BioAtlas son propiedad de BioAtlas Project. Los datos de GBIF e imágenes de iNaturalist están sujetos a sus respectivas licencias.",
+    "terminos.s5_titulo":"5. Limitación de responsabilidad","terminos.s5_p":"BioAtlas no garantiza la exactitud de los datos taxonómicos de fuentes externas.",
+    "terminos.s6_titulo":"6. Cancelación de suscripción","terminos.s6_p":"El usuario puede cancelar su suscripción Premium en cualquier momento desde su perfil.",
+    "terminos.s7_titulo":"7. Modificaciones","terminos.s7_p":"BioAtlas se reserva el derecho de modificar estos términos con 15 días de antelación.",
+    "quiz.titulo":"Quiz Visual","quiz.subtitulo":"Identifica especies a partir de su fotografía",
+    "quiz.error_titulo":"No hay suficientes especies con imagen","quiz.error_sub":"Sincroniza más países para poder jugar.",
+    "quiz.inicio_titulo":"¿Listo para el Quiz Visual?",
+    "quiz.inicio_desc":"Se mostrará la foto de una especie y tendrás que identificar su clasificación taxonómica. Tienes 30 segundos por pregunta.",
+    "quiz.facil":"Fácil","quiz.facil_desc":"Reino y Clase · Selección múltiple",
+    "quiz.normal":"Normal","quiz.normal_desc":"Hasta Familia · Selección múltiple",
+    "quiz.dificil":"Difícil","quiz.dificil_desc":"Hasta Género · Escribir a mano",
+    "quiz.recomendado":"RECOMENDADO","quiz.hint":"👆 Selecciona una dificultad para continuar",
+    "quiz.btn_comenzar":"▶ Comenzar Quiz Visu","quiz.comenzar_modo":"Comenzar en modo",
+    "quiz.ranking_titulo":"🏆 Mejores puntuaciones","quiz.aciertos":"aciertos",
+    "quiz.hud_puntos":"Puntos","quiz.hud_racha":"Racha","quiz.hud_num":"Nº","quiz.hud_tiempo":"Tiempo",
+    "quiz.pregunta_titulo":"¿A qué grupo pertenece esta especie?",
+    "quiz.btn_comprobar":"✅ Comprobar","quiz.btn_siguiente":"➡️ Siguiente especie",
+    "quiz.btn_terminar":"🏆 Ver resultado final","quiz.abandonar":"Abandonar partida",
+    "quiz.tiempo_agotado":"¡Tiempo agotado!","quiz.respuestas_verdes":"Las respuestas correctas están marcadas en verde",
+    "quiz.correcto":"correcto","quiz.racha":"Racha de",
+    "quiz.todo_correcto":"¡Todo correcto!","quiz.correctos":"correctos",
+    "quiz.resultado_titulo":"Partida terminada",
+    "quiz.res_puntos":"Puntuación","quiz.res_aciertos":"Aciertos","quiz.res_racha":"Racha máx.",
+    "quiz.nuevo_record":"🏆 ¡Nuevo récord personal!",
+    "quiz.jugar_nuevo":"🔄 Jugar de nuevo","quiz.cambiar_dif":"🎯 Cambiar dificultad",
+    "quiz.experto":"¡Eres un experto en zoología!","quiz.muy_bien":"¡Muy buena identificación!",
+    "quiz.practica":"Sigue practicando","quiz.primeros_pasos":"Los primeros pasos son los más difíciles",
   },
   en:{
     "nav.inicio":"Home","nav.explorar":"Explore","nav.login":"Sign in","nav.registro":"Sign up",
@@ -318,8 +398,8 @@ const TRANSLATIONS={
     "filters.all_phylums":"All phylums","filters.all_classes":"All classes",
     "filters.all_orders":"All orders","filters.all_families":"All families",
     "filters.iucn_all":"IUCN Status — All","filters.apply":"Apply filters","filters.clear":"Clear",
-    "pill.all":"🌐 All","pill.mammalia":"🦁 Mammals","pill.aves":"🦅 Birds","pill.reptilia":"🦎 Reptiles",
-    "pill.amphibia":"🐸 Amphibians","pill.peces":"🐟 Fish","pill.insecta":"🦋 Insects","pill.plantas":"🌸 Plants",
+    "pill.all":"All","pill.mammalia":"Mammals","pill.aves":"Birds","pill.reptilia":"Reptiles",
+    "pill.amphibia":"Amphibians","pill.peces":"Fish","pill.insecta":"Insects","pill.plantas":"Plants",
     "species.empty":"No species found with the selected filters.",
     "pagination.prev":"« Previous","pagination.next":"Next »",
     "species.details":"View details →",
@@ -419,6 +499,91 @@ const TRANSLATIONS={
     "biolog_pais.coleccionadas":"species collected out of","biolog_pais.disponibles":"available",
     "biolog_pais.progreso":"Progress in",
     "biolog_pais.sin_filtro":"No species with this filter.","biolog_pais.ver_todas":"View all →",
+    "legal.actualizado":"Last updated: April 2026",
+    "legal.contacto_titulo":"Contact","legal.contacto_p":"For any enquiry, write to us at bioatlas@gmail.com.",
+    "contacto.titulo":"Contact","contacto.subtitulo":"Have a question or suggestion? Write to us.",
+    "contacto.desc":"World biodiversity atlas. Exploring the planet's nature through GBIF and iNaturalist data.",
+    "contacto.ubicacion_label":"Location","contacto.ubicacion":"Madrid, Spain",
+    "contacto.respuesta_label":"Response time","contacto.respuesta":"Within 24 hours",
+    "contacto.dev_titulo":"💡 Are you a developer?",
+    "contacto.dev_desc":"BioAtlas biodiversity data comes from GBIF and iNaturalist. If you want to collaborate or report a data error, write to us.",
+    "contacto.form_titulo":"Send us a message",
+    "contacto.form_sub":"Fill in the form and your email client will open with the message ready to send.",
+    "contacto.nombre_label":"Name *","contacto.nombre_ph":"Your name","contacto.email_label":"Email *",
+    "contacto.asunto_label":"Subject *",
+    "contacto.asunto1":"💬 General enquiry","contacto.asunto2":"🐛 Data error",
+    "contacto.asunto3":"💡 Improvement suggestion","contacto.asunto4":"👤 Account issue",
+    "contacto.asunto5":"✨ Premium enquiry","contacto.asunto6":"🤝 Collaboration","contacto.asunto7":"📌 Other",
+    "contacto.mensaje_label":"Message *","contacto.mensaje_ph":"Write your message here...",
+    "contacto.error":"Please fill in all required fields.",
+    "contacto.btn":"📧 Send message",
+    "contacto.nota":"When you send, your email client will open with the message ready.",
+    "contacto.ok_titulo":"Message ready!",
+    "contacto.ok_desc":"Your email client has opened with the message ready. Press send to reach us.",
+    "contacto.otro_msg":"Send another message",
+    "privacidad.titulo":"Privacy Policy",
+    "privacidad.intro":"At BioAtlas we take the privacy of our users very seriously.",
+    "privacidad.s1_titulo":"1. Data we collect","privacidad.s1_p":"When you register at BioAtlas we collect the following personal data:",
+    "privacidad.s1_l1":"Username — required to identify you on the platform.",
+    "privacidad.s1_l2":"Email address — required for account management and communications.",
+    "privacidad.s1_l3":"Password — stored in encrypted form, never in plain text.",
+    "privacidad.s1_stripe":"If you purchase the Premium plan, payment processing is handled securely by Stripe. BioAtlas does not store credit card data.",
+    "privacidad.s2_titulo":"2. Usage-generated data","privacidad.s2_p":"During use of the platform the following data linked to your account is generated:",
+    "privacidad.s2_l1":"Species marked as favourites.","privacidad.s2_l2":"Species added to your My Atlas collection.",
+    "privacidad.s2_l3":"Recorded sightings, including date, location and notes.",
+    "privacidad.s3_titulo":"3. How we use your data","privacidad.s3_p":"The data collected is used exclusively to:",
+    "privacidad.s3_l1":"Manage your account and personalise your experience.","privacidad.s3_l2":"Process Premium plan payments via Stripe.",
+    "privacidad.s3_l3":"Send you service-related communications if you authorise it.",
+    "privacidad.s3_nota":"BioAtlas does not sell or share your personal data with third parties except those strictly necessary for payment processing (Stripe).",
+    "privacidad.s4_titulo":"4. Security","privacidad.s4_p":"BioAtlas implements password encryption, CSRF protection on all forms and HTTPS communications in production.",
+    "privacidad.s5_titulo":"5. Your rights","privacidad.s5_p":"You have the right to access, correct or delete your personal data at any time by contacting us at bioatlas@gmail.com.",
+    "privacidad.s6_titulo":"6. Minors","privacidad.s6_p":"BioAtlas is not aimed at users under 14. If you are under that age, you need your legal guardian's consent to register.",
+    "cookies.titulo":"Cookie Policy",
+    "cookies.intro":"BioAtlas uses strictly necessary cookies for the platform to function.",
+    "cookies.s1_titulo":"What is a cookie?","cookies.s1_p":"A cookie is a small text file stored in your browser when you visit a website to improve your experience.",
+    "cookies.s2_titulo":"Cookies we use",
+    "cookies.th_cookie":"Cookie","cookies.th_tipo":"Type","cookies.th_fin":"Purpose","cookies.th_dur":"Duration",
+    "cookies.c1_tipo":"Technical","cookies.c1_fin":"Maintains the session of the authenticated user.","cookies.c1_dur":"Session",
+    "cookies.c2_tipo":"Security","cookies.c2_fin":"Protects forms against CSRF attacks.","cookies.c2_dur":"1 year",
+    "cookies.c3_tipo":"Preferences","cookies.c3_fin":"Stores the language selected by the user (ES, EN, FR).","cookies.c3_dur":"Persistent",
+    "cookies.s3_titulo":"Third-party cookies","cookies.s3_p1":"BioAtlas does not use tracking, advertising or analytics cookies.",
+    "cookies.s3_p2":"If you purchase the Premium plan, Stripe may set its own cookies during payment processing.",
+    "cookies.s4_titulo":"How to manage cookies","cookies.s4_p":"You can configure your browser to block or delete cookies at any time.",
+    "terminos.titulo":"Terms and Conditions",
+    "terminos.intro":"Welcome to BioAtlas. By accessing and using this platform, you accept the following terms and conditions.",
+    "terminos.s1_titulo":"1. Service description","terminos.s1_p":"BioAtlas is a global biodiversity exploration web platform with data from GBIF and iNaturalist.",
+    "terminos.s2_titulo":"2. Access plans","terminos.s2_p":"BioAtlas offers two access plans:",
+    "terminos.s2_l1":"Free plan: limited access to 20 favourites, 10 sightings and collection in up to 3 countries.",
+    "terminos.s2_l2":"Premium plan: unlimited access to all platform features via monthly subscription.",
+    "terminos.s2_nota":"Prices and conditions of the Premium plan may be modified with 30 days' notice.",
+    "terminos.s3_titulo":"3. Registration and user account","terminos.s3_p":"The user is responsible for maintaining the confidentiality of their credentials.",
+    "terminos.s4_titulo":"4. Intellectual property","terminos.s4_p":"BioAtlas design and code are property of BioAtlas Project. GBIF data and iNaturalist images are subject to their respective licences.",
+    "terminos.s5_titulo":"5. Limitation of liability","terminos.s5_p":"BioAtlas does not guarantee the accuracy of taxonomic data from external sources.",
+    "terminos.s6_titulo":"6. Subscription cancellation","terminos.s6_p":"Users can cancel their Premium subscription at any time from their profile.",
+    "terminos.s7_titulo":"7. Modifications","terminos.s7_p":"BioAtlas reserves the right to modify these terms with 15 days' advance notice.",
+    "quiz.titulo":"Visual Quiz","quiz.subtitulo":"Identify species from their photograph",
+    "quiz.error_titulo":"Not enough species with images","quiz.error_sub":"Sync more countries to play.",
+    "quiz.inicio_titulo":"Ready for the Visual Quiz?",
+    "quiz.inicio_desc":"A species photo will be shown and you must identify its taxonomic classification. You have 30 seconds per question.",
+    "quiz.facil":"Easy","quiz.facil_desc":"Kingdom and Class · Multiple choice",
+    "quiz.normal":"Normal","quiz.normal_desc":"Up to Family · Multiple choice",
+    "quiz.dificil":"Hard","quiz.dificil_desc":"Up to Genus · Type the answer",
+    "quiz.recomendado":"RECOMMENDED","quiz.hint":"👆 Select a difficulty to continue",
+    "quiz.btn_comenzar":"▶ Start Visual Quiz","quiz.comenzar_modo":"Start in",
+    "quiz.ranking_titulo":"🏆 Top scores","quiz.aciertos":"correct",
+    "quiz.hud_puntos":"Points","quiz.hud_racha":"Streak","quiz.hud_num":"No.","quiz.hud_tiempo":"Time",
+    "quiz.pregunta_titulo":"Which group does this species belong to?",
+    "quiz.btn_comprobar":"✅ Check","quiz.btn_siguiente":"➡️ Next species",
+    "quiz.btn_terminar":"🏆 See final result","quiz.abandonar":"Abandon game",
+    "quiz.tiempo_agotado":"Time's up!","quiz.respuestas_verdes":"Correct answers are marked in green",
+    "quiz.correcto":"correct","quiz.racha":"Streak of",
+    "quiz.todo_correcto":"All correct!","quiz.correctos":"correct",
+    "quiz.resultado_titulo":"Game over",
+    "quiz.res_puntos":"Score","quiz.res_aciertos":"Correct","quiz.res_racha":"Max streak",
+    "quiz.nuevo_record":"🏆 New personal record!",
+    "quiz.jugar_nuevo":"🔄 Play again","quiz.cambiar_dif":"🎯 Change difficulty",
+    "quiz.experto":"You're a zoology expert!","quiz.muy_bien":"Great identification!",
+    "quiz.practica":"Keep practising","quiz.primeros_pasos":"The first steps are the hardest",
   },
   fr:{
     "nav.inicio":"Accueil","nav.explorar":"Explorer","nav.login":"Se connecter","nav.registro":"S'inscrire",
@@ -440,8 +605,8 @@ const TRANSLATIONS={
     "filters.all_phylums":"Tous les phylums","filters.all_classes":"Toutes les classes",
     "filters.all_orders":"Tous les ordres","filters.all_families":"Toutes les familles",
     "filters.iucn_all":"Statut UICN — Tous","filters.apply":"Appliquer les filtres","filters.clear":"Effacer",
-    "pill.all":"🌐 Tous","pill.mammalia":"🦁 Mammifères","pill.aves":"🦅 Oiseaux","pill.reptilia":"🦎 Reptiles",
-    "pill.amphibia":"🐸 Amphibiens","pill.peces":"🐟 Poissons","pill.insecta":"🦋 Insectes","pill.plantas":"🌸 Plantes",
+    "pill.all":"Tous","pill.mammalia":"Mammifères","pill.aves":"Oiseaux","pill.reptilia":"Reptiles",
+    "pill.amphibia":"Amphibiens","pill.peces":"Poissons","pill.insecta":"Insectes","pill.plantas":"Plantes",
     "species.empty":"Aucune espèce trouvée avec les filtres sélectionnés.",
     "pagination.prev":"« Précédent","pagination.next":"Suivant »",
     "species.details":"Voir les détails →",
@@ -541,6 +706,91 @@ const TRANSLATIONS={
     "biolog_pais.coleccionadas":"espèces collectées sur","biolog_pais.disponibles":"disponibles",
     "biolog_pais.progreso":"Progression en",
     "biolog_pais.sin_filtro":"Aucune espèce avec ce filtre.","biolog_pais.ver_todas":"Voir tout →",
+    "legal.actualizado":"Dernière mise à jour : avril 2026",
+    "legal.contacto_titulo":"Contact","legal.contacto_p":"Pour toute question, écrivez-nous à bioatlas@gmail.com.",
+    "contacto.titulo":"Contact","contacto.subtitulo":"Vous avez une question ou une suggestion ? Écrivez-nous.",
+    "contacto.desc":"Atlas mondial de la biodiversité. Explorer la nature de la planète à travers les données de GBIF et iNaturalist.",
+    "contacto.ubicacion_label":"Localisation","contacto.ubicacion":"Madrid, Espagne",
+    "contacto.respuesta_label":"Délai de réponse","contacto.respuesta":"En moins de 24h",
+    "contacto.dev_titulo":"💡 Êtes-vous développeur ?",
+    "contacto.dev_desc":"Les données de biodiversité de BioAtlas proviennent de GBIF et iNaturalist. Si vous souhaitez collaborer ou signaler une erreur, écrivez-nous.",
+    "contacto.form_titulo":"Envoyez-nous un message",
+    "contacto.form_sub":"Remplissez le formulaire et votre client de messagerie s'ouvrira avec le message prêt à envoyer.",
+    "contacto.nombre_label":"Nom *","contacto.nombre_ph":"Votre nom","contacto.email_label":"Email *",
+    "contacto.asunto_label":"Sujet *",
+    "contacto.asunto1":"💬 Demande générale","contacto.asunto2":"🐛 Erreur dans les données",
+    "contacto.asunto3":"💡 Suggestion d'amélioration","contacto.asunto4":"👤 Problème avec mon compte",
+    "contacto.asunto5":"✨ Demande sur Premium","contacto.asunto6":"🤝 Collaboration","contacto.asunto7":"📌 Autre",
+    "contacto.mensaje_label":"Message *","contacto.mensaje_ph":"Écrivez votre message ici...",
+    "contacto.error":"Veuillez remplir tous les champs obligatoires.",
+    "contacto.btn":"📧 Envoyer le message",
+    "contacto.nota":"En envoyant, votre client de messagerie s'ouvrira avec le message préparé.",
+    "contacto.ok_titulo":"Message prêt !",
+    "contacto.ok_desc":"Votre client de messagerie s'est ouvert avec le message prêt. Appuyez sur envoyer pour nous le faire parvenir.",
+    "contacto.otro_msg":"Envoyer un autre message",
+    "privacidad.titulo":"Politique de Confidentialité",
+    "privacidad.intro":"Chez BioAtlas, nous prenons très au sérieux la confidentialité de nos utilisateurs.",
+    "privacidad.s1_titulo":"1. Données que nous collectons","privacidad.s1_p":"Lors de votre inscription à BioAtlas, nous collectons les données personnelles suivantes :",
+    "privacidad.s1_l1":"Nom d'utilisateur — nécessaire pour vous identifier sur la plateforme.",
+    "privacidad.s1_l2":"Adresse email — nécessaire pour la gestion du compte et les communications.",
+    "privacidad.s1_l3":"Mot de passe — stocké de manière chiffrée, jamais en clair.",
+    "privacidad.s1_stripe":"Si vous souscrivez au plan Premium, le traitement du paiement est effectué par Stripe. BioAtlas ne stocke pas de données de carte bancaire.",
+    "privacidad.s2_titulo":"2. Données générées par l'utilisation","privacidad.s2_p":"Lors de l'utilisation de la plateforme, les données suivantes sont générées :",
+    "privacidad.s2_l1":"Espèces marquées comme favorites.","privacidad.s2_l2":"Espèces ajoutées à votre collection Mon Atlas.",
+    "privacidad.s2_l3":"Observations enregistrées, incluant la date, le lieu et les notes.",
+    "privacidad.s3_titulo":"3. Comment nous utilisons vos données","privacidad.s3_p":"Les données collectées sont utilisées exclusivement pour :",
+    "privacidad.s3_l1":"Gérer votre compte et personnaliser votre expérience.","privacidad.s3_l2":"Traiter les paiements du plan Premium via Stripe.",
+    "privacidad.s3_l3":"Vous envoyer des communications liées au service si vous l'autorisez.",
+    "privacidad.s3_nota":"BioAtlas ne vend ni ne partage vos données personnelles avec des tiers, sauf ceux nécessaires au traitement des paiements (Stripe).",
+    "privacidad.s4_titulo":"4. Sécurité","privacidad.s4_p":"BioAtlas implémente le chiffrement des mots de passe, la protection CSRF et les communications HTTPS en production.",
+    "privacidad.s5_titulo":"5. Vos droits","privacidad.s5_p":"Vous avez le droit d'accéder, corriger ou supprimer vos données personnelles à tout moment en nous contactant à bioatlas@gmail.com.",
+    "privacidad.s6_titulo":"6. Mineurs","privacidad.s6_p":"BioAtlas n'est pas destiné aux moins de 14 ans. Vous avez besoin du consentement de votre tuteur légal pour vous inscrire.",
+    "cookies.titulo":"Politique de Cookies",
+    "cookies.intro":"BioAtlas utilise des cookies strictement nécessaires au fonctionnement de la plateforme.",
+    "cookies.s1_titulo":"Qu'est-ce qu'un cookie ?","cookies.s1_p":"Un cookie est un petit fichier texte stocké dans votre navigateur pour améliorer votre expérience.",
+    "cookies.s2_titulo":"Cookies que nous utilisons",
+    "cookies.th_cookie":"Cookie","cookies.th_tipo":"Type","cookies.th_fin":"Finalité","cookies.th_dur":"Durée",
+    "cookies.c1_tipo":"Technique","cookies.c1_fin":"Maintient la session de l'utilisateur authentifié.","cookies.c1_dur":"Session",
+    "cookies.c2_tipo":"Sécurité","cookies.c2_fin":"Protège les formulaires contre les attaques CSRF.","cookies.c2_dur":"1 an",
+    "cookies.c3_tipo":"Préférences","cookies.c3_fin":"Stocke la langue sélectionnée par l'utilisateur (ES, EN, FR).","cookies.c3_dur":"Persistant",
+    "cookies.s3_titulo":"Cookies tiers","cookies.s3_p1":"BioAtlas n'utilise pas de cookies de suivi, publicité ou analytique.",
+    "cookies.s3_p2":"Si vous souscrivez au plan Premium, Stripe peut définir ses propres cookies lors du traitement du paiement.",
+    "cookies.s4_titulo":"Comment gérer les cookies","cookies.s4_p":"Vous pouvez configurer votre navigateur pour bloquer ou supprimer les cookies à tout moment.",
+    "terminos.titulo":"Conditions Générales d'Utilisation",
+    "terminos.intro":"Bienvenue sur BioAtlas. En accédant et en utilisant cette plateforme, vous acceptez les conditions générales suivantes.",
+    "terminos.s1_titulo":"1. Description du service","terminos.s1_p":"BioAtlas est une plateforme web d'exploration de la biodiversité mondiale avec des données de GBIF et iNaturalist.",
+    "terminos.s2_titulo":"2. Plans d'accès","terminos.s2_p":"BioAtlas propose deux plans d'accès :",
+    "terminos.s2_l1":"Plan gratuit : accès limité à 20 favoris, 10 observations et collection dans 3 pays.",
+    "terminos.s2_l2":"Plan Premium : accès illimité à toutes les fonctionnalités via abonnement mensuel.",
+    "terminos.s2_nota":"Les prix et conditions du plan Premium peuvent être modifiés avec un préavis de 30 jours.",
+    "terminos.s3_titulo":"3. Inscription et compte","terminos.s3_p":"L'utilisateur est responsable de la confidentialité de ses identifiants.",
+    "terminos.s4_titulo":"4. Propriété intellectuelle","terminos.s4_p":"Le design et le code de BioAtlas sont la propriété de BioAtlas Project. Les données GBIF et images iNaturalist sont soumises à leurs licences respectives.",
+    "terminos.s5_titulo":"5. Limitation de responsabilité","terminos.s5_p":"BioAtlas ne garantit pas l'exactitude des données taxonomiques provenant de sources externes.",
+    "terminos.s6_titulo":"6. Annulation d'abonnement","terminos.s6_p":"L'utilisateur peut annuler son abonnement Premium à tout moment depuis son profil.",
+    "terminos.s7_titulo":"7. Modifications","terminos.s7_p":"BioAtlas se réserve le droit de modifier ces conditions avec un préavis de 15 jours.",
+    "quiz.titulo":"Quiz Visuel","quiz.subtitulo":"Identifiez des espèces à partir de leur photographie",
+    "quiz.error_titulo":"Pas assez d'espèces avec des images","quiz.error_sub":"Synchronisez plus de pays pour jouer.",
+    "quiz.inicio_titulo":"Prêt pour le Quiz Visuel ?",
+    "quiz.inicio_desc":"La photo d'une espèce sera affichée et vous devrez identifier sa classification taxonomique. Vous avez 30 secondes par question.",
+    "quiz.facil":"Facile","quiz.facil_desc":"Règne et Classe · Choix multiple",
+    "quiz.normal":"Normal","quiz.normal_desc":"Jusqu'à la Famille · Choix multiple",
+    "quiz.dificil":"Difficile","quiz.dificil_desc":"Jusqu'au Genre · Écrire la réponse",
+    "quiz.recomendado":"RECOMMANDÉ","quiz.hint":"👆 Sélectionnez une difficulté pour continuer",
+    "quiz.btn_comenzar":"▶ Commencer le Quiz Visuel","quiz.comenzar_modo":"Commencer en mode",
+    "quiz.ranking_titulo":"🏆 Meilleures scores","quiz.aciertos":"corrects",
+    "quiz.hud_puntos":"Points","quiz.hud_racha":"Série","quiz.hud_num":"N°","quiz.hud_tiempo":"Temps",
+    "quiz.pregunta_titulo":"À quel groupe appartient cette espèce ?",
+    "quiz.btn_comprobar":"✅ Vérifier","quiz.btn_siguiente":"➡️ Espèce suivante",
+    "quiz.btn_terminar":"🏆 Voir le résultat final","quiz.abandonar":"Abandonner la partie",
+    "quiz.tiempo_agotado":"Temps écoulé !","quiz.respuestas_verdes":"Les bonnes réponses sont marquées en vert",
+    "quiz.correcto":"correct","quiz.racha":"Série de",
+    "quiz.todo_correcto":"Tout correct !","quiz.correctos":"corrects",
+    "quiz.resultado_titulo":"Partie terminée",
+    "quiz.res_puntos":"Score","quiz.res_aciertos":"Corrects","quiz.res_racha":"Série max.",
+    "quiz.nuevo_record":"🏆 Nouveau record personnel !",
+    "quiz.jugar_nuevo":"🔄 Rejouer","quiz.cambiar_dif":"🎯 Changer de difficulté",
+    "quiz.experto":"Vous êtes un expert en zoologie !","quiz.muy_bien":"Très bonne identification !",
+    "quiz.practica":"Continuez à pratiquer","quiz.primeros_pasos":"Les premiers pas sont les plus difficiles",
   }
 };
 const FLAGS={es:'🇪🇸',en:'🇬🇧',fr:'🇫🇷'};

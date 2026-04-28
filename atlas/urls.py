@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.http import HttpResponse
+from django.template import loader
 
 app_name = 'atlas'
 
@@ -54,4 +56,9 @@ urlpatterns = [
     path('privacidad/', views.privacidad, name='privacidad'),
     path('cookies/', views.cookies, name='cookies'),
     path('contacto/', views.contacto, name='contacto'),
+    path('quiz/', views.quiz, name='quiz'),
+    path('quiz/responder/', views.quiz_responder, name='quiz_responder'),
+
+    path('404/', lambda r: HttpResponse(loader.render_to_string('404.html', {}, r), status=404), name='error_404'),
+    path('500/', lambda r: HttpResponse(loader.render_to_string('500.html', {}, r), status=500), name='error_500'),
 ]

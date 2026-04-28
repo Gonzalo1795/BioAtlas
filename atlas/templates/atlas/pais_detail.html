@@ -5,7 +5,6 @@
 {% block title %}{{ pais.nombre }} — BioAtlas{% endblock %}
 
 {% block content %}
-
 <div class="page-header">
     <div class="container">
         <nav class="breadcrumb">
@@ -16,10 +15,7 @@
             <span>{{ pais.nombre }}</span>
         </nav>
         <h1 style="display:flex; align-items:center; gap:12px;">
-            <img src="https://flagcdn.com/32x24/{{ pais.codigo|lower }}.png"
-                 alt="{{ pais.codigo }}"
-                 style="width:32px; height:24px; border-radius:3px; object-fit:cover;"
-                 onerror="this.style.display='none'">
+            <img src="https://flagcdn.com/32x24/{{ pais.codigo|lower }}.png" alt="{{ pais.codigo }}" style="width:32px; height:24px; border-radius:3px; object-fit:cover;" onerror="this.style.display='none'">
             {{ pais.nombre }}
         </h1>
         <p class="page-subtitle">
@@ -34,7 +30,6 @@
 <div class="container" style="padding-bottom:4rem;">
 <div class="atlas-layout">
 
-    <!-- SIDEBAR -->
     <aside class="filters-sidebar">
         <div class="filters-box">
             <h3 data-i18n="filters.title">Filtros</h3>
@@ -76,69 +71,42 @@
         </div>
     </aside>
 
-    <!-- GRID -->
     <main>
         <div class="class-filters">
             <a href="?" class="cf-pill {% if not request.GET.class_name %}active{% endif %}" data-i18n="pill.all">🌐 Todos</a>
-            <a href="?class_name=Mammalia" class="cf-pill {% if request.GET.class_name == 'Mammalia' %}active{% endif %}" data-i18n="pill.mammalia">🦁 Mamíferos</a>
-            <a href="?class_name=Aves" class="cf-pill {% if request.GET.class_name == 'Aves' %}active{% endif %}" data-i18n="pill.aves">🦅 Aves</a>
-            <a href="?class_name=Reptilia" class="cf-pill {% if request.GET.class_name == 'Reptilia' %}active{% endif %}" data-i18n="pill.reptilia">🦎 Reptiles</a>
-            <a href="?class_name=Amphibia" class="cf-pill {% if request.GET.class_name == 'Amphibia' %}active{% endif %}" data-i18n="pill.amphibia">🐸 Anfibios</a>
-            <a href="?class_name=Actinopterygii" class="cf-pill {% if request.GET.class_name == 'Actinopterygii' %}active{% endif %}" data-i18n="pill.peces">🐟 Peces</a>
-            <a href="?class_name=Insecta" class="cf-pill {% if request.GET.class_name == 'Insecta' %}active{% endif %}" data-i18n="pill.insecta">🦋 Insectos</a>
-            <a href="?class_name=Magnoliopsida" class="cf-pill {% if request.GET.class_name == 'Magnoliopsida' %}active{% endif %}" data-i18n="pill.plantas">🌸 Plantas</a>
+            <a href="?class_name=Mammalia" class="cf-pill {% if request.GET.class_name == 'Mammalia' %}active{% endif %}"><img src="/static/atlas/img/fauna/Mamiferos.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Mamíferos"> <span data-i18n="pill.mammalia">Mamíferos</span></a>
+            <a href="?class_name=Aves" class="cf-pill {% if request.GET.class_name == 'Aves' %}active{% endif %}"><img src="/static/atlas/img/fauna/Aves.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Aves"> <span data-i18n="pill.aves">Aves</span></a>
+            <a href="?class_name=Reptilia" class="cf-pill {% if request.GET.class_name == 'Reptilia' %}active{% endif %}"><img src="/static/atlas/img/fauna/Reptiles.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Reptiles"> <span data-i18n="pill.reptilia">Reptiles</span></a>
+            <a href="?class_name=Amphibia" class="cf-pill {% if request.GET.class_name == 'Amphibia' %}active{% endif %}"><img src="/static/atlas/img/fauna/Anfibios.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Anfibios"> <span data-i18n="pill.amphibia">Anfibios</span></a>
+            <a href="?class_name=Actinopterygii" class="cf-pill {% if request.GET.class_name == 'Actinopterygii' %}active{% endif %}"><img src="/static/atlas/img/fauna/Peces.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Peces"> <span data-i18n="pill.peces">Peces</span></a>
+            <a href="?class_name=Insecta" class="cf-pill {% if request.GET.class_name == 'Insecta' %}active{% endif %}"><img src="/static/atlas/img/fauna/Insectos.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Insectos"> <span data-i18n="pill.insecta">Insectos</span></a>
+            <a href="?class_name=Magnoliopsida" class="cf-pill {% if request.GET.class_name == 'Magnoliopsida' %}active{% endif %}"><img src="/static/atlas/img/fauna/Planta.svg" style="width:28px;height:28px;display:inline-block;vertical-align:middle;margin-right:4px;object-fit:contain;" alt="Plantas"> <span data-i18n="pill.plantas">Plantas</span></a>
         </div>
 
         <div class="species-grid">
             {% for especie in especies %}
             <article class="species-card" data-species-key="{{ especie.species_key }}" data-pais-id="{{ pais.pk }}">
-
                 {% if especie.species_key in especies_biolog %}
                 <div class="sc-biolog-badge visible" id="badge-{{ especie.species_key }}">✓ Atlas</div>
                 {% else %}
                 <div class="sc-biolog-badge" id="badge-{{ especie.species_key }}"></div>
                 {% endif %}
-
                 {% if user.is_authenticated %}
                 <div class="sc-quick-actions" onclick="event.stopPropagation()">
-                    <button class="sc-qa-btn {% if especie.species_key in especies_favoritas %}active-fav{% endif %}"
-                            id="qa-fav-{{ especie.species_key }}" title="Favorito"
-                            onclick="quickFavorito({{ especie.species_key }}, this)">
-                        {% if especie.species_key in especies_favoritas %}❤️{% else %}🤍{% endif %}
-                    </button>
-                    <button class="sc-qa-btn {% if especie.species_key in especies_biolog %}active-atlas{% endif %}"
-                            id="qa-atlas-{{ especie.species_key }}" title="Mi Atlas"
-                            onclick="quickAtlas({{ especie.species_key }}, {{ pais.pk }}, this)">
-                        {% if especie.species_key in especies_biolog %}🌿{% else %}🪴{% endif %}
-                    </button>
-                    <a class="sc-qa-btn" title="Registrar avistamiento"
-                       href="{% url 'atlas:nuevo_avistamiento' especie.species_key %}"
-                       onclick="event.stopPropagation()">📍</a>
+                    <button class="sc-qa-btn {% if especie.species_key in especies_favoritas %}active-fav{% endif %}" id="qa-fav-{{ especie.species_key }}" title="Favorito" onclick="quickFavorito({{ especie.species_key }}, this)"><img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;"></button>
+                    <button class="sc-qa-btn {% if especie.species_key in especies_biolog %}active-atlas{% endif %}" id="qa-atlas-{{ especie.species_key }}" title="Mi Atlas" onclick="quickAtlas({{ especie.species_key }}, {{ pais.pk }}, this)"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;"></button>
+                    <a class="sc-qa-btn" title="Registrar avistamiento" href="{% url 'atlas:nuevo_avistamiento' especie.species_key %}" onclick="event.stopPropagation()"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;"></a>
                 </div>
                 {% endif %}
-
                 <div class="sc-image-wrap">
                     {% with img_url=imagenes_pais|get_item:especie.species_key %}
-                    {% if img_url %}
-                    <img class="sc-img" src="{{ img_url }}"
-                         alt="{{ especie.canonical_name|default:especie.scientific_name }}"
-                         loading="lazy"
-                         onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">
-                    {% elif especie.image_url %}
-                    <img class="sc-img" src="{{ especie.image_url }}"
-                         alt="{{ especie.canonical_name|default:especie.scientific_name }}"
-                         loading="lazy"
-                         onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">
-                    {% endif %}
-                    <div class="sc-placeholder {% if img_url or especie.image_url %}hidden{% endif %}">
-                    </div>
+                    {% if img_url %}<img class="sc-img" src="{{ img_url }}" alt="{{ especie.canonical_name|default:especie.scientific_name }}" loading="lazy" onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">
+                    {% elif especie.image_url %}<img class="sc-img" src="{{ especie.image_url }}" alt="{{ especie.canonical_name|default:especie.scientific_name }}" loading="lazy" onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">{% endif %}
+                    <div class="sc-placeholder {% if img_url or especie.image_url %}hidden{% endif %}"></div>
                     {% endwith %}
-                    {% if especie.kingdom %}
-                    <span class="sc-kingdom sc-kingdom--{{ especie.kingdom|lower }}">{{ especie.kingdom }}</span>
-                    {% endif %}
+                    {% if especie.kingdom %}<span class="sc-kingdom sc-kingdom--{{ especie.kingdom|lower }}">{{ especie.kingdom }}</span>{% endif %}
                     <div class="sc-overlay"><span class="sc-overlay-text" data-i18n="species.details">Ver detalles →</span></div>
                 </div>
-
                 <div class="sc-body">
                     <p class="sc-sci-name">{{ especie.canonical_name|default:especie.scientific_name }}</p>
                     {% if especie.common_name %}<p class="sc-common-name">{{ especie.common_name }}</p>{% endif %}
@@ -146,9 +114,7 @@
                         {% if especie.family %}<span>{{ especie.family }}</span>{% endif %}
                         {% if especie.class_name %}<span>{{ especie.class_name }}</span>{% endif %}
                     </div>
-                    {% if especie.descripcion %}
-                    <p class="sc-description">{{ especie.get_descripcion }}</p>
-                    {% endif %}
+                    {% if especie.descripcion %}<p class="sc-description">{{ especie.get_descripcion }}</p>{% endif %}
                     {% if especie.iucn_status %}
                     <div class="sc-iucn sc-iucn--{{ especie.iucn_status|lower }}">
                         {% if especie.iucn_status == 'EX' %}💀 Extinta{% elif especie.iucn_status == 'EW' %}💀 Ext. silvestre{% elif especie.iucn_status == 'CR' %}🔴 Peligro crítico{% elif especie.iucn_status == 'EN' %}🟠 En peligro{% elif especie.iucn_status == 'VU' %}🟡 Vulnerable{% elif especie.iucn_status == 'NT' %}🟢 Casi amenazada{% elif especie.iucn_status == 'LC' %}⚪ Preoc. menor{% endif %}
@@ -157,26 +123,18 @@
                 </div>
             </article>
             {% empty %}
-            <p style="color:var(--text-muted); grid-column:1/-1; padding:2rem 0;" data-i18n="species.empty">
-                No se encontraron especies con los filtros seleccionados.
-            </p>
+            <p style="color:var(--text-muted); grid-column:1/-1; padding:2rem 0;" data-i18n="species.empty">No se encontraron especies con los filtros seleccionados.</p>
             {% endfor %}
         </div>
 
         {% if page_obj.has_other_pages %}
         <div class="pagination">
-            {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" data-i18n="pagination.prev">&laquo; Anterior</a>
-            {% endif %}
+            {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" data-i18n="pagination.prev">&laquo; Anterior</a>{% endif %}
             {% for num in paginator.page_range %}
                 {% if page_obj.number == num %}<span class="current">{{ num }}</span>
-                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-                <a href="?page={{ num }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
-                {% endif %}
+                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}<a href="?page={{ num }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>{% endif %}
             {% endfor %}
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" data-i18n="pagination.next">Siguiente &raquo;</a>
-            {% endif %}
+            {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if request.GET.kingdom %}&kingdom={{ request.GET.kingdom }}{% endif %}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.iucn_status %}&iucn_status={{ request.GET.iucn_status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" data-i18n="pagination.next">Siguiente &raquo;</a>{% endif %}
         </div>
         {% endif %}
     </main>
@@ -199,9 +157,9 @@
         </div>
         <div class="smodal-right">
             <div class="smodal-actions">
-                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn">🤍 <span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span></button>
-                <button id="btn-miatlas" onclick="toggleMiAtlas()" class="smodal-action-btn">🪴 <span id="btn-miatlas-text" data-i18n="modal.miatlas">Mi Atlas</span></button>
-                <a id="btn-avistamiento" href="#" class="smodal-action-btn" data-i18n="modal.avistamiento">📍 Avistamiento</a>
+                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn"><img src="/static/atlas/img/menu/favoritos.svg" style="width:50px;height:50px;vertical-align:middle;margin-right:6px;"><span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span></button>
+                <button id="btn-miatlas" onclick="toggleMiAtlas()" class="smodal-action-btn"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:50px;height:50px;vertical-align:middle;margin-right:6px;"><span id="btn-miatlas-text" data-i18n="modal.miatlas">Mi Atlas</span></button>
+                <a id="btn-avistamiento" href="#" class="smodal-action-btn"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:50px;height:50px;vertical-align:middle;margin-right:6px;">Avistamiento</a>
             </div>
             <div id="smodal-desc-wrap" style="display:none;">
                 <p class="smodal-section-title" data-i18n="modal.descripcion">Descripción</p>
@@ -236,7 +194,6 @@
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lb-close">✕</button>
     <div class="lightbox-main">
         <button class="lightbox-btn lightbox-prev" id="lb-prev">&#8592;</button>
         <img class="lightbox-img" id="lb-img" src="" alt="">
@@ -246,16 +203,17 @@
     <div class="lightbox-counter" id="lb-counter"></div>
     <div class="lightbox-thumbs" id="lb-thumbs"></div>
 </div>
+<button id="lb-close-btn" onclick="lbClose()" style="display:none; position:fixed; top:16px; right:16px; z-index:10002; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:0.9rem; cursor:pointer; align-items:center; justify-content:center;">✕</button>
 
 {% endblock %}
 
 {% block extra_js %}
 <style>
+.pill-icon { width:28px; height:28px; color: var(--accent, #2d8a4e); display:inline-block; vertical-align:middle; margin-right:4px; }
 .smodal-lang-btn { padding:4px 11px; border-radius:999px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-muted); font-size:0.73rem; font-weight:600; cursor:pointer; font-family:var(--font-body); transition:all 0.15s; }
 .smodal-lang-btn:hover { border-color:var(--border-hover); color:var(--text); }
 .smodal-lang-btn.active { background:var(--green-bg); border-color:var(--green); color:var(--green); }
 </style>
-
 <script>
 const isAuthenticated = {{ user.is_authenticated|yesno:'true,false' }};
 const backdrop = document.getElementById('smodal-backdrop');
@@ -266,8 +224,23 @@ const currentPaisId = {{ pais.pk }};
 
 function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.length===2)return p.pop().split(';').shift();}
 
-function lbOpen(photos,i){lbPhotos=photos;lbCurrent=i;if(lbEl.parentNode!==document.body)document.body.appendChild(lbEl);document.body.style.overflow='';lbRender();lbEl.classList.add('open');}
-function lbClose(){lbEl.classList.remove('open');if(backdrop.classList.contains('open'))document.body.style.overflow='hidden';}
+function lbOpen(photos,i){
+    lbPhotos=photos;lbCurrent=i;
+    if(lbEl.parentNode!==document.body){
+        document.body.appendChild(lbEl);
+        document.getElementById('lb-prev').addEventListener('click',()=>{lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length;lbRender();});
+        document.getElementById('lb-next').addEventListener('click',()=>{lbCurrent=(lbCurrent+1)%lbPhotos.length;lbRender();});
+    }
+    document.getElementById('lb-close-btn').style.display='flex';
+    document.body.style.overflow='';
+    lbRender();
+    lbEl.classList.add('open');
+}
+function lbClose(){
+    lbEl.classList.remove('open');
+    document.getElementById('lb-close-btn').style.display='none';
+    if(backdrop.classList.contains('open'))document.body.style.overflow='hidden';
+}
 function lbRender(){
     const p=lbPhotos[lbCurrent],img=document.getElementById('lb-img');
     img.style.opacity='0';setTimeout(()=>{img.src=p.url;img.style.opacity='1';},120);
@@ -276,9 +249,6 @@ function lbRender(){
     const thumbs=document.getElementById('lb-thumbs');thumbs.innerHTML='';
     lbPhotos.forEach((ph,i)=>{const t=document.createElement('img');t.src=ph.url;t.className='lightbox-thumb'+(i===lbCurrent?' active':'');t.onclick=()=>{lbCurrent=i;lbRender();};thumbs.appendChild(t);});
 }
-document.getElementById('lb-close').onclick=lbClose;
-document.getElementById('lb-prev').onclick=()=>{lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length;lbRender();};
-document.getElementById('lb-next').onclick=()=>{lbCurrent=(lbCurrent+1)%lbPhotos.length;lbRender();};
 
 function openModal(speciesKey){
     backdrop.classList.add('open');document.body.style.overflow='hidden';
@@ -287,10 +257,9 @@ function openModal(speciesKey){
     document.getElementById('smodal-common').textContent='';
     document.getElementById('smodal-kingdom-badge').textContent='';
     document.getElementById('smodal-iucn-badge').style.display='none';
-    // Usar imagen de la tarjeta como hero inmediato
-    const cardImg = document.querySelector(`.species-card[data-species-key="${speciesKey}"] .sc-img`);
-    const heroImg = document.getElementById('smodal-hero-img');
-    heroImg.src = cardImg ? cardImg.src : '';
+    const cardImg=document.querySelector(`.species-card[data-species-key="${speciesKey}"] .sc-img`);
+    const heroImg=document.getElementById('smodal-hero-img');
+    heroImg.src=cardImg?cardImg.src:'';
     document.getElementById('smodal-names-list').innerHTML='';
     document.getElementById('smodal-names-wrap').style.display='none';
     document.getElementById('smodal-desc-wrap').style.display='none';
@@ -302,17 +271,15 @@ function openModal(speciesKey){
     document.getElementById('btn-miatlas-text').textContent=t('modal.miatlas');
     ['smodal-kingdom','smodal-phylum','smodal-class','smodal-order','smodal-family','smodal-genus'].forEach(id=>document.getElementById(id).textContent='—');
     document.querySelector('.smodal-right').scrollTop=0;
-
     const lang=localStorage.getItem('bioatlas-lang')||'es';
     fetch(`/api/especie/${speciesKey}/?pais_id={{ pais.pk }}&lang=${lang}`)
-        .then(r=>r.json())
-        .then(data=>{
+        .then(r=>r.json()).then(data=>{
             if(!data.success)return;
             const sp=data.especie;
             document.getElementById('smodal-sci').textContent=sp.canonical_name||sp.scientific_name;
             document.getElementById('smodal-common').textContent=sp.common_name||'';
             document.getElementById('smodal-kingdom-badge').textContent=sp.kingdom||'';
-            if(sp.image_url && !heroImg.src) heroImg.src=sp.image_url;
+            if(sp.image_url&&!heroImg.src)heroImg.src=sp.image_url;
             const iucnL={"EX":"💀 Extinta","EW":"💀 Ext. silvestre","CR":"🔴 Peligro crítico","EN":"🟠 En peligro","VU":"🟡 Vulnerable","NT":"🟢 Casi amenazada","LC":"⚪ Preoc. menor"};
             const iucnC={"EX":"#1a1a1a","EW":"#1a1a1a","CR":"rgba(220,38,38,0.8)","EN":"rgba(234,88,12,0.8)","VU":"rgba(202,138,4,0.8)","NT":"rgba(45,138,78,0.6)","LC":"rgba(0,0,0,0.3)"};
             const badge=document.getElementById('smodal-iucn-badge');
@@ -323,18 +290,13 @@ function openModal(speciesKey){
             document.getElementById('smodal-order').textContent=sp.order||'—';
             document.getElementById('smodal-family').textContent=sp.family||'—';
             document.getElementById('smodal-genus').textContent=sp.genus||'—';
-            if(sp.common_names&&sp.common_names.length){
-                document.getElementById('smodal-names-wrap').style.display='';
-                const list=document.getElementById('smodal-names-list');
-                sp.common_names.forEach(cn=>{const pill=document.createElement('span');pill.className='smodal-name-pill';pill.textContent=cn.name;list.appendChild(pill);});
-            }
+            if(sp.common_names&&sp.common_names.length){document.getElementById('smodal-names-wrap').style.display='';const list=document.getElementById('smodal-names-list');sp.common_names.forEach(cn=>{const pill=document.createElement('span');pill.className='smodal-name-pill';pill.textContent=cn.name;list.appendChild(pill);});}
             if(sp.description){document.getElementById('smodal-desc-wrap').style.display='';document.getElementById('smodal-description').textContent=sp.description;}
             if(data.es_favorito){document.getElementById('btn-favorito').className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');}
             if(data.en_biolog){document.getElementById('btn-miatlas').className='smodal-action-btn active-atlas';document.getElementById('btn-miatlas-text').textContent=t('modal.en_miatlas');}
             document.getElementById('btn-avistamiento').href='/perfil/avistamientos/nuevo/'+speciesKey+'/';
             loadGallery(sp.canonical_name||sp.scientific_name);
-        })
-        .catch(()=>{document.getElementById('smodal-sci').textContent=t('modal.error');});
+        }).catch(()=>{document.getElementById('smodal-sci').textContent=t('modal.error');});
 }
 
 function changeDescLang(lang){
@@ -347,7 +309,6 @@ function changeDescLang(lang){
 
 function loadGallery(name){
     const grid=document.getElementById('gallery-grid'),loading=document.getElementById('smodal-gallery-loading');
-    const heroImg=document.getElementById('smodal-hero-img');
     const BAD=['label','specimen','herbarium','museum','holotype','illustration','illustrat','drawing','painting','artwork','cartoon','animated','clipart','vector','composite','montage','photoshop','white_background','cutout','isolated','shutterstock','gettyimages','alamy'];
     function isGood(url,attr){if(!url)return false;const u=url.toLowerCase(),a=(attr||'').toLowerCase();if(BAD.some(k=>u.includes(k)))return false;if(['illustrat','drawn by','painted by','artwork by','digital art','ai generated'].some(k=>a.includes(k)))return false;return true;}
     fetch(`https://api.inaturalist.org/v1/observations?taxon_name=${encodeURIComponent(name)}&photos=true&quality_grade=research,needs_id&order_by=votes&per_page=20`)
@@ -355,7 +316,6 @@ function loadGallery(name){
         const photos=[];
         (data.results||[]).forEach(obs=>(obs.photos||[]).forEach(p=>{const url=(p.url||'').replace('/square.','/original.');if(isGood(url,p.attribution)&&!photos.find(x=>x.url===url))photos.push({url,caption:name});}));
         loading.style.display='none';
-        // hero ya establecido desde sp.image_url;
         if(!photos.length){grid.style.display='none';return;}
         grid.innerHTML='';grid.style.display='grid';
         photos.slice(0,6).forEach((ph,i)=>{const item=document.createElement('div');item.className='gallery-item';item.innerHTML=`<img src="${ph.url}" alt="${name}" loading="lazy" onerror="this.closest('.gallery-item').style.display='none'"><div class="gallery-item-overlay"><span class="gallery-zoom-icon">🔍</span></div>`;item.onclick=()=>lbOpen(photos.slice(0,6),i);grid.appendChild(item);});

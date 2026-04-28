@@ -7,10 +7,10 @@
         <nav class="breadcrumb">
             <a href="{% url 'atlas:index' %}" data-i18n="nav.inicio">Inicio</a>
             <span>/</span>
-            <span>Contacto</span>
+            <span data-i18n="contacto.titulo">Contacto</span>
         </nav>
-        <h1>Contacto</h1>
-        <p class="page-subtitle">¿Tienes alguna pregunta o sugerencia? Escríbenos.</p>
+        <h1 data-i18n="contacto.titulo">Contacto</h1>
+        <p class="page-subtitle" data-i18n="contacto.subtitulo">¿Tienes alguna pregunta o sugerencia? Escríbenos.</p>
     </div>
 </div>
 
@@ -23,7 +23,7 @@
             <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem;">
                 <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🌍</div>
                 <h3 style="font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem;">BioAtlas Project</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;">Atlas mundial de biodiversidad. Explorando la naturaleza del planeta a través de los datos de GBIF e iNaturalist.</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;" data-i18n="contacto.desc">Atlas mundial de biodiversidad. Explorando la naturaleza del planeta a través de los datos de GBIF e iNaturalist.</p>
             </div>
 
             <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem;">
@@ -37,40 +37,40 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--green-bg); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">📍</div>
                     <div>
-                        <p style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 2px;">Ubicación</p>
-                        <p style="font-size: 0.88rem; color: var(--text); font-weight: 600;">Madrid, España</p>
+                        <p style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 2px;" data-i18n="contacto.ubicacion_label">Ubicación</p>
+                        <p style="font-size: 0.88rem; color: var(--text); font-weight: 600;" data-i18n="contacto.ubicacion">Madrid, España</p>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--green-bg); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">🕐</div>
                     <div>
-                        <p style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 2px;">Respuesta</p>
-                        <p style="font-size: 0.88rem; color: var(--text); font-weight: 600;">En menos de 24h</p>
+                        <p style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 2px;" data-i18n="contacto.respuesta_label">Respuesta</p>
+                        <p style="font-size: 0.88rem; color: var(--text); font-weight: 600;" data-i18n="contacto.respuesta">En menos de 24h</p>
                     </div>
                 </div>
             </div>
 
             <div style="background: var(--green-bg); border: 1px solid rgba(45,138,78,0.2); border-radius: var(--radius-lg); padding: 1.5rem;">
-                <p style="font-size: 0.82rem; color: var(--green); font-weight: 600; margin-bottom: 0.4rem;">💡 ¿Eres desarrollador?</p>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">Los datos de biodiversidad de BioAtlas provienen de <strong>GBIF</strong> e <strong>iNaturalist</strong>. Si quieres colaborar o reportar un error de datos, escríbenos.</p>
+                <p style="font-size: 0.82rem; color: var(--green); font-weight: 600; margin-bottom: 0.4rem;" data-i18n="contacto.dev_titulo">💡 ¿Eres desarrollador?</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;" data-i18n="contacto.dev_desc">Los datos de biodiversidad de BioAtlas provienen de <strong>GBIF</strong> e <strong>iNaturalist</strong>. Si quieres colaborar o reportar un error de datos, escríbenos.</p>
             </div>
         </div>
 
         <!-- FORMULARIO DERECHA -->
         <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem;">
-            <h2 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem;">Envíanos un mensaje</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.75rem;">Completa el formulario y se abrirá tu cliente de correo con el mensaje listo para enviar.</p>
+            <h2 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem;" data-i18n="contacto.form_titulo">Envíanos un mensaje</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.75rem;" data-i18n="contacto.form_sub">Completa el formulario y se abrirá tu cliente de correo con el mensaje listo para enviar.</p>
 
             <div style="display: flex; flex-direction: column; gap: 1rem;" id="contact-form">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
-                        <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;">Nombre *</label>
-                        <input type="text" id="contact-nombre" placeholder="Tu nombre"
+                        <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;" data-i18n="contacto.nombre_label">Nombre *</label>
+                        <input type="text" id="contact-nombre" data-i18n-placeholder="contacto.nombre_ph" placeholder="Tu nombre"
                                style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); background: var(--bg); font-family: var(--font-body); outline: none; transition: border-color 0.2s; box-sizing: border-box;"
                                onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;">Email *</label>
+                        <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;" data-i18n="contacto.email_label">Email *</label>
                         <input type="email" id="contact-email" placeholder="tu@email.com"
                                style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); background: var(--bg); font-family: var(--font-body); outline: none; transition: border-color 0.2s; box-sizing: border-box;"
                                onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
@@ -78,39 +78,40 @@
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;">Asunto *</label>
+                    <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;" data-i18n="contacto.asunto_label">Asunto *</label>
                     <select id="contact-asunto"
                             style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); background: var(--bg); font-family: var(--font-body); outline: none; transition: border-color 0.2s; box-sizing: border-box;"
                             onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
-                        <option value="Consulta general">💬 Consulta general</option>
-                        <option value="Error en los datos">🐛 Error en los datos</option>
-                        <option value="Sugerencia de mejora">💡 Sugerencia de mejora</option>
-                        <option value="Problema con mi cuenta">👤 Problema con mi cuenta</option>
-                        <option value="Consulta sobre Premium">✨ Consulta sobre Premium</option>
-                        <option value="Colaboración">🤝 Colaboración</option>
-                        <option value="Otro">📌 Otro</option>
+                        <option value="Consulta general" data-i18n="contacto.asunto1">💬 Consulta general</option>
+                        <option value="Error en los datos" data-i18n="contacto.asunto2">🐛 Error en los datos</option>
+                        <option value="Sugerencia de mejora" data-i18n="contacto.asunto3">💡 Sugerencia de mejora</option>
+                        <option value="Problema con mi cuenta" data-i18n="contacto.asunto4">👤 Problema con mi cuenta</option>
+                        <option value="Consulta sobre Premium" data-i18n="contacto.asunto5">✨ Consulta sobre Premium</option>
+                        <option value="Colaboración" data-i18n="contacto.asunto6">🤝 Colaboración</option>
+                        <option value="Otro" data-i18n="contacto.asunto7">📌 Otro</option>
                     </select>
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;">Mensaje *</label>
-                    <textarea id="contact-mensaje" placeholder="Escribe tu mensaje aquí..." rows="5"
+                    <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 6px;" data-i18n="contacto.mensaje_label">Mensaje *</label>
+                    <textarea id="contact-mensaje" data-i18n-placeholder="contacto.mensaje_ph" placeholder="Escribe tu mensaje aquí..." rows="5"
                               style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); background: var(--bg); font-family: var(--font-body); outline: none; transition: border-color 0.2s; box-sizing: border-box; resize: vertical; min-height: 120px;"
                               onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
                 </div>
 
-                <div id="contact-error" style="display:none; background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.83rem; color: #DC2626;">
+                <div id="contact-error" style="display:none; background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.83rem; color: #DC2626;" data-i18n="contacto.error">
                     Por favor rellena todos los campos obligatorios.
                 </div>
 
                 <button onclick="enviarContacto()"
                         style="background: var(--green); color: #fff; border: none; border-radius: 999px; padding: 0.85rem 2rem; font-size: 0.92rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;"
                         onmouseover="this.style.background='#236B3C'; this.style.transform='translateY(-1px)'"
-                        onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'">
+                        onmouseout="this.style.background='var(--green)'; this.style.transform='translateY(0)'"
+                        data-i18n="contacto.btn">
                     📧 Enviar mensaje
                 </button>
 
-                <p style="font-size: 0.75rem; color: var(--text-faint); text-align: center;">
+                <p style="font-size: 0.75rem; color: var(--text-faint); text-align: center;" data-i18n="contacto.nota">
                     Al enviar se abrirá tu cliente de correo con el mensaje preparado.
                 </p>
             </div>
@@ -118,9 +119,9 @@
             <!-- Confirmación -->
             <div id="contact-ok" style="display:none; text-align: center; padding: 2rem 0;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin-bottom: 0.5rem;">¡Mensaje preparado!</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Tu cliente de correo se ha abierto con el mensaje listo. Pulsa enviar para hacérnoslo llegar.</p>
-                <button onclick="resetForm()" style="margin-top: 1.25rem; background: var(--bg-surface); color: var(--text-muted); border: 1.5px solid var(--border); border-radius: 999px; padding: 0.6rem 1.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);">
+                <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin-bottom: 0.5rem;" data-i18n="contacto.ok_titulo">¡Mensaje preparado!</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);" data-i18n="contacto.ok_desc">Tu cliente de correo se ha abierto con el mensaje listo. Pulsa enviar para hacérnoslo llegar.</p>
+                <button onclick="resetForm()" style="margin-top: 1.25rem; background: var(--bg-surface); color: var(--text-muted); border: 1.5px solid var(--border); border-radius: 999px; padding: 0.6rem 1.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);" data-i18n="contacto.otro_msg">
                     Enviar otro mensaje
                 </button>
             </div>
@@ -135,24 +136,15 @@ function enviarContacto() {
     const asunto  = document.getElementById('contact-asunto').value;
     const mensaje = document.getElementById('contact-mensaje').value.trim();
     const errorEl = document.getElementById('contact-error');
-
-    if (!nombre || !email || !mensaje) {
-        errorEl.style.display = 'block';
-        return;
-    }
+    if (!nombre || !email || !mensaje) { errorEl.style.display = 'block'; return; }
     errorEl.style.display = 'none';
-
     const cuerpo = `Nombre: ${nombre}\nEmail: ${email}\n\n${mensaje}`;
-    const mailtoUrl = `mailto:bioatlas@gmail.com?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-
-    window.location.href = mailtoUrl;
-
+    window.location.href = `mailto:bioatlas@gmail.com?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
     setTimeout(() => {
         document.getElementById('contact-form').style.display = 'none';
         document.getElementById('contact-ok').style.display = 'block';
     }, 500);
 }
-
 function resetForm() {
     document.getElementById('contact-nombre').value = '';
     document.getElementById('contact-email').value = '';
@@ -161,5 +153,4 @@ function resetForm() {
     document.getElementById('contact-ok').style.display = 'none';
 }
 </script>
-
 {% endblock %}
