@@ -8,15 +8,12 @@
     <div style="background:linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-2) 100%); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; margin-bottom:2rem; display:flex; align-items:center; gap:2rem; flex-wrap:wrap; position:relative; overflow:hidden;">
         <div style="position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 0% 50%, rgba(74,222,128,0.04) 0%, transparent 60%); pointer-events:none;"></div>
         <div style="width:80px; height:80px; border-radius:50%; background:var(--bg-surface); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:800; flex-shrink:0; color:var(--green); position:relative; z-index:1;">
-            {% with suscripcion=user.suscripcion %}{% if suscripcion.es_premium %}✨{% else %}{{ user.username|first|upper }}{% endif %}{% endwith %}
+            {% with suscripcion=user.suscripcion %}{% if suscripcion.es_premium %}<img src="/static/atlas/img/premium.svg" style="width:180px;height:180px;object-fit:contain;">{% else %}{{ user.username|first|upper }}{% endif %}{% endwith %}
         </div>
         <div style="flex:1; position:relative; z-index:1;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
                 <h1 style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; color:var(--text); margin:0; letter-spacing:-0.02em;">{{ user.username }}</h1>
                 {% with suscripcion=user.suscripcion %}
-                {% if suscripcion.es_premium %}
-                <span style="background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-size:0.72rem; font-weight:800; padding:3px 12px; border-radius:999px;">✨ Premium</span>
-                {% endif %}
                 {% endwith %}
             </div>
             <p style="color:var(--text-muted); margin:4px 0 0; font-size:0.88rem;" data-i18n="perfil.miembro">Miembro de BioAtlas</p>
@@ -25,11 +22,11 @@
         <div style="display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1;">
             {% with suscripcion=user.suscripcion %}
             {% if not suscripcion.es_premium %}
-            <a href="{% url 'atlas:premium' %}" style="padding:10px 20px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.85rem;" data-i18n="perfil.hazte_premium">✨ Hazte Premium</a>
+            <a href="{% url 'atlas:premium' %}" style="padding:10px 20px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.85rem;" ><img src="/static/atlas/img/premium.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:4px;object-fit:contain;"><span data-i18n="perfil.hazte_premium">Hazte Premium</span></a>
             {% else %}
             <form method="POST" action="{% url 'atlas:cancelar_suscripcion' %}">
                 {% csrf_token %}
-                <button type="submit" onclick="return confirm('¿Cancelar tu suscripción Premium?')"
+                <button type="submit" onclick="BioNotify.show({icon:'⚠️',title:'¿Cancelar Premium?',msg:'Perderás el acceso a todas las funciones Premium.',actions:[{label:'Sí, cancelar',primary:true,onclick:()=>{BioNotify.close();this.closest('form').submit();}},{label:'No, mantener',onclick:()=>BioNotify.close()}]});return false;"
                     style="padding:8px 16px; background:var(--bg-surface); color:var(--text-muted); border:1px solid var(--border); border-radius:999px; font-size:0.8rem; cursor:pointer; font-family:var(--font-body);"
                     data-i18n="perfil.cancelar_premium">
                     Cancelar Premium
@@ -43,19 +40,19 @@
     <!-- Stats -->
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:2rem;">
         <a href="{% url 'atlas:mis_favoritos' %}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-decoration:none; text-align:center; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
-            <div style="font-size:1.8rem; margin-bottom:0.5rem;">❤️</div>
+            <div style="margin-bottom:0.5rem;"><img src="/static/atlas/img/menu/favoritos.svg" style="width:90px;height:90px;object-fit:contain;"></div>
             <div style="font-size:1.8rem; font-weight:800; color:var(--text); font-family:var(--font-display);">{{ num_favoritos }}</div>
             <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;" data-i18n="perfil.stat.favoritos">Favoritos</div>
             {% with suscripcion=user.suscripcion %}{% if not suscripcion.es_premium %}<div style="font-size:0.7rem; color:var(--text-faint); margin-top:2px;">{{ num_favoritos }}/{{ limite_favoritos }}</div>{% endif %}{% endwith %}
         </a>
         <a href="{% url 'atlas:mis_avistamientos' %}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-decoration:none; text-align:center; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
-            <div style="font-size:1.8rem; margin-bottom:0.5rem;">📍</div>
+            <div style="margin-bottom:0.5rem;"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:90px;height:90px;object-fit:contain;"></div>
             <div style="font-size:1.8rem; font-weight:800; color:var(--text); font-family:var(--font-display);">{{ num_avistamientos }}</div>
             <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;" data-i18n="perfil.stat.avistamientos">Avistamientos</div>
             {% with suscripcion=user.suscripcion %}{% if not suscripcion.es_premium %}<div style="font-size:0.7rem; color:var(--text-faint); margin-top:2px;">{{ num_avistamientos }}/{{ limite_avistamientos }}</div>{% endif %}{% endwith %}
         </a>
         <a href="{% url 'atlas:biolog' %}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-decoration:none; text-align:center; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
-            <div style="font-size:1.8rem; margin-bottom:0.5rem;">🌿</div>
+            <div style="margin-bottom:0.5rem;"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:90px;height:90px;object-fit:contain;"></div>
             <div style="font-size:1.8rem; font-weight:800; color:var(--text); font-family:var(--font-display);">{{ num_biolog }}</div>
             <div style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;" data-i18n="perfil.stat.atlas">En Mi Atlas</div>
             <div style="font-size:0.7rem; color:var(--text-faint); margin-top:2px;">{{ paises_biolog }} país{{ paises_biolog|pluralize:"es" }}</div>
@@ -64,7 +61,7 @@
 
     <!-- Buscador rápido -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem;">
-        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 10px;" data-i18n="perfil.buscar_rapido">🔍 Añadir especie rápidamente</p>
+        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); margin:0 0 10px;" ><img src="/static/atlas/img/buscar_especie.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:4px;object-fit:contain;"> <span data-i18n="perfil.buscar_rapido">Añadir especie rápidamente</span></p>
         <div id="perfil-search-wrap" style="position:relative;">
             <input type="text" id="perfil-search-input"
                    data-i18n-placeholder="perfil.buscar_placeholder"

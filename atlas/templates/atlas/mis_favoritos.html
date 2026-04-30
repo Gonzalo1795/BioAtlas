@@ -2,15 +2,17 @@
 {% block title %}Mis favoritos — BioAtlas{% endblock %}
 
 {% block content %}
-<div style="max-width:1200px; margin:2.5rem auto; padding:0 1.5rem;">
-
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
-        <div>
-            <h1 style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--text); margin:0; letter-spacing:-0.02em;">❤️ <span data-i18n="favs.titulo">Mis favoritos</span></h1>
-            <p style="color:var(--text-muted); font-size:0.88rem; margin:4px 0 0;">{{ total }} <span data-i18n="favs.guardadas">especie{{ total|pluralize:"s" }} guardada{{ total|pluralize:"s" }}</span></p>
-        </div>
-        <a href="{% url 'atlas:perfil' %}" style="color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;" data-i18n="favs.volver">← Volver al perfil</a>
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}" data-i18n="nav.inicio">Inicio</a><span>/</span><a href="{% url 'atlas:perfil' %}">Mi perfil</a><span>/</span><span data-i18n="favs.titulo">Mis favoritos</span>
+        </nav>
+        <h1><img src="/static/atlas/img/menu/favoritos.svg" style="width:160px;height:160px;vertical-align:middle;margin-right:8px;object-fit:contain;"><span data-i18n="favs.titulo">Mis favoritos</span></h1>
+        <p class="page-subtitle">{{ total }} <span data-i18n="favs.guardadas">especie{{ total|pluralize:"s" }} guardada{{ total|pluralize:"s" }}</span></p>
     </div>
+</div>
+
+<div class="container" style="padding-bottom:4rem;">
 
     <!-- Buscador para añadir -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem;">
@@ -27,31 +29,40 @@
     </div>
 
     {% if page_obj.object_list %}
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:1rem;">
+    <div class="species-grid">
         {% for fav in page_obj.object_list %}
-        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
-            <div style="aspect-ratio:4/3; overflow:hidden; background:var(--bg-surface);">
-                {% if fav.especie.image_url %}
-                <img src="{{ fav.especie.image_url }}" alt="{{ fav.especie.canonical_name }}"
-                     style="width:100%; height:100%; object-fit:cover;"
-                     onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:2rem;\'>🌿</div>'">
-                {% else %}
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:2rem;">🌿</div>
-                {% endif %}
-            </div>
-            <div style="padding:0.85rem;">
-                <p style="font-size:0.82rem; font-style:italic; font-weight:700; color:var(--text); margin:0 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ fav.especie.canonical_name|default:fav.especie.scientific_name }}</p>
-                {% if fav.especie.common_name %}<p style="font-size:0.72rem; color:var(--green); font-weight:600; margin:0 0 6px;">{{ fav.especie.common_name }}</p>{% endif %}
-                <p style="font-size:0.7rem; color:var(--text-faint); margin:0;">{{ fav.especie.family|default:fav.especie.kingdom }}</p>
-                <p style="font-size:0.7rem; color:var(--text-faint); margin:2px 0 8px;">{{ fav.created_at|date:"d/m/Y" }}</p>
-                <button onclick="quitarFavorito({{ fav.especie.species_key }}, this)"
-                    style="width:100%; padding:6px; border-radius:var(--radius-sm); border:1px solid rgba(248,113,113,0.2); background:none; color:#F87171; font-size:0.75rem; cursor:pointer; font-weight:600; font-family:var(--font-body); transition:all 0.15s;"
-                    onmouseover="this.style.background='rgba(248,113,113,0.08)'" onmouseout="this.style.background='none'"
-                    data-i18n="favs.quitar">
-                    🗑️ Quitar
+        <article class="species-card" data-species-key="{{ fav.especie.species_key }}" data-pais-id="0">
+            {% if user.is_authenticated %}
+            <div class="sc-quick-actions" onclick="event.stopPropagation()">
+                <button class="sc-qa-btn active-fav" id="qa-fav-{{ fav.especie.species_key }}" title="Quitar de favoritos" onclick="quitarFavoritoCard({{ fav.especie.species_key }}, this)">
+                    <img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;">
                 </button>
+                <a class="sc-qa-btn" title="Registrar avistamiento" href="{% url 'atlas:nuevo_avistamiento' fav.especie.species_key %}" onclick="event.stopPropagation()"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;"></a>
             </div>
-        </div>
+            {% endif %}
+            <div class="sc-image-wrap">
+                {% if fav.especie.image_url %}
+                <img class="sc-img" src="{{ fav.especie.image_url }}" alt="{{ fav.especie.canonical_name|default:fav.especie.scientific_name }}" loading="lazy" onerror="this.closest('.sc-image-wrap').querySelector('.sc-placeholder').classList.remove('hidden'); this.remove();">
+                {% endif %}
+                <div class="sc-placeholder {% if fav.especie.image_url %}hidden{% endif %}"></div>
+                {% if fav.especie.kingdom %}<span class="sc-kingdom sc-kingdom--{{ fav.especie.kingdom|lower }}">{{ fav.especie.kingdom }}</span>{% endif %}
+                <div class="sc-overlay"><span class="sc-overlay-text" data-i18n="species.details">Ver detalles →</span></div>
+            </div>
+            <div class="sc-body">
+                <p class="sc-sci-name">{{ fav.especie.canonical_name|default:fav.especie.scientific_name }}</p>
+                {% if fav.especie.common_name %}<p class="sc-common-name">{{ fav.especie.common_name }}</p>{% endif %}
+                <div class="sc-taxonomy">
+                    {% if fav.especie.family %}<span>{{ fav.especie.family }}</span>{% endif %}
+                    {% if fav.especie.class_name %}<span>{{ fav.especie.class_name }}</span>{% endif %}
+                </div>
+                {% if fav.especie.iucn_status %}
+                <div class="sc-iucn sc-iucn--{{ fav.especie.iucn_status|lower }}">
+                    {% if fav.especie.iucn_status == 'EX' %}💀 Extinta{% elif fav.especie.iucn_status == 'EW' %}💀 Ext. silvestre{% elif fav.especie.iucn_status == 'CR' %}🔴 Peligro crítico{% elif fav.especie.iucn_status == 'EN' %}🟠 En peligro{% elif fav.especie.iucn_status == 'VU' %}🟡 Vulnerable{% elif fav.especie.iucn_status == 'NT' %}🟢 Casi amenazada{% elif fav.especie.iucn_status == 'LC' %}⚪ Preoc. menor{% endif %}
+                </div>
+                {% endif %}
+                <p style="font-size:0.68rem; color:var(--text-faint); margin:6px 0 0;">📅 {{ fav.created_at|date:"d/m/Y" }}</p>
+            </div>
+        </article>
         {% endfor %}
     </div>
 
@@ -65,19 +76,220 @@
 
     {% else %}
     <div style="text-align:center; padding:5rem 2rem;">
-        <div style="font-size:3rem; margin-bottom:1rem;">❤️</div>
+        <div style="margin-bottom:1rem;"><img src="/static/atlas/img/menu/favoritos.svg" style="width:160px;height:160px;object-fit:contain;"></div>
         <p style="font-size:1rem; font-weight:600; color:var(--text-muted);" data-i18n="favs.vacio_titulo">Aún no tienes favoritos</p>
         <p style="font-size:0.88rem; color:var(--text-faint); margin-top:6px;" data-i18n="favs.vacio_sub">Usa el buscador de arriba o explora el atlas</p>
         <a href="{% url 'atlas:index' %}" style="display:inline-block; margin-top:1.5rem; padding:10px 24px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.88rem;" data-i18n="favs.explorar">Explorar atlas</a>
     </div>
     {% endif %}
 </div>
+
+<!-- MODAL -->
+<div class="smodal-backdrop" id="smodal-backdrop">
+    <div class="smodal">
+        <button class="smodal-close" id="smodal-close">✕</button>
+        <div class="smodal-left">
+            <img class="smodal-hero-img" id="smodal-hero-img" src="" alt="">
+            <div class="smodal-hero-gradient"></div>
+            <div class="smodal-hero-info">
+                <span id="smodal-kingdom-badge" class="smodal-kingdom-badge"></span>
+                <span id="smodal-iucn-badge" class="smodal-iucn-badge"></span>
+                <h2 id="smodal-sci"></h2>
+                <p id="smodal-common" class="smodal-common"></p>
+            </div>
+        </div>
+        <div class="smodal-right">
+            <div class="smodal-actions">
+                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn active-fav"><img src="/static/atlas/img/menu/favoritos.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;"><span id="btn-favorito-text" data-i18n="modal.en_favoritos">En favoritos</span></button>
+                <a id="btn-avistamiento" href="#" class="smodal-action-btn"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;">Avistamiento</a>
+            </div>
+            <div id="smodal-desc-wrap" style="display:none;">
+                <p class="smodal-section-title" data-i18n="modal.descripcion">Descripción</p>
+                <div id="smodal-description" class="smodal-description"></div>
+                <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                    <button onclick="changeDescLang('es')" class="smodal-lang-btn active" data-lang="es">🇪🇸 ES</button>
+                    <button onclick="changeDescLang('en')" class="smodal-lang-btn" data-lang="en">🇬🇧 EN</button>
+                    <button onclick="changeDescLang('fr')" class="smodal-lang-btn" data-lang="fr">🇫🇷 FR</button>
+                </div>
+            </div>
+            <div id="smodal-names-wrap" style="display:none;">
+                <p class="smodal-section-title" data-i18n="modal.nombres_comunes">Nombres comunes</p>
+                <div class="smodal-names-list" id="smodal-names-list"></div>
+            </div>
+            <p class="smodal-section-title" data-i18n="modal.taxonomia">Clasificación taxonómica</p>
+            <div class="smodal-taxo-grid">
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.reino">Reino</span><span class="smodal-taxo-value" id="smodal-kingdom"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.filo">Filo</span><span class="smodal-taxo-value" id="smodal-phylum"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.clase">Clase</span><span class="smodal-taxo-value" id="smodal-class"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.orden">Orden</span><span class="smodal-taxo-value" id="smodal-order"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.familia">Familia</span><span class="smodal-taxo-value" id="smodal-family"></span></div>
+                <div class="smodal-taxo-item"><span class="smodal-taxo-label" data-i18n="taxo.genero">Género</span><span class="smodal-taxo-value" id="smodal-genus"></span></div>
+            </div>
+            <p class="smodal-section-title" data-i18n="modal.galeria">Galería de fotos</p>
+            <div class="smodal-gallery">
+                <div class="smodal-gallery-loading" id="smodal-gallery-loading"><span></span><span></span><span></span></div>
+                <div class="gallery-grid" id="gallery-grid" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+    <div class="lightbox-main">
+        <button class="lightbox-btn lightbox-prev" id="lb-prev">&#8592;</button>
+        <img class="lightbox-img" id="lb-img" src="" alt="">
+        <button class="lightbox-btn lightbox-next" id="lb-next">&#8594;</button>
+    </div>
+    <div class="lightbox-caption" id="lb-caption"></div>
+    <div class="lightbox-counter" id="lb-counter"></div>
+    <div class="lightbox-thumbs" id="lb-thumbs"></div>
+</div>
+<button id="lb-close-btn" onclick="lbClose()" style="display:none; position:fixed; top:16px; right:16px; z-index:10002; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:0.9rem; cursor:pointer; align-items:center; justify-content:center;">✕</button>
+
 {% endblock %}
 
 {% block extra_js %}
+<style>
+.smodal-lang-btn { padding:4px 11px; border-radius:999px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-muted); font-size:0.73rem; font-weight:600; cursor:pointer; font-family:var(--font-body); transition:all 0.15s; }
+.smodal-lang-btn:hover { border-color:var(--border-hover); color:var(--text); }
+.smodal-lang-btn.active { background:var(--green-bg); border-color:var(--green); color:var(--green); }
+</style>
 <script>
+const isAuthenticated = {{ user.is_authenticated|yesno:'true,false' }};
+const backdrop = document.getElementById('smodal-backdrop');
+const lbEl = document.getElementById('lightbox');
+let lbPhotos = [], lbCurrent = 0;
+let currentSpeciesKey = null;
+
 function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.length===2)return p.pop().split(';').shift();}
 
+function lbOpen(photos,i){
+    lbPhotos=photos;lbCurrent=i;
+    if(lbEl.parentNode!==document.body){
+        document.body.appendChild(lbEl);
+        document.getElementById('lb-prev').addEventListener('click',()=>{lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length;lbRender();});
+        document.getElementById('lb-next').addEventListener('click',()=>{lbCurrent=(lbCurrent+1)%lbPhotos.length;lbRender();});
+    }
+    document.getElementById('lb-close-btn').style.display='flex';
+    document.body.style.overflow='';lbRender();lbEl.classList.add('open');
+}
+function lbClose(){lbEl.classList.remove('open');document.getElementById('lb-close-btn').style.display='none';if(backdrop.classList.contains('open'))document.body.style.overflow='hidden';}
+function lbRender(){
+    const p=lbPhotos[lbCurrent],img=document.getElementById('lb-img');
+    img.style.opacity='0';setTimeout(()=>{img.src=p.url;img.style.opacity='1';},120);
+    document.getElementById('lb-caption').textContent=p.caption||'';
+    document.getElementById('lb-counter').textContent=`${lbCurrent+1} / ${lbPhotos.length}`;
+    const thumbs=document.getElementById('lb-thumbs');thumbs.innerHTML='';
+    lbPhotos.forEach((ph,i)=>{const t=document.createElement('img');t.src=ph.url;t.className='lightbox-thumb'+(i===lbCurrent?' active':'');t.onclick=()=>{lbCurrent=i;lbRender();};thumbs.appendChild(t);});
+}
+
+function openModal(speciesKey){
+    backdrop.classList.add('open');document.body.style.overflow='hidden';
+    currentSpeciesKey=speciesKey;
+    document.getElementById('smodal-sci').textContent=t('modal.loading');
+    document.getElementById('smodal-common').textContent='';
+    document.getElementById('smodal-kingdom-badge').textContent='';
+    document.getElementById('smodal-iucn-badge').style.display='none';
+    const cardImg=document.querySelector(`.species-card[data-species-key="${speciesKey}"] .sc-img`);
+    const heroImg=document.getElementById('smodal-hero-img');
+    heroImg.src=cardImg?cardImg.src:'';
+    document.getElementById('smodal-names-list').innerHTML='';
+    document.getElementById('smodal-names-wrap').style.display='none';
+    document.getElementById('smodal-desc-wrap').style.display='none';
+    document.getElementById('gallery-grid').style.display='none';
+    document.getElementById('smodal-gallery-loading').style.display='flex';
+    document.getElementById('btn-favorito').className='smodal-action-btn active-fav';
+    document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');
+    ['smodal-kingdom','smodal-phylum','smodal-class','smodal-order','smodal-family','smodal-genus'].forEach(id=>document.getElementById(id).textContent='—');
+    document.querySelector('.smodal-right').scrollTop=0;
+    const lang=localStorage.getItem('bioatlas-lang')||'es';
+    fetch(`/api/especie/${speciesKey}/?lang=${lang}`)
+    .then(r=>r.json()).then(data=>{
+        if(!data.success)return;
+        const sp=data.especie;
+        document.getElementById('smodal-sci').textContent=sp.canonical_name||sp.scientific_name;
+        document.getElementById('smodal-common').textContent=sp.common_name||'';
+        document.getElementById('smodal-kingdom-badge').textContent=sp.kingdom||'';
+        if(sp.image_url&&!heroImg.src)heroImg.src=sp.image_url;
+        const iucnL={"EX":"💀 Extinta","EW":"💀 Ext. silvestre","CR":"🔴 Peligro crítico","EN":"🟠 En peligro","VU":"🟡 Vulnerable","NT":"🟢 Casi amenazada","LC":"⚪ Preoc. menor"};
+        const iucnC={"EX":"#1a1a1a","EW":"#1a1a1a","CR":"rgba(220,38,38,0.8)","EN":"rgba(234,88,12,0.8)","VU":"rgba(202,138,4,0.8)","NT":"rgba(45,138,78,0.6)","LC":"rgba(0,0,0,0.3)"};
+        const badge=document.getElementById('smodal-iucn-badge');
+        if(sp.iucn_status&&iucnL[sp.iucn_status]){badge.textContent=iucnL[sp.iucn_status];badge.style.background=iucnC[sp.iucn_status];badge.style.color='#fff';badge.style.display='inline-block';}
+        document.getElementById('smodal-kingdom').textContent=sp.kingdom||'—';
+        document.getElementById('smodal-phylum').textContent=sp.phylum||'—';
+        document.getElementById('smodal-class').textContent=sp.class||'—';
+        document.getElementById('smodal-order').textContent=sp.order||'—';
+        document.getElementById('smodal-family').textContent=sp.family||'—';
+        document.getElementById('smodal-genus').textContent=sp.genus||'—';
+        if(sp.common_names&&sp.common_names.length){document.getElementById('smodal-names-wrap').style.display='';const list=document.getElementById('smodal-names-list');sp.common_names.forEach(cn=>{const pill=document.createElement('span');pill.className='smodal-name-pill';pill.textContent=cn.name;list.appendChild(pill);});}
+        if(sp.description){document.getElementById('smodal-desc-wrap').style.display='';document.getElementById('smodal-description').textContent=sp.description;}
+        document.getElementById('btn-avistamiento').href='/perfil/avistamientos/nuevo/'+speciesKey+'/';
+        loadGallery(sp.canonical_name||sp.scientific_name);
+    }).catch(()=>{document.getElementById('smodal-sci').textContent=t('modal.error');});
+}
+
+function changeDescLang(lang){
+    document.querySelectorAll('.smodal-lang-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.lang===lang));
+    if(currentSpeciesKey){fetch(`/api/especie/${currentSpeciesKey}/?lang=${lang}`).then(r=>r.json()).then(data=>{if(data.success&&data.especie.description){document.getElementById('smodal-description').textContent=data.especie.description;document.getElementById('smodal-desc-wrap').style.display='';}});}
+}
+
+function loadGallery(name){
+    const grid=document.getElementById('gallery-grid'),loading=document.getElementById('smodal-gallery-loading');
+    const BAD=['label','specimen','herbarium','museum','holotype','illustration','illustrat','drawing','painting','artwork','cartoon','animated','clipart','vector','composite','montage','photoshop','white_background','cutout','isolated','shutterstock','gettyimages','alamy'];
+    function isGood(url,attr){if(!url)return false;const u=url.toLowerCase(),a=(attr||'').toLowerCase();if(BAD.some(k=>u.includes(k)))return false;return true;}
+    fetch(`https://api.inaturalist.org/v1/observations?taxon_name=${encodeURIComponent(name)}&photos=true&quality_grade=research,needs_id&order_by=votes&per_page=20`)
+    .then(r=>r.json()).then(data=>{
+        const photos=[];
+        (data.results||[]).forEach(obs=>(obs.photos||[]).forEach(p=>{const url=(p.url||'').replace('/square.','/original.');if(isGood(url,p.attribution)&&!photos.find(x=>x.url===url))photos.push({url,caption:name});}));
+        loading.style.display='none';
+        if(!photos.length){grid.style.display='none';return;}
+        grid.innerHTML='';grid.style.display='grid';
+        photos.slice(0,6).forEach((ph,i)=>{const item=document.createElement('div');item.className='gallery-item';item.innerHTML=`<img src="${ph.url}" alt="${name}" loading="lazy" onerror="this.closest('.gallery-item').style.display='none'"><div class="gallery-item-overlay"><span class="gallery-zoom-icon">🔍</span></div>`;item.onclick=()=>lbOpen(photos.slice(0,6),i);grid.appendChild(item);});
+    }).catch(()=>{loading.style.display='none';});
+}
+
+function closeModal(){backdrop.classList.remove('open');document.body.style.overflow='';}
+document.getElementById('smodal-close').onclick=closeModal;
+backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeModal();});
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){if(lbEl.classList.contains('open'))lbClose();else closeModal();}
+    if(!lbEl.classList.contains('open'))return;
+    if(e.key==='ArrowLeft'){lbCurrent=(lbCurrent-1+lbPhotos.length)%lbPhotos.length;lbRender();}
+    if(e.key==='ArrowRight'){lbCurrent=(lbCurrent+1)%lbPhotos.length;lbRender();}
+});
+
+function toggleFavorito(){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    const btn=document.getElementById('btn-favorito');btn.disabled=true;
+    fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:currentSpeciesKey})})
+    .then(r=>r.json()).then(data=>{
+        btn.disabled=false;
+        if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
+        if(!data.es_favorito){
+            BioNotify.toast(t('modal.eliminado_fav'),'✕');
+            const card=document.querySelector(`.species-card[data-species-key="${currentSpeciesKey}"]`);
+            if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>card.remove(),300);}
+            closeModal();
+        }
+    }).catch(()=>{btn.disabled=false;});
+}
+
+function quitarFavoritoCard(speciesKey,btn){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    btn.disabled=true;
+    fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
+    .then(r=>r.json()).then(data=>{
+        btn.disabled=false;
+        if(data.success&&!data.es_favorito){
+            BioNotify.toast(t('modal.eliminado_fav'),'✕');
+            const card=btn.closest('.species-card');
+            if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>card.remove(),300);}
+        }
+    }).catch(()=>{btn.disabled=false;});
+}
+
+// Buscador
 (function(){
     const input=document.getElementById('fav-search-input');
     const dropdown=document.getElementById('fav-search-dropdown');
@@ -93,7 +305,7 @@ function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.l
                 if(!res.length){dropdown.innerHTML=`<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">${t('search.noresults')} "${q}"</div>`;return;}
                 dropdown.innerHTML=res.map(e=>{
                     const n=e.canonical_name||e.scientific_name;
-                    const img=e.image_url?`<img src="${e.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;">🌿</div>`;
+                    const img=e.image_url?`<img src="${e.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;"><img src="/static/atlas/img/menu/favoritos.svg" style="width:20px;height:20px;"></div>`;
                     return `<div onclick="addFavFromSearch(${e.species_key},'${n.replace(/'/g,"\\'")}',this)"
                         style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;"
                         onmouseover="this.style.background='rgba(74,222,128,0.05)'" onmouseout="this.style.background=''">
@@ -115,21 +327,11 @@ function addFavFromSearch(speciesKey,nombre){
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
     .then(r=>r.json()).then(data=>{
         if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
-        if(data.es_favorito){BioNotify.toast(`${nombre} ${t('favs.añadida')}`,'❤️');document.getElementById('fav-search-input').value='';document.getElementById('fav-search-dropdown').style.display='none';setTimeout(()=>location.reload(),1200);}
-        else BioNotify.toast(`${nombre} ${t('favs.eliminada')}`,'💔');
+        if(data.es_favorito){BioNotify.toast(`${nombre} ${t('favs.añadida')}`,'✓');document.getElementById('fav-search-input').value='';document.getElementById('fav-search-dropdown').style.display='none';setTimeout(()=>location.reload(),1200);}
+        else BioNotify.toast(`${nombre} ${t('favs.eliminada')}`,'✕');
     });
 }
 
-function quitarFavorito(speciesKey,btn){
-    btn.disabled=true;
-    fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
-    .then(r=>r.json()).then(data=>{
-        if(data.success&&!data.es_favorito){
-            BioNotify.toast(t('favs.eliminado_toast'),'💔');
-            const card=btn.closest('[style*="background:var(--bg-card)"]');
-            if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>card.remove(),300);}
-        }else btn.disabled=false;
-    }).catch(()=>{btn.disabled=false;});
-}
+document.querySelectorAll('.species-card').forEach(card=>{card.addEventListener('click',()=>openModal(card.dataset.speciesKey));});
 </script>
 {% endblock %}

@@ -2,15 +2,17 @@
 {% block title %}Mis avistamientos — BioAtlas{% endblock %}
 
 {% block content %}
-<div style="max-width:900px; margin:2.5rem auto; padding:0 1.5rem;">
-
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
-        <div>
-            <h1 style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--text); margin:0; letter-spacing:-0.02em;">📍 <span data-i18n="avist.titulo">Mis avistamientos</span></h1>
-            <p style="color:var(--text-muted); font-size:0.88rem; margin:4px 0 0;">{{ total }} <span data-i18n="avist.registrados">avistamiento{{ total|pluralize:"s" }} registrado{{ total|pluralize:"s" }}</span></p>
-        </div>
-        <a href="{% url 'atlas:perfil' %}" style="color:var(--green); font-size:0.85rem; font-weight:600; text-decoration:none;" data-i18n="avist.volver">← Volver al perfil</a>
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'atlas:index' %}" data-i18n="nav.inicio">Inicio</a><span>/</span><a href="{% url 'atlas:perfil' %}">Mi perfil</a><span>/</span><span data-i18n="avist.titulo">Mis avistamientos</span>
+        </nav>
+        <h1><img src="/static/atlas/img/menu/avistamientos.svg" style="width:160px;height:160px;vertical-align:middle;margin-right:8px;object-fit:contain;"><span data-i18n="avist.titulo">Mis avistamientos</span></h1>
+        <p class="page-subtitle">{{ total }} <span data-i18n="avist.registrados">avistamiento{{ total|pluralize:"s" }} registrado{{ total|pluralize:"s" }}</span></p>
     </div>
+</div>
+
+<div class="container" style="padding-bottom:4rem;">
 
     <!-- Buscador para nuevo avistamiento -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem;">
@@ -32,9 +34,9 @@
         <div id="av-{{ av.pk }}" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; display:flex; gap:1.25rem; align-items:flex-start; transition:opacity 0.3s;">
             <div style="width:72px; height:72px; border-radius:var(--radius-sm); overflow:hidden; flex-shrink:0; background:var(--bg-surface);">
                 {% if av.especie.image_url %}
-                <img src="{{ av.especie.image_url }}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:1.8rem;\'>🌿</div>'">
+                <img src="{{ av.especie.image_url }}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;\'><img src=\'/static/atlas/img/menu/avistamientos.svg\' style=\'width:36px;height:36px;\'></div>'">
                 {% else %}
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:1.8rem;">🌿</div>
+                <div style="display:flex; align-items:center; justify-content:center; height:100%;"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:36px;height:36px;"></div>
                 {% endif %}
             </div>
             <div style="flex:1; min-width:0;">
@@ -42,14 +44,14 @@
                 {% if av.especie.common_name %}<p style="font-size:0.78rem; color:var(--green); font-weight:600; margin:0 0 8px;">{{ av.especie.common_name }}</p>{% endif %}
                 <div style="display:flex; gap:12px; flex-wrap:wrap;">
                     <span style="font-size:0.78rem; color:var(--text-muted);">📅 {{ av.fecha }}</span>
-                    <span style="font-size:0.78rem; color:var(--text-muted);">📍 {{ av.lugar }}</span>
+                    <span style="font-size:0.78rem; color:var(--text-muted);"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:28px;height:28px;vertical-align:middle;margin-right:3px;"> {{ av.lugar }}</span>
                 </div>
                 {% if av.notas %}<p style="font-size:0.82rem; color:var(--text-muted); margin:8px 0 0; line-height:1.5;">{{ av.notas }}</p>{% endif %}
                 {% if av.foto %}<img src="{{ av.foto.url }}" style="margin-top:10px; max-width:200px; border-radius:var(--radius-sm); object-fit:cover;">{% endif %}
             </div>
             <button onclick="confirmarEliminar({{ av.pk }})"
-                style="background:none; border:1px solid rgba(248,113,113,0.2); color:#F87171; border-radius:var(--radius-sm); padding:5px 10px; font-size:0.75rem; cursor:pointer; font-family:var(--font-body); transition:all 0.15s; flex-shrink:0;"
-                onmouseover="this.style.background='rgba(248,113,113,0.08)'" onmouseout="this.style.background='none'"
+                style="background:none; border:1px solid var(--border); color:var(--text-muted); border-radius:var(--radius-sm); padding:5px 10px; font-size:0.75rem; cursor:pointer; font-family:var(--font-body); transition:all 0.15s; flex-shrink:0;"
+                onmouseover="this.style.background='rgba(248,113,113,0.08)';this.style.borderColor='rgba(248,113,113,0.4)';this.style.color='#F87171'" onmouseout="this.style.background='none';this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'"
                 data-i18n="avist.eliminar">
                 🗑️ Eliminar
             </button>
@@ -70,7 +72,7 @@
 
     {% else %}
     <div style="text-align:center; padding:5rem 2rem;">
-        <div style="font-size:3rem; margin-bottom:1rem;">📍</div>
+        <div style="margin-bottom:1rem;"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:160px;height:160px;object-fit:contain;"></div>
         <p style="font-size:1rem; font-weight:600; color:var(--text-muted);" data-i18n="avist.vacio_titulo">Aún no has registrado ningún avistamiento</p>
         <p style="font-size:0.88rem; color:var(--text-faint); margin-top:6px;" data-i18n="avist.vacio_sub">Usa el buscador de arriba para registrar tu primer avistamiento</p>
         <a href="{% url 'atlas:index' %}" style="display:inline-block; margin-top:1.5rem; padding:10px 24px; background:var(--green); color:#0A0F0D; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.88rem;" data-i18n="favs.explorar">Explorar atlas</a>
@@ -103,7 +105,7 @@ function confirmarEliminar(pk){
                 if(!res.length){dropdown.innerHTML=`<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.85rem;">${t('search.noresults')} "${q}"</div>`;return;}
                 dropdown.innerHTML=res.map(e=>{
                     const n=e.canonical_name||e.scientific_name;
-                    const img=e.image_url?`<img src="${e.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;">🌿</div>`;
+                    const img=e.image_url?`<img src="${e.image_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">`:`<div style="width:36px;height:36px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:20px;height:20px;"></div>`;
                     return `<a href="/perfil/avistamientos/nuevo/${e.species_key}/"
                         style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;text-decoration:none;color:inherit;"
                         onmouseover="this.style.background='rgba(74,222,128,0.05)'" onmouseout="this.style.background=''">

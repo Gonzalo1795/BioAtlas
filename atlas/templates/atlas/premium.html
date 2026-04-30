@@ -8,13 +8,13 @@
     <div style="position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 50% 0%, rgba(212,175,55,0.06) 0%, transparent 60%); pointer-events:none;"></div>
     <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(212,175,55,0.02) 1px, transparent 1px),linear-gradient(90deg, rgba(212,175,55,0.02) 1px, transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);"></div>
     <div class="container" style="text-align:center; position:relative; z-index:1;">
-        <div style="display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(212,175,55,0.3); background:rgba(212,175,55,0.06); padding:6px 16px; border-radius:999px; margin-bottom:1.5rem;">✨ BioAtlas Premium</div>
+        <div style="display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(212,175,55,0.3); background:rgba(212,175,55,0.06); padding:6px 16px; border-radius:999px; margin-bottom:1.5rem;"> BioAtlas Premium</div>
         <h1 style="font-family:var(--font-display); font-size:clamp(2.5rem,5vw,4rem); font-weight:700; color:var(--text); letter-spacing:-0.03em; line-height:1.1; margin-bottom:1rem;" data-i18n="premium.hero_titulo">Explora la biodiversidad<br><em style="color:var(--gold);">sin ningún límite</em></h1>
         <p style="font-size:1.1rem; color:var(--text-muted); max-width:520px; margin:0 auto 2.5rem; line-height:1.7; font-weight:300;" data-i18n="premium.hero_sub">Accede a todas las funciones de BioAtlas con una suscripción mensual. Cancela cuando quieras.</p>
 
         {% if suscripcion and suscripcion.es_premium %}
         <div style="display:inline-flex; align-items:center; gap:10px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius); padding:1rem 2rem;">
-            <span style="font-size:1.5rem;">✨</span>
+            
             <span style="font-size:1rem; font-weight:700; color:var(--gold);" data-i18n="premium.ya_premium">Ya eres usuario Premium</span>
         </div>
         {% else %}
@@ -22,8 +22,8 @@
            style="display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-size:1rem; font-weight:700; border-radius:999px; text-decoration:none; transition:all 0.2s; box-shadow:0 8px 24px rgba(212,175,55,0.25);"
            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(212,175,55,0.35)'"
            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px rgba(212,175,55,0.25)'"
-           data-i18n="premium.btn_cta">
-            ✨ Hazte Premium — 2,99€/mes
+           >
+             <span data-i18n="premium.btn_cta">Hazte Premium — 2,99€/mes</span>
         </a>
         <p style="font-size:0.8rem; color:var(--text-faint); margin-top:1rem;" data-i18n="premium.sin_compromiso">Cancela cuando quieras · Sin permanencia</p>
         {% endif %}
@@ -51,7 +51,7 @@
         <!-- Plan premium -->
         <div style="background:linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.03) 100%); border:1px solid rgba(212,175,55,0.25); border-radius:var(--radius-lg); padding:2rem; position:relative;">
             <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-size:0.68rem; font-weight:800; padding:3px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap;" data-i18n="premium.recomendado">Recomendado</div>
-            <h3 style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin:0 0 1.5rem;">✨ Premium</h3>
+            <h3 style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin:0 0 1.5rem;"> Premium</h3>
             <div style="margin-bottom:1.5rem;">
                 <span style="font-family:var(--font-display); font-size:2.5rem; font-weight:700; color:var(--text);">2,99€</span>
                 <span style="font-size:0.88rem; color:var(--text-muted);" data-i18n="premium.mes">/mes</span>

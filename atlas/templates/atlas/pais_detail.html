@@ -339,8 +339,8 @@ function toggleFavorito(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
-        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'❤️');updateCardFav(currentSpeciesKey,true);}
-        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent=t('modal.favorito');BioNotify.toast('Eliminado de favoritos','💔');updateCardFav(currentSpeciesKey,false);}
+        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'✓');updateCardFav(currentSpeciesKey,true);}
+        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent=t('modal.favorito');BioNotify.toast(t('modal.eliminado_fav'),'✕');updateCardFav(currentSpeciesKey,false);}
     }).catch(()=>{btn.disabled=false;});
 }
 
@@ -351,8 +351,8 @@ function toggleMiAtlas(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(data.success){
-            if(data.en_biolog){btn.className='smodal-action-btn active-atlas';document.getElementById('btn-miatlas-text').textContent=t('modal.en_miatlas');BioNotify.toast(t('modal.en_miatlas'),'🌿');updateCardAtlas(currentSpeciesKey,true);}
-            else{btn.className='smodal-action-btn';document.getElementById('btn-miatlas-text').textContent=t('modal.miatlas');BioNotify.toast('Eliminada de Mi Atlas','🌿');updateCardAtlas(currentSpeciesKey,false);}
+            if(data.en_biolog){btn.className='smodal-action-btn active-atlas';document.getElementById('btn-miatlas-text').textContent=t('modal.en_miatlas');BioNotify.toast(t('modal.en_miatlas'),'✓');updateCardAtlas(currentSpeciesKey,true);}
+            else{btn.className='smodal-action-btn';document.getElementById('btn-miatlas-text').textContent=t('modal.miatlas');BioNotify.toast(t('modal.eliminado_atlas'),'✕');updateCardAtlas(currentSpeciesKey,false);}
         }else if(data.limite)BioNotify.limitePremium(data.error);
     }).catch(()=>{btn.disabled=false;});
 }
@@ -361,18 +361,18 @@ function quickFavorito(speciesKey,btn){
     if(!isAuthenticated){window.location.href='/login/';return;}
     btn.disabled=true;
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
-    .then(r=>r.json()).then(data=>{btn.disabled=false;if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}updateCardFav(speciesKey,data.es_favorito);BioNotify.toast(data.es_favorito?t('modal.en_favoritos'):'Eliminado de favoritos',data.es_favorito?'❤️':'💔');}).catch(()=>{btn.disabled=false;});
+    .then(r=>r.json()).then(data=>{btn.disabled=false;if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}updateCardFav(speciesKey,data.es_favorito);BioNotify.toast(data.es_favorito?t('modal.en_favoritos'):t('modal.eliminado_fav'),data.es_favorito?'✓':'✕');}).catch(()=>{btn.disabled=false;});
 }
 
 function quickAtlas(speciesKey,paisId,btn){
     if(!isAuthenticated){window.location.href='/login/';return;}
     btn.disabled=true;
     fetch('/api/biolog/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey,pais_id:paisId})})
-    .then(r=>r.json()).then(data=>{btn.disabled=false;if(data.success){updateCardAtlas(speciesKey,data.en_biolog);BioNotify.toast(data.en_biolog?t('modal.en_miatlas'):'Eliminada de Mi Atlas','🌿');}else if(data.limite)BioNotify.limitePremium(data.error);}).catch(()=>{btn.disabled=false;});
+    .then(r=>r.json()).then(data=>{btn.disabled=false;if(data.success){updateCardAtlas(speciesKey,data.en_biolog);BioNotify.toast(data.en_biolog?t('modal.en_miatlas'):t('modal.eliminado_atlas'),data.en_biolog?'✓':'✕');}else if(data.limite)BioNotify.limitePremium(data.error);}).catch(()=>{btn.disabled=false;});
 }
 
-function updateCardFav(sk,active){const btn=document.getElementById('qa-fav-'+sk);if(!btn)return;btn.textContent=active?'❤️':'🤍';btn.classList.toggle('active-fav',active);}
-function updateCardAtlas(sk,active){const btn=document.getElementById('qa-atlas-'+sk),badge=document.getElementById('badge-'+sk);if(btn){btn.textContent=active?'🌿':'🪴';btn.classList.toggle('active-atlas',active);}if(badge){badge.textContent=active?'✓ Atlas':'';badge.classList.toggle('visible',active);}}
+function updateCardFav(sk,active){const btn=document.getElementById('qa-fav-'+sk);if(!btn)return;btn.innerHTML='<img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;">';btn.classList.toggle('active-fav',active);}
+function updateCardAtlas(sk,active){const btn=document.getElementById('qa-atlas-'+sk),badge=document.getElementById('badge-'+sk);if(btn){btn.innerHTML='<img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;">';btn.classList.toggle('active-atlas',active);}if(badge){badge.textContent=active?'✓ Atlas':'';badge.classList.toggle('visible',active);}}
 
 document.querySelectorAll('.species-card').forEach(card=>{
     card.addEventListener('click',()=>openModal(card.dataset.speciesKey));

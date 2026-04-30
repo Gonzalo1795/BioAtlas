@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.utils.html import format_html
+from django.utils.html import format_html, mark_safe
 from django.db.models import Count
 
 from .models import (
@@ -139,12 +139,8 @@ class SuscripcionAdmin(admin.ModelAdmin):
 
     def plan_badge(self, obj):
         if obj.plan == 'premium':
-            return format_html(
-                '<span style="background:linear-gradient(135deg,#D4AF37,#F0D060);color:#0A0F0D;padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">✨ Premium</span>'
-            )
-        return format_html(
-            '<span style="background:#F0F0EE;color:#6B7280;padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">Free</span>'
-        )
+            return mark_safe('<span style="background:linear-gradient(135deg,#D4AF37,#F0D060);color:#0A0F0D;padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">✨ Premium</span>')
+        return mark_safe('<span style="background:#F0F0EE;color:#6B7280;padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">Free</span>')
     plan_badge.short_description = 'Plan'
 
 

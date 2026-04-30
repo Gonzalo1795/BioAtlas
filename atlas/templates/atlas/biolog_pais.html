@@ -10,7 +10,7 @@
             <a href="{% url 'atlas:biolog' %}" data-i18n="atlas.titulo">Mi Atlas</a><span>/</span>
             <span>{{ pais.nombre }}</span>
         </nav>
-        <h1>🌍 {{ pais.nombre }}</h1>
+        <h1><img src="https://flagcdn.com/160x120/{{ pais.codigo|lower }}.png" alt="{{ pais.codigo }}" style="width:64px;height:48px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:10px;" onerror="this.style.display='none'"> {{ pais.nombre }}</h1>
         <p class="page-subtitle">
             {{ total_coleccionadas }} <span data-i18n="biolog_pais.coleccionadas">especies coleccionadas de</span> {{ total_pais }} <span data-i18n="biolog_pais.disponibles">disponibles</span>
             &bull; <span style="color:var(--green);">{{ porcentaje }}%</span>
@@ -67,9 +67,10 @@
                 {% if user.is_authenticated %}
                 <div class="sc-quick-actions" onclick="event.stopPropagation()">
                     <button class="sc-qa-btn {% if entrada.especie.species_key in especies_favoritas %}active-fav{% endif %}" id="qa-fav-{{ entrada.especie.species_key }}" title="Favorito" onclick="quickFavorito({{ entrada.especie.species_key }}, this)">
-                        {% if entrada.especie.species_key in especies_favoritas %}❤️{% else %}🤍{% endif %}
+                        <img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;">
                     </button>
-                    <button class="sc-qa-btn active-atlas" id="qa-atlas-{{ entrada.especie.species_key }}" title="Quitar de Mi Atlas" onclick="quitarAtlas({{ entrada.especie.species_key }}, {{ pais.pk }}, this)">🌿</button>
+                    <button class="sc-qa-btn active-atlas" id="qa-atlas-{{ entrada.especie.species_key }}" title="Quitar de Mi Atlas" onclick="quitarAtlas({{ entrada.especie.species_key }}, {{ pais.pk }}, this)"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;"></button>
+                    <a class="sc-qa-btn" title="Registrar avistamiento" href="{% url 'atlas:nuevo_avistamiento' entrada.especie.species_key %}" onclick="event.stopPropagation()"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;"></a>
                 </div>
                 {% endif %}
                 <div class="sc-image-wrap">
@@ -132,9 +133,9 @@
         </div>
         <div class="smodal-right">
             <div class="smodal-actions">
-                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn">🤍 <span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span></button>
-                <button id="btn-miatlas" onclick="toggleMiAtlas()" class="smodal-action-btn active-atlas">🌿 <span id="btn-miatlas-text" data-i18n="modal.en_miatlas">En Mi Atlas ✓</span></button>
-                <a id="btn-avistamiento" href="#" class="smodal-action-btn" data-i18n="modal.avistamiento">📍 Avistamiento</a>
+                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn"><img src="/static/atlas/img/menu/favoritos.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;"><span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span></button>
+                <button id="btn-miatlas" onclick="toggleMiAtlas()" class="smodal-action-btn active-atlas"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;"><span id="btn-miatlas-text" data-i18n="modal.en_miatlas">En Mi Atlas ✓</span></button>
+                <a id="btn-avistamiento" href="#" class="smodal-action-btn"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;">Avistamiento</a>
             </div>
             <div id="smodal-desc-wrap" style="display:none;">
                 <p class="smodal-section-title" data-i18n="modal.descripcion">Descripción</p>
@@ -303,8 +304,8 @@ function toggleFavorito(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
-        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'❤️');updateCardFav(currentSpeciesKey,true);}
-        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent=t('modal.favorito');BioNotify.toast('Eliminado de favoritos','💔');updateCardFav(currentSpeciesKey,false);}
+        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'✓');updateCardFav(currentSpeciesKey,true);}
+        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent=t('modal.favorito');BioNotify.toast(t('modal.eliminado_fav'),'✕');updateCardFav(currentSpeciesKey,false);}
     }).catch(()=>{btn.disabled=false;});
 }
 
@@ -315,7 +316,7 @@ function toggleMiAtlas(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(data.success){
-            if(!data.en_biolog){BioNotify.toast('Eliminada de Mi Atlas','🌿');const card=document.querySelector(`.species-card[data-species-key="${currentSpeciesKey}"]`);if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>{card.remove();},300);}closeModal();}
+            if(!data.en_biolog){BioNotify.toast(t('modal.eliminado_atlas'),'✕');const card=document.querySelector(`.species-card[data-species-key="${currentSpeciesKey}"]`);if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>{card.remove();},300);}closeModal();}
         }else if(data.limite)BioNotify.limitePremium(data.error);
     }).catch(()=>{btn.disabled=false;});
 }
@@ -324,17 +325,22 @@ function quickFavorito(speciesKey,btn){
     if(!isAuthenticated){window.location.href='/login/';return;}
     btn.disabled=true;
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
-    .then(r=>r.json()).then(data=>{btn.disabled=false;if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}updateCardFav(speciesKey,data.es_favorito);BioNotify.toast(data.es_favorito?t('modal.en_favoritos'):'Eliminado de favoritos',data.es_favorito?'❤️':'💔');}).catch(()=>{btn.disabled=false;});
+    .then(r=>r.json()).then(data=>{btn.disabled=false;if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}updateCardFav(speciesKey,data.es_favorito);BioNotify.toast(data.es_favorito?t('modal.en_favoritos'):t('modal.eliminado_fav'),data.es_favorito?'✓':'✕');}).catch(()=>{btn.disabled=false;});
 }
 
 function quitarAtlas(speciesKey,paisId,btn){
-    if(!isAuthenticated){window.location.href='/login/';return;}
+    BioNotify.show({title:t('atlas.confirm_titulo'),msg:t('atlas.confirm_msg'),actions:[
+        {label:t('atlas.confirm_si'),primary:true,onclick:()=>{BioNotify.close();doQuitarAtlas(speciesKey,paisId,btn);}},
+        {label:t('atlas.confirm_no'),onclick:()=>{BioNotify.close();}}
+    ]});
+}
+function doQuitarAtlas(speciesKey,paisId,btn){
     btn.disabled=true;
     fetch('/api/biolog/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey,pais_id:paisId})})
-    .then(r=>r.json()).then(data=>{btn.disabled=false;if(data.success&&!data.en_biolog){BioNotify.toast('Eliminada de Mi Atlas','🌿');const card=document.querySelector(`.species-card[data-species-key="${speciesKey}"]`);if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>card.remove(),300);}}}).catch(()=>{btn.disabled=false;});
+    .then(r=>r.json()).then(data=>{btn.disabled=false;if(data.success&&!data.en_biolog){BioNotify.toast(t('modal.eliminado_atlas'),'✕');const card=document.querySelector(`.species-card[data-species-key="${speciesKey}"]`);if(card){card.style.opacity='0';card.style.transition='opacity 0.3s';setTimeout(()=>card.remove(),300);}}}).catch(()=>{btn.disabled=false;});
 }
 
-function updateCardFav(sk,active){const btn=document.getElementById('qa-fav-'+sk);if(!btn)return;btn.textContent=active?'❤️':'🤍';btn.classList.toggle('active-fav',active);}
+function updateCardFav(sk,active){const btn=document.getElementById('qa-fav-'+sk);if(!btn)return;btn.innerHTML='<img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;">';btn.classList.toggle('active-fav',active);}
 
 document.querySelectorAll('.species-card').forEach(card=>{card.addEventListener('click',()=>openModal(card.dataset.speciesKey));});
 </script>

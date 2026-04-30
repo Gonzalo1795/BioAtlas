@@ -12,10 +12,10 @@
         .navbar { position: sticky; top: 0; z-index: 10000; }
         .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; margin-left: auto; background: none; border: none; flex-shrink: 0; }
         .nav-hamburger span { display: block; width: 22px; height: 2px; background: #F0F4F1; border-radius: 2px; }
-        #nav-mobile-menu { position: fixed; top: 60px; left: 0; right: 0; background: #0A0F0D; border-bottom: 1px solid rgba(74,222,128,0.08); padding: 1rem 1.5rem 1.5rem; flex-direction: column; gap: 4px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-        #nav-mobile-menu a { display: block; padding: 11px 14px; border-radius: 8px; color: #F0F4F1; text-decoration: none; font-size: 0.92rem; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+        #nav-mobile-menu { position: fixed; top: 80px; left: 0; right: 0; background: #ffffff; border-bottom: 1px solid rgba(45,138,78,0.2); padding: 1rem 1.5rem 1.5rem; flex-direction: column; gap: 4px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        #nav-mobile-menu a { display: block; padding: 11px 14px; border-radius: 8px; color: #1a1a1a; text-decoration: none; font-size: 0.92rem; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
         #nav-mobile-menu a:hover { background: rgba(255,255,255,0.06); }
-        .nav-mobile-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
+        .nav-mobile-divider { height: 1px; background: rgba(45,138,78,0.2); margin: 6px 0; }
         .nav-mobile-lang { display: flex; gap: 8px; padding: 4px 0; }
         .nav-mobile-lang button { flex: 1; padding: 9px; text-align: center; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #8A9E8E; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
         .nav-mobile-lang button.active { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,0.08); }
@@ -29,7 +29,7 @@
 
 <nav class="navbar">
     <div class="container">
-        <a href="{% url 'atlas:index' %}" class="logo"><img src="/static/atlas/img/logo.svg" style="width:110px;height:110px;object-fit:contain;vertical-align:middle;">
+        <a href="{% url 'atlas:index' %}" class="logo" style="display:flex;align-items:center;height:100%;"><img src="/static/atlas/img/logo.svg" style="width:110px;height:110px;object-fit:contain;">
             Bio<em>Atlas</em>
         </a>
 
@@ -51,21 +51,25 @@
             <a href="{% url 'atlas:quiz' %}" class="nav-link" data-i18n="quiz.titulo">Quiz Visual</a>
             {% if user.is_authenticated %}
                 {% with suscripcion=user.suscripcion %}
-                    {% if not suscripcion.es_premium %}<a href="{% url 'atlas:premium' %}" class="btn-premium-nav">✨ Premium</a>{% endif %}
+                    {% if not suscripcion.es_premium %}<a href="{% url 'atlas:premium' %}" class="btn-premium-nav"><img src="/static/atlas/img/premium.svg" style="width:36px;height:36px;vertical-align:middle;object-fit:contain;"> Premium</a>{% endif %}
                 {% endwith %}
                 <div class="nav-user" id="nav-user">
                     <div class="nav-user-btn" id="nav-user-btn">
                         {% with suscripcion=user.suscripcion %}
-                            <div class="nav-user-avatar {% if suscripcion.es_premium %}premium{% endif %}">{% if suscripcion.es_premium %}✨{% else %}{{ user.username|first|upper }}{% endif %}</div>
+                            <div class="nav-user-avatar {% if suscripcion.es_premium %}premium{% endif %}">{% if suscripcion.es_premium %}<img src="/static/atlas/img/premium.svg" style="width:36px;height:36px;vertical-align:middle;object-fit:contain;">{% else %}{{ user.username|first|upper }}{% endif %}</div>
                         {% endwith %}
                         {{ user.username }}
                         <span style="font-size:0.65rem; color:var(--text-faint);">▾</span>
                     </div>
                     <div class="nav-user-dropdown" id="nav-user-dropdown">
-                        <a href="{% url 'atlas:perfil' %}"><img src="/static/atlas/img/menu/Perfil.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.perfil">Mi perfil</span></a>
-                        <a href="{% url 'atlas:biolog' %}"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.atlas">Mi Atlas</span></a>
-                        <a href="{% url 'atlas:mis_favoritos' %}"><img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.favoritos">Mis favoritos</span></a>
-                        <a href="{% url 'atlas:mis_avistamientos' %}"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.avistamientos">Mis avistamientos</span></a>
+                        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:perfil' %}"><img src="/static/atlas/img/menu/Perfil.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.perfil">Mi perfil</span></a>
+                        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:biolog' %}"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.atlas">Mi Atlas</span></a>
+                        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:mis_favoritos' %}"><img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.favoritos">Mis favoritos</span></a>
+                        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:mis_avistamientos' %}"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;margin-right:8px;"> <span data-i18n="menu.avistamientos">Mis avistamientos</span></a>
                         {% with suscripcion=user.suscripcion %}
                             {% if not suscripcion.es_premium %}
                                 <div class="divider"></div>
@@ -88,13 +92,13 @@
             {% endif %}
             <div class="lang-selector" id="lang-selector">
                 <button class="lang-btn" id="lang-btn">
-                    <span id="lang-flag">🇪🇸</span><span id="lang-label">ES</span>
+                    <img id="lang-flag" src="https://flagcdn.com/16x12/es.png" style="width:16px;height:12px;vertical-align:middle;border-radius:2px;"><span id="lang-label">ES</span>
                     <span style="font-size:0.6rem; opacity:0.6;">▾</span>
                 </button>
                 <div class="lang-dropdown" id="lang-dropdown">
-                    <div class="lang-option active" onclick="setLang('es')">🇪🇸 Español</div>
-                    <div class="lang-option" onclick="setLang('en')">🇬🇧 English</div>
-                    <div class="lang-option" onclick="setLang('fr')">🇫🇷 Français</div>
+                    <div class="lang-option active" onclick="setLang('es')"><img src="https://flagcdn.com/16x12/es.png" style="width:16px;height:12px;vertical-align:middle;margin-right:4px;border-radius:2px;"> Español</div>
+                    <div class="lang-option" onclick="setLang('en')"><img src="https://flagcdn.com/16x12/gb.png" style="width:16px;height:12px;vertical-align:middle;margin-right:4px;border-radius:2px;"> English</div>
+                    <div class="lang-option" onclick="setLang('fr')"><img src="https://flagcdn.com/16x12/fr.png" style="width:16px;height:12px;vertical-align:middle;margin-right:4px;border-radius:2px;"> Français</div>
                 </div>
             </div>
         </div>
@@ -106,28 +110,33 @@
 </nav>
 
 <div id="nav-mobile-menu" style="display:none;">
-    <a href="{% url 'atlas:index' %}">🏠 Inicio</a>
-    <a href="{% url 'atlas:buscar_especie' %}">🔍 Explorar</a>
-    <a href="{% url 'atlas:quiz' %}">🧬 Quiz Visu</a>
+    <a href="{% url 'atlas:index' %}"><img src="/static/atlas/img/logo.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Inicio</a>
+    <div class="nav-mobile-divider"></div>
+    <a href="{% url 'atlas:buscar_especie' %}"><img src="/static/atlas/img/buscar_especie.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Explorar</a>
+    <div class="nav-mobile-divider"></div>
+    <a href="{% url 'atlas:quiz' %}"><img src="/static/atlas/img/quiz/Quiz.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Quiz Visual</a>
     <div class="nav-mobile-divider"></div>
     {% if user.is_authenticated %}
-        <a href="{% url 'atlas:perfil' %}">👤 Mi perfil</a>
-        <a href="{% url 'atlas:biolog' %}">🌿 Mi Atlas</a>
-        <a href="{% url 'atlas:mis_favoritos' %}">❤️ Mis favoritos</a>
-        <a href="{% url 'atlas:mis_avistamientos' %}">📍 Mis avistamientos</a>
+        <a href="{% url 'atlas:perfil' %}"><img src="/static/atlas/img/menu/Perfil.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Mi perfil</a>
+        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:biolog' %}"><img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Mi Atlas</a>
+        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:mis_favoritos' %}"><img src="/static/atlas/img/menu/favoritos.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Mis favoritos</a>
+        <div class="nav-mobile-divider"></div>
+        <a href="{% url 'atlas:mis_avistamientos' %}"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Mis avistamientos</a>
         {% with suscripcion=user.suscripcion %}
             {% if not suscripcion.es_premium %}
                 <div class="nav-mobile-divider"></div>
-                <a href="{% url 'atlas:premium' %}" style="background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-weight:700; text-align:center; border-radius:8px; padding:10px 14px; text-decoration:none;">✨ Hazte Premium</a>
+                <a href="{% url 'atlas:premium' %}" style="background:linear-gradient(135deg,#D4AF37,#F0D060); color:#0A0F0D; font-weight:700; text-align:center; border-radius:8px; padding:10px 14px; text-decoration:none;"><img src="/static/atlas/img/premium.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Hazte Premium</a>
             {% endif %}
         {% endwith %}
         <div class="nav-mobile-divider"></div>
         <form method="POST" action="{% url 'atlas:logout' %}">
             {% csrf_token %}
-            <button type="submit" style="color:#F87171; background:none; border:none; padding:10px 14px; font-size:0.92rem; font-family:'DM Sans',sans-serif; cursor:pointer; width:100%; text-align:left;">🚪 Cerrar sesión</button>
+            <button type="submit" style="color:#F87171; background:none; border:none; padding:10px 14px; font-size:0.92rem; font-family:'DM Sans',sans-serif; cursor:pointer; width:100%; text-align:left;"><img src="/static/atlas/img/menu/cerrar_sesion.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Cerrar sesión</button>
         </form>
     {% else %}
-        <a href="{% url 'atlas:login' %}">🔑 Iniciar sesión</a>
+        <a href="{% url 'atlas:login' %}"><img src="/static/atlas/img/menu/Perfil.svg" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;object-fit:contain;"> Iniciar sesión</a>
         <a href="{% url 'atlas:registro' %}" style="background:#4ADE80; color:#0A0F0D; font-weight:700; text-align:center; border-radius:8px; padding:10px 14px; text-decoration:none;">Registrarse</a>
     {% endif %}
     <div class="nav-mobile-divider"></div>
@@ -197,8 +206,8 @@ const TRANSLATIONS={
     "pagination.prev":"« Anterior","pagination.next":"Siguiente »",
     "species.details":"Ver detalles →",
     "modal.loading":"Cargando...","modal.error":"Error cargando datos",
-    "modal.favorito":"Favorito","modal.en_favoritos":"En favoritos",
-    "modal.miatlas":"Mi Atlas","modal.en_miatlas":"En Mi Atlas ✓",
+    "modal.favorito":"Favorito","modal.en_favoritos":"En favoritos","modal.eliminado_fav":"Eliminado de favoritos","modal.eliminado_atlas":"Eliminada de Mi Atlas",
+    "modal.miatlas":"Mi Atlas","modal.en_miatlas":"En Mi Atlas",
     "modal.avistamiento":"📍 Avistamiento",
     "modal.descripcion":"Descripción","modal.nombres_comunes":"Nombres comunes",
     "modal.taxonomia":"Clasificación taxonómica","modal.galeria":"Galería de fotos",
@@ -209,10 +218,10 @@ const TRANSLATIONS={
     "buscar.placeholder":"Nombre científico o común...","buscar.btn":"Buscar",
     "buscar.sin_resultados":"No se encontraron resultados","buscar.sin_resultados_tip":"Prueba con el nombre científico o en inglés",
     "buscar.sugerencias":"Sugerencias",
-    "perfil.miembro":"Miembro de BioAtlas","perfil.hazte_premium":"✨ Hazte Premium",
+    "perfil.miembro":"Miembro de BioAtlas","perfil.hazte_premium":"Hazte Premium",
     "perfil.cancelar_premium":"Cancelar Premium",
     "perfil.stat.favoritos":"Favoritos","perfil.stat.avistamientos":"Avistamientos","perfil.stat.atlas":"En Mi Atlas",
-    "perfil.buscar_rapido":"🔍 Añadir especie rápidamente","perfil.buscar_placeholder":"Busca una especie para añadir a favoritos...",
+    "perfil.buscar_rapido":"Añadir especie rápidamente","perfil.buscar_placeholder":"Busca una especie para añadir a favoritos...",
     "perfil.ultimos_avist":"Últimos avistamientos","perfil.ver_todos":"Ver todos →",
     "perfil.modal.añadir_fav":"Añadir a favoritos","perfil.modal.registrar_avist":"Registrar avistamiento","perfil.modal.cancelar":"Cancelar",
     "registro.titulo":"Empieza a explorar","registro.subtitulo":"Crea tu cuenta gratuita y empieza a coleccionar especies de todo el mundo",
@@ -222,7 +231,7 @@ const TRANSLATIONS={
     "registro.label.confirmar":"Confirmar contraseña","registro.ph.confirmar":"Repite la contraseña",
     "registro.btn":"Crear cuenta gratis →",
     "registro.plan_gratis":"✓ Acceso a 197 países · ✓ 20 favoritos · ✓ 10 avistamientos",
-    "registro.ver_premium":"✨ Ver plan Premium →",
+    "registro.ver_premium":"Ver plan Premium →",
     "registro.ya_tienes":"¿Ya tienes cuenta?","registro.ir_login":"Iniciar sesión →",
     "registro.volver":"← Volver al atlas",
     "login.titulo":"Bienvenido de nuevo","login.subtitulo":"Inicia sesión para acceder a tu atlas personal",
@@ -247,17 +256,17 @@ const TRANSLATIONS={
     "avist.vacio_sub":"Usa el buscador de arriba para registrar tu primer avistamiento",
     "atlas.titulo":"Mi Atlas","atlas.subtitulo":"Tu atlas personal de biodiversidad",
     "atlas.stat.especies":"Especies","atlas.stat.paises":"Países","atlas.stat.paises_lower":"países","atlas.especies_lower":"especies",
-    "atlas.plan_gratis":"Plan Gratuito","atlas.sin_limites":"Sin límites",
+    "atlas.plan_gratis":"Plan Gratuito","atlas.sin_limites":"Sin límites","atlas.confirm_titulo":"¿Quitar del Atlas?","atlas.confirm_msg":"¿Estás seguro de que quieres eliminar esta especie de tu Atlas?","atlas.confirm_si":"Sí, eliminar","atlas.confirm_no":"Cancelar",
     "atlas.limite_alcanzado":"Has alcanzado el límite de países.",
     "atlas.limite_sub":" Hazte Premium para desbloquear todos los países.",
     "atlas.ver_premium":"Ver Premium",
     "atlas.vacio_titulo":"Tu Mi Atlas está vacío",
-    "atlas.vacio_sub":"Explora cualquier país y pulsa 🌿 Mi Atlas en la ficha de cada especie para empezar tu colección.",
+    "atlas.vacio_sub":"Explora cualquier país y pulsa Mi Atlas en la ficha de cada especie para empezar tu colección.",
     "atlas.explorar":"Explorar el atlas",
     "premium.hero_titulo":"Explora la biodiversidad sin ningún límite",
     "premium.hero_sub":"Accede a todas las funciones de BioAtlas con una suscripción mensual. Cancela cuando quieras.",
     "premium.ya_premium":"Ya eres usuario Premium",
-    "premium.btn_cta":"✨ Hazte Premium — 2,99€/mes",
+    "premium.btn_cta":"Hazte Premium — 2,99€/mes",
     "premium.sin_compromiso":"Cancela cuando quieras · Sin permanencia",
     "premium.plan_gratis":"Gratuito","premium.recomendado":"Recomendado","premium.mes":"/mes",
     "premium.f1":"✓ Acceso a 197 países","premium.f2":"✓ Búsqueda global de especies",
@@ -268,7 +277,7 @@ const TRANSLATIONS={
     "premium.p5":"✓ Todos los países del mundo",
     "premium.btn_empezar":"Empezar ahora →",
     "nuevo_avist.volver":"← Volver a mis avistamientos",
-    "nuevo_avist.registrar_label":"📍 Registrar avistamiento",
+    "nuevo_avist.registrar_label":"Registrar avistamiento",
     "nuevo_avist.limite_msg":"Has alcanzado el límite de avistamientos del plan gratuito.",
     "nuevo_avist.limite_cta":"Hazte Premium →",
     "nuevo_avist.label.fecha":"Fecha *","nuevo_avist.label.lugar":"Lugar *",
@@ -404,8 +413,8 @@ const TRANSLATIONS={
     "pagination.prev":"« Previous","pagination.next":"Next »",
     "species.details":"View details →",
     "modal.loading":"Loading...","modal.error":"Error loading data",
-    "modal.favorito":"Favourite","modal.en_favoritos":"In favourites",
-    "modal.miatlas":"My Atlas","modal.en_miatlas":"In My Atlas ✓",
+    "modal.favorito":"Favourite","modal.en_favoritos":"In favourites","modal.eliminado_fav":"Removed from favourites","modal.eliminado_atlas":"Removed from My Atlas",
+    "modal.miatlas":"My Atlas","modal.en_miatlas":"In My Atlas",
     "modal.avistamiento":"📍 Sighting",
     "modal.descripcion":"Description","modal.nombres_comunes":"Common names",
     "modal.taxonomia":"Taxonomic classification","modal.galeria":"Photo gallery",
@@ -416,10 +425,10 @@ const TRANSLATIONS={
     "buscar.placeholder":"Scientific or common name...","buscar.btn":"Search",
     "buscar.sin_resultados":"No results found","buscar.sin_resultados_tip":"Try with the scientific name or in English",
     "buscar.sugerencias":"Suggestions",
-    "perfil.miembro":"BioAtlas member","perfil.hazte_premium":"✨ Go Premium",
+    "perfil.miembro":"BioAtlas member","perfil.hazte_premium":"Go Premium",
     "perfil.cancelar_premium":"Cancel Premium",
     "perfil.stat.favoritos":"Favourites","perfil.stat.avistamientos":"Sightings","perfil.stat.atlas":"In My Atlas",
-    "perfil.buscar_rapido":"🔍 Add species quickly","perfil.buscar_placeholder":"Search a species to add to favourites...",
+    "perfil.buscar_rapido":"Add species quickly","perfil.buscar_placeholder":"Search a species to add to favourites...",
     "perfil.ultimos_avist":"Latest sightings","perfil.ver_todos":"View all →",
     "perfil.modal.añadir_fav":"Add to favourites","perfil.modal.registrar_avist":"Record sighting","perfil.modal.cancelar":"Cancel",
     "registro.titulo":"Start exploring","registro.subtitulo":"Create your free account and start collecting species from around the world",
@@ -429,7 +438,7 @@ const TRANSLATIONS={
     "registro.label.confirmar":"Confirm password","registro.ph.confirmar":"Repeat password",
     "registro.btn":"Create free account →",
     "registro.plan_gratis":"✓ Access to 197 countries · ✓ 20 favourites · ✓ 10 sightings",
-    "registro.ver_premium":"✨ View Premium plan →",
+    "registro.ver_premium":"View Premium plan →",
     "registro.ya_tienes":"Already have an account?","registro.ir_login":"Sign in →",
     "registro.volver":"← Back to atlas",
     "login.titulo":"Welcome back","login.subtitulo":"Sign in to access your personal atlas",
@@ -454,17 +463,17 @@ const TRANSLATIONS={
     "avist.vacio_sub":"Use the search above to record your first sighting",
     "atlas.titulo":"My Atlas","atlas.subtitulo":"Your personal biodiversity atlas",
     "atlas.stat.especies":"Species","atlas.stat.paises":"Countries","atlas.stat.paises_lower":"countries","atlas.especies_lower":"species",
-    "atlas.plan_gratis":"Free Plan","atlas.sin_limites":"Unlimited",
+    "atlas.plan_gratis":"Free Plan","atlas.sin_limites":"Unlimited","atlas.confirm_titulo":"Remove from Atlas?","atlas.confirm_msg":"Are you sure you want to remove this species from your Atlas?","atlas.confirm_si":"Yes, remove","atlas.confirm_no":"Cancel",
     "atlas.limite_alcanzado":"You have reached the country limit.",
     "atlas.limite_sub":" Go Premium to unlock all countries.",
     "atlas.ver_premium":"View Premium",
     "atlas.vacio_titulo":"Your My Atlas is empty",
-    "atlas.vacio_sub":"Explore any country and tap 🌿 My Atlas on each species card to start your collection.",
+    "atlas.vacio_sub":"Explore any country and tap My Atlas on each species card to start your collection.",
     "atlas.explorar":"Explore the atlas",
     "premium.hero_titulo":"Explore biodiversity without any limits",
     "premium.hero_sub":"Access all BioAtlas features with a monthly subscription. Cancel anytime.",
     "premium.ya_premium":"You are already a Premium user",
-    "premium.btn_cta":"✨ Go Premium — €2.99/month",
+    "premium.btn_cta":"Go Premium — €2.99/month",
     "premium.sin_compromiso":"Cancel anytime · No commitment",
     "premium.plan_gratis":"Free","premium.recomendado":"Recommended","premium.mes":"/month",
     "premium.f1":"✓ Access to 197 countries","premium.f2":"✓ Global species search",
@@ -611,8 +620,8 @@ const TRANSLATIONS={
     "pagination.prev":"« Précédent","pagination.next":"Suivant »",
     "species.details":"Voir les détails →",
     "modal.loading":"Chargement...","modal.error":"Erreur de chargement",
-    "modal.favorito":"Favori","modal.en_favoritos":"Dans les favoris",
-    "modal.miatlas":"Mon Atlas","modal.en_miatlas":"Dans Mon Atlas ✓",
+    "modal.favorito":"Favori","modal.en_favoritos":"Dans les favoris","modal.eliminado_fav":"Retiré des favoris","modal.eliminado_atlas":"Retiré de Mon Atlas",
+    "modal.miatlas":"Mon Atlas","modal.en_miatlas":"Dans Mon Atlas",
     "modal.avistamiento":"📍 Observation",
     "modal.descripcion":"Description","modal.nombres_comunes":"Noms communs",
     "modal.taxonomia":"Classification taxonomique","modal.galeria":"Galerie de photos",
@@ -623,10 +632,10 @@ const TRANSLATIONS={
     "buscar.placeholder":"Nom scientifique ou commun...","buscar.btn":"Rechercher",
     "buscar.sin_resultados":"Aucun résultat trouvé","buscar.sin_resultados_tip":"Essayez avec le nom scientifique ou en anglais",
     "buscar.sugerencias":"Suggestions",
-    "perfil.miembro":"Membre de BioAtlas","perfil.hazte_premium":"✨ Devenir Premium",
+    "perfil.miembro":"Membre de BioAtlas","perfil.hazte_premium":"Devenir Premium",
     "perfil.cancelar_premium":"Annuler Premium",
     "perfil.stat.favoritos":"Favoris","perfil.stat.avistamientos":"Observations","perfil.stat.atlas":"Dans Mon Atlas",
-    "perfil.buscar_rapido":"🔍 Ajouter une espèce rapidement","perfil.buscar_placeholder":"Cherchez une espèce à ajouter aux favoris...",
+    "perfil.buscar_rapido":"Ajouter une espèce rapidement","perfil.buscar_placeholder":"Cherchez une espèce à ajouter aux favoris...",
     "perfil.ultimos_avist":"Dernières observations","perfil.ver_todos":"Voir tout →",
     "perfil.modal.añadir_fav":"Ajouter aux favoris","perfil.modal.registrar_avist":"Enregistrer observation","perfil.modal.cancelar":"Annuler",
     "registro.titulo":"Commencez à explorer","registro.subtitulo":"Créez votre compte gratuit et commencez à collectionner des espèces du monde entier",
@@ -636,7 +645,7 @@ const TRANSLATIONS={
     "registro.label.confirmar":"Confirmer le mot de passe","registro.ph.confirmar":"Répétez le mot de passe",
     "registro.btn":"Créer un compte gratuit →",
     "registro.plan_gratis":"✓ Accès à 197 pays · ✓ 20 favoris · ✓ 10 observations",
-    "registro.ver_premium":"✨ Voir le plan Premium →",
+    "registro.ver_premium":"Voir le plan Premium →",
     "registro.ya_tienes":"Vous avez déjà un compte ?","registro.ir_login":"Se connecter →",
     "registro.volver":"← Retour à l'atlas",
     "login.titulo":"Bienvenue de retour","login.subtitulo":"Connectez-vous pour accéder à votre atlas personnel",
@@ -661,17 +670,17 @@ const TRANSLATIONS={
     "avist.vacio_sub":"Utilisez la recherche ci-dessus pour enregistrer votre première observation",
     "atlas.titulo":"Mon Atlas","atlas.subtitulo":"Votre atlas personnel de biodiversité",
     "atlas.stat.especies":"Espèces","atlas.stat.paises":"Pays","atlas.stat.paises_lower":"pays","atlas.especies_lower":"espèces",
-    "atlas.plan_gratis":"Plan Gratuit","atlas.sin_limites":"Illimité",
+    "atlas.plan_gratis":"Plan Gratuit","atlas.sin_limites":"Illimité","atlas.confirm_titulo":"Retirer de l'Atlas?","atlas.confirm_msg":"Voulez-vous vraiment retirer cette espèce de votre Atlas?","atlas.confirm_si":"Oui, retirer","atlas.confirm_no":"Annuler",
     "atlas.limite_alcanzado":"Vous avez atteint la limite de pays.",
     "atlas.limite_sub":" Devenez Premium pour débloquer tous les pays.",
     "atlas.ver_premium":"Voir Premium",
     "atlas.vacio_titulo":"Votre Mon Atlas est vide",
-    "atlas.vacio_sub":"Explorez n'importe quel pays et appuyez sur 🌿 Mon Atlas sur chaque fiche d'espèce pour commencer votre collection.",
+    "atlas.vacio_sub":"Explorez n'importe quel pays et appuyez sur Mon Atlas sur chaque fiche d'espèce pour commencer votre collection.",
     "atlas.explorar":"Explorer l'atlas",
     "premium.hero_titulo":"Explorez la biodiversité sans aucune limite",
     "premium.hero_sub":"Accédez à toutes les fonctions de BioAtlas avec un abonnement mensuel. Annulez quand vous voulez.",
     "premium.ya_premium":"Vous êtes déjà utilisateur Premium",
-    "premium.btn_cta":"✨ Devenir Premium — 2,99€/mois",
+    "premium.btn_cta":"Devenir Premium — 2,99€/mois",
     "premium.sin_compromiso":"Annulez quand vous voulez · Sans engagement",
     "premium.plan_gratis":"Gratuit","premium.recomendado":"Recommandé","premium.mes":"/mois",
     "premium.f1":"✓ Accès à 197 pays","premium.f2":"✓ Recherche mondiale d'espèces",
@@ -810,7 +819,7 @@ function applyTranslations(){
 }
 function setLang(lang){
     currentLang=lang;localStorage.setItem('bioatlas-lang',lang);
-    document.getElementById('lang-flag').textContent=FLAGS[lang];
+    const flagEl=document.getElementById('lang-flag');flagEl.src='https://flagcdn.com/16x12/'+{es:'es',en:'gb',fr:'fr'}[lang]+'.png';
     document.getElementById('lang-label').textContent=LABELS[lang];
     document.querySelectorAll('.lang-option').forEach((el,i)=>el.classList.toggle('active',['es','en','fr'][i]===lang));
     document.getElementById('lang-dropdown').classList.remove('open');

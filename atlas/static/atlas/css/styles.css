@@ -62,7 +62,7 @@ body {
   background: var(--nav-bg);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--nav-border);
-  padding: 0 1.5rem; height: 60px;
+  padding: 0 1.5rem; height: 80px;
   display: flex; align-items: center;
 }
 .navbar .container {
@@ -126,7 +126,7 @@ body {
   background: rgba(74,222,128,0.2); display: flex; align-items: center;
   justify-content: center; font-size: 0.72rem; font-weight: 700; color: #4ADE80; flex-shrink: 0;
 }
-.nav-user-avatar.premium { background: linear-gradient(135deg,#D4AF37,#F0D060); color: #0A0F0D; }
+.nav-user-avatar.premium { background: var(--bg-surface); }
 
 .nav-user-dropdown {
   display: none; position: absolute; top: calc(100% + 8px); right: 0;
@@ -152,7 +152,7 @@ body {
 .btn-login:hover { color: var(--nav-text); border-color: rgba(255,255,255,0.3); }
 .btn-registro { padding: 6px 14px; border-radius: 999px; background: #4ADE80; color: #0A0F0D; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: var(--transition); }
 .btn-registro:hover { background: #6EE79A; }
-.btn-premium-nav { padding: 6px 12px; border-radius: 999px; background: linear-gradient(135deg,#D4AF37,#F0D060); color: #0A0F0D; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: var(--transition); }
+.btn-premium-nav { padding: 0 10px; height: 34px; border-radius: 999px; background: linear-gradient(135deg,#D4AF37,#F0D060); color: #0A0F0D; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: var(--transition); display:inline-flex; align-items:center; gap:6px; }
 .btn-premium-nav:hover { opacity: 0.9; }
 
 .lang-selector { position: relative; }
@@ -262,8 +262,8 @@ body {
 .species-card:hover .sc-quick-actions { opacity: 1; pointer-events: all; }
 .sc-qa-btn { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.92); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; box-shadow: var(--shadow); transition: var(--transition); text-decoration: none; }
 .sc-qa-btn:hover { transform: scale(1.15); border-color: var(--green); }
-.sc-qa-btn.active-fav { background: #FEF2F2; border-color: #FCA5A5; }
-.sc-qa-btn.active-atlas { background: #F0FDF4; border-color: #86EFAC; }
+.sc-qa-btn.active-fav { background: var(--green); border-color: var(--green); }
+.sc-qa-btn.active-atlas { background: var(--green); border-color: var(--green); }
 
 .sc-biolog-badge { position: absolute; bottom: 7px; right: 7px; z-index: 3; background: var(--green); color: #fff; font-size: 0.58rem; font-weight: 800; padding: 2px 7px; border-radius: 999px; display: none; }
 .sc-biolog-badge.visible { display: block; }
@@ -324,6 +324,7 @@ body {
 .cf-pill:hover { border-color: var(--green); color: var(--green); }
 .cf-pill.active { background: var(--green); border-color: var(--green); color: #fff; }
 .cf-pill.active img { filter: brightness(0) invert(1); }
+.sc-qa-btn.active-fav img, .sc-qa-btn.active-atlas img { filter: brightness(0) invert(1); }
 
 /* ═══════════════════════════════════════════════════════════════
    MODAL HORIZONTAL
@@ -377,7 +378,7 @@ body {
 .smodal-actions { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
 .smodal-action-btn { flex: 1; min-width: 90px; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 8px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: var(--transition); font-family: var(--font-body); text-decoration: none; }
 .smodal-action-btn:hover { border-color: var(--border-hover); color: var(--text); }
-.smodal-action-btn.active-fav   { border-color: #FCA5A5; color: #DC2626; background: #FEF2F2; }
+.smodal-action-btn.active-fav { border-color: var(--green); color: var(--green); background: var(--green-bg); }
 .smodal-action-btn.active-atlas { border-color: #86EFAC; color: var(--green); background: #F0FDF4; }
 .smodal-section-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); margin: 1rem 0 0.5rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
 .smodal-names-list { display: flex; gap: 5px; flex-wrap: wrap; }

@@ -681,7 +681,14 @@ def nuevo_avistamiento(request, species_key):
             foto  = request.FILES.get("foto")
             if not fecha or not lugar:
                 error = "La fecha y el lugar son obligatorios."
-            else:
+            elif foto:
+                allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+                max_size = 5 * 1024 * 1024  # 5MB
+                if foto.content_type not in allowed_types:
+                    error = "Solo se permiten imágenes JPG, PNG, WEBP o GIF."
+                elif foto.size > max_size:
+                    error = "La imagen no puede superar los 5MB."
+            if not error:
                 Avistamiento.objects.create(
                     usuario=request.user, especie=especie,
                     fecha=fecha, lugar=lugar, notas=notas, foto=foto,
@@ -866,14 +873,15 @@ def quiz(request):
     )[offset:offset + 1])[0]
 
     def get_opciones(campo, valor_correcto, n=4):
-        valores = list(
+        valores = list(set(
             Especie.objects.exclude(**{campo: ''})
+            .exclude(**{campo: None})
             .exclude(**{campo: valor_correcto})
             .values_list(campo, flat=True)
-            .distinct()[:50]
-        )
+            .distinct()[:200]
+        ) - {valor_correcto})
         muestra  = random.sample(valores, min(n - 1, len(valores)))
-        opciones = muestra + [valor_correcto]
+        opciones = list(dict.fromkeys(muestra + [valor_correcto]))
         random.shuffle(opciones)
         return opciones
 
