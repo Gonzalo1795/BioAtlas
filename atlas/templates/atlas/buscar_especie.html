@@ -29,10 +29,21 @@
     <div class="species-grid">
         {% for especie in resultados %}
         <article class="species-card" data-species-key="{{ especie.species_key }}" data-sci-name="{{ especie.canonical_name|default:especie.scientific_name }}" style="cursor:pointer;">
+            {% if user.is_authenticated %}
+            <div class="sc-quick-actions" onclick="event.stopPropagation()">
+                <button class="sc-qa-btn {% if especie.species_key in especies_favoritas %}active-fav{% endif %}" id="qa-fav-{{ especie.species_key }}" title="Favorito" onclick="quickFavorito({{ especie.species_key }}, this)">
+                    <img src="/static/atlas/img/menu/favoritos.svg" style="width:34px;height:34px;vertical-align:middle;">
+                </button>
+                <button class="sc-qa-btn" id="qa-atlas-{{ especie.species_key }}" title="Mi Atlas" onclick="quickAtlas({{ especie.species_key }}, this)">
+                    <img src="/static/atlas/img/menu/Mi_atlas.svg" style="width:34px;height:34px;vertical-align:middle;">
+                </button>
+                <a class="sc-qa-btn" title="Registrar avistamiento" href="{% url 'atlas:nuevo_avistamiento' especie.species_key %}" onclick="event.stopPropagation()">
+                    <img src="/static/atlas/img/menu/avistamientos.svg" style="width:34px;height:34px;vertical-align:middle;">
+                </a>
+            </div>
+            {% endif %}
             <div class="sc-image-wrap">
-                <div class="sc-placeholder" id="placeholder-{{ especie.species_key }}">
-                    {% if especie.class_name == 'Mammalia' %}🦁{% elif especie.class_name == 'Aves' %}🦅{% elif especie.class_name == 'Reptilia' %}🦎{% elif especie.class_name == 'Amphibia' %}🐸{% elif especie.class_name == 'Actinopterygii' %}🐟{% elif especie.class_name == 'Insecta' %}🦋{% elif especie.class_name == 'Magnoliopsida' %}🌸{% elif especie.class_name == 'Agaricomycetes' %}🍄{% elif especie.class_name == 'Arachnida' %}🕷️{% elif especie.kingdom == 'Plantae' %}🌿{% elif especie.kingdom == 'Fungi' %}🍄{% else %}🌍{% endif %}
-                </div>
+                <div class="sc-placeholder" id="placeholder-{{ especie.species_key }}"></div>
                 <img class="sc-img" id="img-{{ especie.species_key }}" src="" alt="{{ especie.canonical_name|default:especie.scientific_name }}" style="display:none;" loading="lazy"
                      onerror="this.style.display='none'; document.getElementById('placeholder-{{ especie.species_key }}').classList.remove('hidden');">
                 {% if especie.kingdom %}<span class="sc-kingdom sc-kingdom--{{ especie.kingdom|lower }}">{{ especie.kingdom }}</span>{% endif %}
@@ -90,8 +101,8 @@
         </div>
         <div class="smodal-right">
             <div class="smodal-actions">
-                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn">🤍 <span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span></button>
-                <a id="btn-avistamiento" href="#" class="smodal-action-btn" data-i18n="modal.avistamiento">📍 Avistamiento</a>
+                <button id="btn-favorito" onclick="toggleFavorito()" class="smodal-action-btn"><img src="/static/atlas/img/menu/favoritos.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;"><span id="btn-favorito-text" data-i18n="modal.favorito">Favorito</span></button>
+                <a id="btn-avistamiento" href="#" class="smodal-action-btn"><img src="/static/atlas/img/menu/avistamientos.svg" style="width:40px;height:40px;vertical-align:middle;margin-right:6px;"> <span>Avistamiento</span></a>
             </div>
             <div id="smodal-desc-wrap" style="display:none;">
                 <p class="smodal-section-title" data-i18n="modal.descripcion">Descripción</p>
@@ -152,6 +163,25 @@ let lbPhotos = [], lbCurrent = 0;
 let currentSpeciesKey = null;
 
 function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);if(p.length===2)return p.pop().split(';').shift();}
+
+
+
+function quickFavorito(speciesKey,btn){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    btn.disabled=true;
+    fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
+    .then(r=>r.json()).then(data=>{
+        btn.disabled=false;
+        if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
+        const img=btn.querySelector('img');
+        if(data.es_favorito){btn.classList.add('active-fav');}else{btn.classList.remove('active-fav');}
+        BioNotify.toast(data.es_favorito?t('modal.en_favoritos'):t('modal.eliminado_fav'),data.es_favorito?'✓':'✕');
+    }).catch(()=>{btn.disabled=false;});
+}
+function quickAtlas(speciesKey,btn){
+    if(!isAuthenticated){window.location.href='/login/';return;}
+    BioNotify.show({title:'Mi Atlas',msg:'Para añadir esta especie a Mi Atlas visita la página del país donde la encontraste.',actions:[{label:'Entendido',onclick:()=>BioNotify.close()}]});
+}
 
 function loadCardImages(){
     document.querySelectorAll('.species-card[data-sci-name]').forEach(card=>{
@@ -256,8 +286,8 @@ function toggleFavorito(){
     .then(r=>r.json()).then(data=>{
         btn.disabled=false;
         if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}
-        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'❤️');}
-        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent=t('modal.favorito');BioNotify.toast('Eliminado de favoritos','💔');}
+        if(data.es_favorito){btn.className='smodal-action-btn active-fav';document.getElementById('btn-favorito-text').textContent=t('modal.en_favoritos');BioNotify.toast(t('modal.en_favoritos'),'✓');}
+        else{btn.className='smodal-action-btn';document.getElementById('btn-favorito-text').textContent=t('modal.favorito');BioNotify.toast(t('modal.eliminado_fav'),'✕');}
     }).catch(()=>{btn.disabled=false;});
 }
 

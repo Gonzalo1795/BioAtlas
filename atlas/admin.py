@@ -10,7 +10,7 @@ from .models import (
 )
 
 # ── Personalización del panel ──
-admin.site.site_header = '🌿 BioAtlas — Panel de Administración'
+admin.site.site_header = 'BioAtlas — Panel de Administración'
 admin.site.site_title  = 'BioAtlas Admin'
 admin.site.index_title = 'Panel de Control'
 
@@ -97,8 +97,8 @@ class EspecieAdmin(admin.ModelAdmin):
 
     def tiene_imagen(self, obj):
         if obj.image_url:
-            return format_html('<span style="color:#2D8A4E;font-weight:700;">✓</span>')
-        return format_html('<span style="color:#DC2626;">✗</span>')
+            return mark_safe('<span style="color:#2D8A4E;font-weight:700;">✓</span>')
+        return mark_safe('<span style="color:#DC2626;">✗</span>')
     tiene_imagen.short_description = 'Imagen'
 
     def image_preview(self, obj):

@@ -414,7 +414,14 @@ def api_especie_detalle(request, species_key):
                 spanish_names.append({"name": name, "language": "es"})
             else:
                 other_names.append({"name": name, "language": lang})
-    common_names = (spanish_names + other_names)[:10]
+    seen = set()
+    unique_names = []
+    for n in (spanish_names + other_names):
+        name_lower = n["name"].lower().strip()
+        if name_lower not in seen:
+            seen.add(name_lower)
+            unique_names.append(n)
+    common_names = unique_names[:3]
 
     lang        = request.GET.get("lang", "es")
     descripcion = especie.get_descripcion(lang)
@@ -844,21 +851,23 @@ def quiz(request):
         })
 
     # Con iniciar=1 — jugar de verdad
-    especies = Especie.objects.filter(
-        image_url__isnull=False
-    ).exclude(
-        image_url=''
-    ).exclude(
-        kingdom=''
-    ).exclude(
-        class_name=''
-    ).exclude(
-        order=''
-    ).exclude(
-        family=''
-    ).filter(
-        image_url__contains='inaturalist'
-    )
+    GRUPOS = ['Aves', 'Mammalia', 'Aves', 'Mammalia', 'Amphibia', 'Squamata', 'Aves', 'Mammalia', 'Insecta']
+    random.shuffle(GRUPOS)
+    especies = None
+    for grupo in GRUPOS:
+        qs = Especie.objects.filter(
+            image_url__isnull=False,
+            image_url__contains='inaturalist',
+            class_name=grupo,
+        ).exclude(image_url='').exclude(image_source='failed').exclude(kingdom='').exclude(order='').exclude(family='')
+        if qs.count() >= 20:
+            especies = qs
+            break
+    if especies is None:
+        especies = Especie.objects.filter(
+            image_url__isnull=False,
+            image_url__contains='inaturalist',
+        ).exclude(image_url='').exclude(image_source='failed').exclude(kingdom='').exclude(order='').exclude(family='')
 
     if not especies.exists():
         return render(request, 'atlas/quiz.html', {'error': True, 'preguntas': [], 'especie': {}})

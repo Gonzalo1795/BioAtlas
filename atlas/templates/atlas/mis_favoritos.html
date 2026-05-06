@@ -277,6 +277,12 @@ function toggleFavorito(){
 
 function quitarFavoritoCard(speciesKey,btn){
     if(!isAuthenticated){window.location.href='/login/';return;}
+    BioNotify.show({title:'\u00bfQuitar de favoritos?',msg:'\u00bfEst\u00e1s seguro de que quieres eliminar esta especie de tus favoritos?',actions:[
+        {label:'S\u00ed, eliminar',primary:true,onclick:()=>{BioNotify.close();doQuitarFavoritoCard(speciesKey,btn);}},
+        {label:'Cancelar',onclick:()=>{BioNotify.close();}}
+    ]});
+}
+function doQuitarFavoritoCard(speciesKey,btn){
     btn.disabled=true;
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
     .then(r=>r.json()).then(data=>{

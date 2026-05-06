@@ -359,6 +359,17 @@ function toggleMiAtlas(){
 
 function quickFavorito(speciesKey,btn){
     if(!isAuthenticated){window.location.href='/login/';return;}
+    const isActive = btn.classList.contains('active-fav');
+    if(isActive){
+        BioNotify.show({title:'¿Quitar de favoritos?',msg:'¿Estás seguro de que quieres eliminar esta especie de tus favoritos?',actions:[
+            {label:'Sí, eliminar',primary:true,onclick:()=>{BioNotify.close();doQuickFavorito(speciesKey,btn);}},
+            {label:'Cancelar',onclick:()=>{BioNotify.close();}}
+        ]});
+    } else {
+        doQuickFavorito(speciesKey,btn);
+    }
+}
+function doQuickFavorito(speciesKey,btn){
     btn.disabled=true;
     fetch('/api/favorito/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey})})
     .then(r=>r.json()).then(data=>{btn.disabled=false;if(!data.success){if(data.limite)BioNotify.limitePremium(data.error);return;}updateCardFav(speciesKey,data.es_favorito);BioNotify.toast(data.es_favorito?t('modal.en_favoritos'):t('modal.eliminado_fav'),data.es_favorito?'✓':'✕');}).catch(()=>{btn.disabled=false;});
@@ -366,6 +377,17 @@ function quickFavorito(speciesKey,btn){
 
 function quickAtlas(speciesKey,paisId,btn){
     if(!isAuthenticated){window.location.href='/login/';return;}
+    const isActive = btn.classList.contains('active-atlas');
+    if(isActive){
+        BioNotify.show({title:t('atlas.confirm_titulo'),msg:t('atlas.confirm_msg'),actions:[
+            {label:t('atlas.confirm_si'),primary:true,onclick:()=>{BioNotify.close();doQuickAtlas(speciesKey,paisId,btn);}},
+            {label:t('atlas.confirm_no'),onclick:()=>{BioNotify.close();}}
+        ]});
+    } else {
+        doQuickAtlas(speciesKey,paisId,btn);
+    }
+}
+function doQuickAtlas(speciesKey,paisId,btn){
     btn.disabled=true;
     fetch('/api/biolog/toggle/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify({species_key:speciesKey,pais_id:paisId})})
     .then(r=>r.json()).then(data=>{btn.disabled=false;if(data.success){updateCardAtlas(speciesKey,data.en_biolog);BioNotify.toast(data.en_biolog?t('modal.en_miatlas'):t('modal.eliminado_atlas'),data.en_biolog?'✓':'✕');}else if(data.limite)BioNotify.limitePremium(data.error);}).catch(()=>{btn.disabled=false;});
